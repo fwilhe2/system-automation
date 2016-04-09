@@ -43,6 +43,13 @@
         state: latest
         name: java-1.8.0-openjdk-devel
 
+    - name: Install C Development Tools and Libraries
+      become: yes
+      become_user: root
+      dnf:
+        state: latest
+        name: "@C Development Tools and Libraries"
+
     - name: Create `~/code/github` Directory
       file:
         path: ~/code/github
