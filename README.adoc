@@ -35,4 +35,5 @@ Free use of this software is granted under the terms of the MIT License.
 
 == References
 
-http://www.whitewashing.de/2013/11/19/setting_up_development_machines_ansible_edition.html
+* http://docs.ansible.com/ansible/list_of_all_modules.html[Ansible Docs: All Modules]
+* http://www.whitewashing.de/2013/11/19/setting_up_development_machines_ansible_edition.html[Setting up development machines: Ansible edition]
