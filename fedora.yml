@@ -37,3 +37,14 @@
       dnf:
         state: latest
         name: java-1.8.0-openjdk-devel
+
+    - name: Create `~/code/github` Directory
+      file:
+        path: ~/code/github
+        state: directory
+
+    - name: Create `~/temp` Directory
+      file:
+        path: ~/temp
+        state: directory
+
