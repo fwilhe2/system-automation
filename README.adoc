@@ -13,6 +13,20 @@ Make sure that `python-dnf` is installed.
 ansible-playbook -K -i inventory fedora.yml
 ----
 
+== Testing
+
+Vagrant can be used to test this project.
+
+.Fire up Vagrant VM with Ansible Provisioning
+----
+vagrant up
+----
+
+.Provision running VM
+----
+vagrant provision
+----
+
 == References
 
 http://www.whitewashing.de/2013/11/19/setting_up_development_machines_ansible_edition.html
