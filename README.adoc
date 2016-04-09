@@ -1,0 +1,18 @@
+= system-automation
+
+System Automation powered by Ansible™
+
+Currently, only fedora is supported.
+
+== Setup
+
+Make sure that `python-dnf` is installed.
+
+.Run Ansible
+----
+ansible-playbook -K -i inventory fedora.yml
+----
+
+== References
+
+http://www.whitewashing.de/2013/11/19/setting_up_development_machines_ansible_edition.html

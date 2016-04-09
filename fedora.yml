@@ -1,0 +1,39 @@
+---
+
+- hosts: localhost
+  tasks:
+    - name: Install Basic Packages
+      become: yes
+      become_user: root
+      dnf:
+        state: latest
+        name: "{{ item }}"
+      with_items:
+        - vim
+        - zsh
+        - htop
+        - rdiff-backup
+        - curl
+        - git
+        - tree
+
+    - name: Clone `oh-my-zsh` Repository
+      git:
+        repo: https://github.com/robbyrussell/oh-my-zsh.git
+        dest: ~/.oh-my-zsh
+
+    - name: Clone `dotfiles` Repository
+      git:
+        repo: git@github.com:fwilhe/dotfiles.git
+        dest: ~/.dotfiles
+      register: clone_dotfiles
+    - name: Symlink Dotfiles
+      shell: ~/.dotfiles/install
+      when: clone_dotfiles.changed
+
+    - name: Install OpenJDK
+      become: yes
+      become_user: root
+      dnf:
+        state: latest
+        name: java-1.8.0-openjdk-devel
