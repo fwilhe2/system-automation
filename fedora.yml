@@ -48,3 +48,7 @@
         path: ~/temp
         state: directory
 
+    - name: Create `~/no_backup` Directory
+      file:
+        path: ~/no_backup
+        state: directory
