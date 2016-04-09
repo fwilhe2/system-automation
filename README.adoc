@@ -27,6 +27,12 @@ vagrant up
 vagrant provision
 ----
 
+== License
+
+Copyright © 2016 Florian Wilhelm
+
+Free use of this software is granted under the terms of the MIT License.
+
 == References
 
 http://www.whitewashing.de/2013/11/19/setting_up_development_machines_ansible_edition.html
