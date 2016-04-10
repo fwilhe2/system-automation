@@ -4,6 +4,8 @@ System Automation powered by Ansible™
 
 Currently, only fedora is supported.
 
+Tested ansible version: `2.0.1.0`
+
 == Project Layout
 
 * `playbooks/common.yml`: Setup for a (in my personal view) minimal system. Does not require an X server.
