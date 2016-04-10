@@ -1,0 +1,12 @@
+---
+
+- hosts: all
+  tasks:
+    - name: Install Basic Desktop Packages
+      become: yes
+      become_user: root
+      dnf:
+        state: latest
+        name: "{{ item }}"
+      with_items:
+        - thunderbird

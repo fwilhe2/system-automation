@@ -4,18 +4,29 @@ System Automation powered by Ansible™
 
 Currently, only fedora is supported.
 
+== Project Layout
+
+* `playbooks/common.yml`: Setup for a (in my personal view) minimal system. Does not require an X server.
+* `playbooks/desktop.yml`: Setup for desktop computers.
+
 == Setup
 
 Make sure that `python-dnf` is installed.
 
-.Run Ansible
+.Run `common` playbook
 ----
 ansible-playbook -K -i inventory fedora.yml
+----
+
+.Run `desktop` playbook
+----
+ansible-playbook -K -v -i inventory playbooks/desktop.yml
 ----
 
 == Testing
 
 Vagrant can be used to test this project.
+This does not include the `desktop` playbook.
 
 .Fire up Vagrant VM with Ansible Provisioning
 ----
