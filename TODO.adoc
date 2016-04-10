@@ -4,10 +4,6 @@
 
 ** How to manage `Vagrantfile`? (Can't use `ssh` for `git clone` without my key)
 
-* Install docker
-
-Latest upstream version is preferred over the distribution's repository
-
 * Install vagrant and virtualbox
 
 Latest upstream version is preferred over the distribution's repository
