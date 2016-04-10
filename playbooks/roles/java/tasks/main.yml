@@ -1,0 +1,8 @@
+---
+
+  - name: Install OpenJDK
+    become: yes
+    become_user: root
+    dnf:
+      state: latest
+      name: java-1.8.0-openjdk-devel

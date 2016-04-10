@@ -1,0 +1,16 @@
+---
+
+  - name: Clone `oh-my-zsh` Repository
+    git:
+      repo: https://github.com/robbyrussell/oh-my-zsh.git
+      dest: ~/.oh-my-zsh
+
+  - name: Clone `dotfiles` Repository
+    git:
+      repo: https://github.com/fwilhe/dotfiles.git
+      dest: ~/.dotfiles
+    register: clone_dotfiles
+
+  - name: Symlink Dotfiles
+    shell: ~/.dotfiles/install
+    when: clone_dotfiles.changed

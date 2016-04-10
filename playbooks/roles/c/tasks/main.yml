@@ -1,0 +1,7 @@
+---
+  - name: Install C Development Tools and Libraries
+    become: yes
+    become_user: root
+    dnf:
+      state: latest
+      name: "@C Development Tools and Libraries"
