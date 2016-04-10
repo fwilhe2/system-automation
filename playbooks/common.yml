@@ -1,25 +1,9 @@
 ---
 
 - hosts: all
-  tasks:
-    - name: Install Basic Packages
-      become: yes
-      become_user: root
-      dnf:
-        state: latest
-        name: "{{ item }}"
-      with_items:
-        - vim
-        - zsh
-        - htop
-        - rdiff-backup
-        - curl
-        - git
-        - tree
-        - autojump
-        - autojump-zsh
 
   roles:
+    - basic
     - dotfiles
     - bin
     - directories
