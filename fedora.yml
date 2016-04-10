@@ -16,6 +16,7 @@
         - curl
         - git
         - tree
+        - autojump
 
     - name: Clone `oh-my-zsh` Repository
       git:
