@@ -1,5 +1,12 @@
 ---
 
+  - name: Upgrade all Packages
+    become: yes
+    become_user: root
+    dnf:
+      state: latest
+      name: "*"
+
   - name: Install Basic Packages
     become: yes
     become_user: root
