@@ -10,3 +10,12 @@
         name: "{{ item }}"
       with_items:
         - thunderbird
+
+    - command: gsettings set org.gnome.desktop.input-sources xkb-options "['compose:caps']"
+
+    - command: gsettings set org.gnome.desktop.wm.keybindings switch-input-source "[]"
+
+    - command: gsettings set org.gnome.desktop.wm.keybindings switch-input-source-backward "[]"
+
+    - command: gsettings set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled "false"
+
