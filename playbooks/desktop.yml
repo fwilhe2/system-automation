@@ -10,6 +10,7 @@
         name: "{{ item }}"
       with_items:
         - thunderbird
+        - keepassx
 
     - command: gsettings set org.gnome.desktop.input-sources xkb-options "['compose:caps']"
 
