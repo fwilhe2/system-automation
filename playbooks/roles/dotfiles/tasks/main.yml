@@ -21,6 +21,12 @@
       dest: ~/.dotfiles/aliases_package_manager
     when: ansible_os_family == 'RedHat'
 
+  - name: Copy Package Manager Aliases File
+    copy:
+      src: files/apt-aliases.txt
+      dest: ~/.dotfiles/aliases_package_manager
+    when: ansible_os_family == 'Debian'
+
   - name: Make Symlink for Package Manager Aliases File
     file:
       state: link
