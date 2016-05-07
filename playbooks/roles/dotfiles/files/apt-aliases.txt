@@ -1,0 +1,5 @@
+alias i='sudo apt install'
+alias up='sudo apt update && sudo apt upgrade'
+alias se='apt search'
+alias sho='apt show'
+alias re='sudo apt remove'
