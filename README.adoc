@@ -2,8 +2,6 @@
 
 System Automation powered by Ansible™
 
-Currently, only fedora is supported.
-
 Tested ansible version: `2.0.1.0`
 
 == Project Layout
@@ -17,7 +15,7 @@ Make sure that `python-dnf` is installed.
 
 .Run `common` playbook
 ----
-ansible-playbook -K -i inventory fedora.yml
+ansible-playbook -K -i inventory system-automation.yml
 ----
 
 .Run `desktop` playbook
@@ -29,6 +27,8 @@ ansible-playbook -K -v -i inventory playbooks/desktop.yml
 
 Vagrant can be used to test this project.
 This does not include the `desktop` playbook.
+
+Various Vagrantfiles are provided in the `test` directory.
 
 .Fire up Vagrant VM with Ansible Provisioning
 ----
