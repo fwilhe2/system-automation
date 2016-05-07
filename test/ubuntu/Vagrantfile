@@ -1,5 +1,15 @@
 Vagrant.configure(2) do |config|
+
+  vm_name = 'system-automation-ubuntu'
+
   config.vm.box = "box-cutter/ubuntu1604"
+  config.vm.hostname = vm_name
+
+  config.vm.provider 'virtualbox' do |provider|
+    provider.memory = 1024
+    provider.cpus = 2
+    provider.name = vm_name
+  end
 
   config.vm.provision "ansible" do |ansible|
       ansible.playbook = "../../system-automation.yml"
