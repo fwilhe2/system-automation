@@ -11,6 +11,7 @@
       with_items:
         - thunderbird
         - keepassx
+      when: ansible_os_family == 'RedHat'
 
     - command: gsettings set org.gnome.desktop.input-sources xkb-options "['compose:caps']"
 

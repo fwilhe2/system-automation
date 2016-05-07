@@ -5,3 +5,4 @@
     dnf:
       state: latest
       name: "@C Development Tools and Libraries"
+    when: ansible_os_family == 'RedHat'

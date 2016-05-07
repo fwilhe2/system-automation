@@ -6,3 +6,4 @@
     dnf:
       state: latest
       name: java-1.8.0-openjdk-devel
+    when: ansible_os_family == 'RedHat'

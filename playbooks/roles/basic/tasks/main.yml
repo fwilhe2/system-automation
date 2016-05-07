@@ -6,6 +6,7 @@
     dnf:
       state: latest
       name: "*"
+    when: ansible_os_family == 'RedHat'
 
   - name: Install Basic Packages
     become: yes
@@ -23,3 +24,4 @@
       - tree
       - autojump
       - autojump-zsh
+    when: ansible_os_family == 'RedHat'
