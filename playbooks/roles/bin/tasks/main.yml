@@ -1,5 +1,4 @@
 ---
-  - name: Clone `bin` Repository
-    git:
-      repo: https://github.com/fwilhe/bin.git
-      dest: ~/bin
+
+- include: bin.yml
+  tags: bin

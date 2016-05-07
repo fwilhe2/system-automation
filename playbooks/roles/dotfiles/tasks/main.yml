@@ -1,34 +1,5 @@
 ---
 
-  - name: Clone `oh-my-zsh` Repository
-    git:
-      repo: https://github.com/robbyrussell/oh-my-zsh.git
-      dest: ~/.oh-my-zsh
+- include: dotfiles.yml
+  tags: dotfiles
 
-  - name: Clone `dotfiles` Repository
-    git:
-      repo: https://github.com/fwilhe/dotfiles.git
-      dest: ~/.dotfiles
-    register: clone_dotfiles
-
-  - name: Symlink Dotfiles
-    shell: ~/.dotfiles/install
-    when: clone_dotfiles.changed
-
-  - name: Copy Package Manager Aliases File
-    copy:
-      src: files/dnf-aliases.txt
-      dest: ~/.dotfiles/aliases_package_manager
-    when: ansible_os_family == 'RedHat'
-
-  - name: Copy Package Manager Aliases File
-    copy:
-      src: files/apt-aliases.txt
-      dest: ~/.dotfiles/aliases_package_manager
-    when: ansible_os_family == 'Debian'
-
-  - name: Make Symlink for Package Manager Aliases File
-    file:
-      state: link
-      src: ~/.dotfiles/aliases_package_manager
-      dest: ~/.aliases_package_manager

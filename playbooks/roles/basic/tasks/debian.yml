@@ -1,0 +1,25 @@
+---
+
+  - name: Upgrade all Packages
+    become: yes
+    become_user: root
+    apt:
+      upgrade: dist
+    when: ansible_os_family == 'Debian'
+
+  - name: Install Basic Packages
+    become: yes
+    become_user: root
+    apt:
+      state: latest
+      name: "{{ item }}"
+    with_items:
+      - vim
+      - zsh
+      - htop
+      - rdiff-backup
+      - curl
+      - git
+      - tree
+      - autojump
+    when: ansible_os_family == 'Debian'

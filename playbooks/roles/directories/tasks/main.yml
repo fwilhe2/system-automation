@@ -1,15 +1,4 @@
 ---
-  - name: Create `~/code/github` Directory
-    file:
-      path: ~/code/github
-      state: directory
 
-  - name: Create `~/temp` Directory
-    file:
-      path: ~/temp
-      state: directory
-
-  - name: Create `~/no_backup` Directory
-    file:
-      path: ~/no_backup
-      state: directory
+- include: directories.yml
+  tags: directories
