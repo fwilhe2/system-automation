@@ -14,3 +14,15 @@
   - name: Symlink Dotfiles
     shell: ~/.dotfiles/install
     when: clone_dotfiles.changed
+
+  - name: Copy Package Manager Aliases File
+    copy:
+      src: files/dnf-aliases.txt
+      dest: ~/.dotfiles/aliases_package_manager
+    when: ansible_os_family == 'RedHat'
+
+  - name: Make Symlink for Package Manager Aliases File
+    file:
+      state: link
+      src: ~/.dotfiles/aliases_package_manager
+      dest: ~/.aliases_package_manager

@@ -1,0 +1,5 @@
+alias i='sudo dnf install'
+alias up='sudo dnf update'
+alias se='dnf search'
+alias sho='dnf info'
+alias re='sudo dnf remove'
