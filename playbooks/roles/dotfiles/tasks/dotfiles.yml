@@ -32,3 +32,16 @@
       state: link
       src: ~/.dotfiles/aliases_package_manager
       dest: ~/.aliases_package_manager
+
+  - name: Make `~/.gitconfig.d` if not exists
+    file:
+      path: ~/.gitconfig.d
+      state: directory
+
+  # This file is not in the dotfiles, because it is different on private and work computers.
+  # I just copy the one with my private address, because I do not install work computers that often.
+  - name: Copy Git Configuration for Email Address if not exists
+    copy:
+      src: files/git-user-details.txt
+      dest: ~/.gitconfig.d/userdetails
+      force: no
