@@ -26,7 +26,6 @@ ansible-playbook -K -v -i inventory playbooks/desktop.yml
 == Testing
 
 Vagrant can be used to test this project.
-This does not include the `desktop` playbook.
 
 Various Vagrantfiles are provided in the `test` directory.
 
@@ -39,6 +38,15 @@ vagrant up
 ----
 vagrant provision
 ----
+
+=== Desktop Playbook
+
+There is a "fedora-gnome" vm.
+It is worth noting, that it does not use a base box that ships gnome.
+I did not find one that suited me on vagrant cloud.
+Instead, it installs gnome using the shell provisioner.
+
+CAUTION: This means that starting this vm will download the whole gnome group, which will take some time and cause lots of internet traffic.
 
 == License
 

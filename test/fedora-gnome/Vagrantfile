@@ -1,0 +1,22 @@
+Vagrant.configure(2) do |config|
+
+  vm_name = 'system-automation-fedora-gnome'
+
+  config.vm.box = "box-cutter/fedora23"
+  config.vm.hostname = vm_name
+
+  config.vm.provider 'virtualbox' do |provider|
+    provider.memory = 1024
+    provider.cpus = 2
+    provider.name = vm_name
+  end
+
+  config.vm.provision "shell", inline: "dnf install --assumeyes python python-dnf; dnf groupinstall --assumeyes gnome"
+
+  config.vm.provision "ansible" do |ansible|
+      ansible.playbook = "../../playbooks/desktop.yml"
+      ansible.raw_arguments = [
+          '--verbose'
+      ]
+  end
+end

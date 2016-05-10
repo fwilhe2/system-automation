@@ -26,8 +26,4 @@ https://github.com/tkrille/infra-ansible/blob/master/roles/dotfiles/tasks/dotfil
 
 * Install Asciidoctor (via `gem`)
 
-* Provision VM including gnome to test how the `Desktop` playbook works out
-
-** How to get the basebox that ships gnome?
-
 * Maybe ship a default configuration file for `autojump` with some custom directories pre-set?
