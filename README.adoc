@@ -46,6 +46,13 @@ Copyright © 2016 Florian Wilhelm
 
 Free use of this software is granted under the terms of the MIT License.
 
+=== Copyright Notice
+
+This project ships the following 3rd party software:
+
+https://github.com/jistr/ansible-gsetting[ansible-gsetting module] (`playbooks/library/gsetting`)::
+  Copyright © Jiří Stránský under the _Apache License, Version 2.0_
+
 == References
 
 * http://docs.ansible.com/ansible/list_of_all_modules.html[Ansible Docs: All Modules]

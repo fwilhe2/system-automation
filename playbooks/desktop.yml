@@ -13,11 +13,35 @@
         - keepassx
       when: ansible_os_family == 'RedHat'
 
-    - command: gsettings set org.gnome.desktop.input-sources xkb-options "['compose:caps']"
+    # cf. https://help.gnome.org/users/gnome-help/stable/tips-specialchars.html.en
+    - name: Set Compose Key to Caps Lock
+      become: yes
+      become_user: root
+      gsetting:
+        user: "{{ ansible_user_id }}"
+        key: org.gnome.desktop.input-sources.xkb-options
+        value: "['compose:caps']"
 
-    - command: gsettings set org.gnome.desktop.wm.keybindings switch-input-source "[]"
+    - name: Disable Switching of Keyboard Layouts
+      become: yes
+      become_user: root
+      gsetting:
+        user: "{{ ansible_user_id }}"
+        key: org.gnome.desktop.wm.keybindings.switch-input-source
+        value: "@as []"
 
-    - command: gsettings set org.gnome.desktop.wm.keybindings switch-input-source-backward "[]"
+    - name: Disable Switching of Keyboard Layouts (Backward)
+      become: yes
+      become_user: root
+      gsetting:
+        user: "{{ ansible_user_id }}"
+        key: org.gnome.desktop.wm.keybindings.switch-input-source-backward
+        value: "@as []"
 
-    - command: gsettings set org.gnome.Terminal.Legacy.Settings menu-accelerator-enabled "false"
-
+    - name: Disable F10 in gnome-terminal, so that mc can use it
+      become: yes
+      become_user: root
+      gsetting:
+        user: "{{ ansible_user_id }}"
+        key: org.gnome.Terminal.Legacy.Settings.menu-accelerator-enabled
+        value: "false"
