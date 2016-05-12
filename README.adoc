@@ -48,6 +48,15 @@ Instead, it installs gnome using the shell provisioner.
 
 CAUTION: This means that starting this vm will download the whole gnome group, which will take some time and cause lots of internet traffic.
 
+You might want to enable X forwarding to test gui apps.
+Create or change the file `~/.ssh/config` and add the following lines:
+
+[source]
+----
+Host 127.0.0.1
+    ForwardX11 yes
+----
+
 == License
 
 Copyright © 2016 Florian Wilhelm
