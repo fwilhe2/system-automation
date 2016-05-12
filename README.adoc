@@ -2,7 +2,7 @@
 
 System Automation powered by Ansible™
 
-Tested ansible version: `2.0.1.0`
+Tested ansible version: `2.0.2.0`
 
 == Project Layout
 
