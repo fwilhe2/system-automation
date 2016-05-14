@@ -23,4 +23,5 @@
       - tree
       - autojump
       - autojump-zsh
+      - unzip
     when: ansible_os_family == 'RedHat'

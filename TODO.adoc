@@ -13,11 +13,6 @@ Latest upstream version is preferred over the distribution's repository
 ** Community vs Ultimate
 ** how to get the latest version?
 
-* Install Maven and Gradle
-
-** sdkman.io is preferred over dnf
-** https://gist.github.com/emilio2hd/c910661bff37246bee17[Example for an Ansible Role]
-
 * Replace `install` shell script in dotfiles repo with native ansible solution
 
 https://github.com/tkrille/infra-ansible/blob/master/roles/dotfiles/tasks/dotfiles.yml#L6[Example]
