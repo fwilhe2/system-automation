@@ -13,8 +13,6 @@ Latest upstream version is preferred over the distribution's repository
 ** Community vs Ultimate
 ** how to get the latest version?
 
-* Install google chrome
-
 * Install Maven and Gradle
 
 ** sdkman.io is preferred over dnf
