@@ -1,4 +1,5 @@
 = system-automation
+:experimental: yes
 
 System Automation powered by Ansible™
 
@@ -22,6 +23,8 @@ ansible-playbook -K -i inventory system-automation.yml
 ----
 ansible-playbook -K -v -i inventory playbooks/desktop.yml
 ----
+
+WARNING: Running the `desktop` playbook will override the custom keybindings in GNOME. kbd:[Ctrl+Alt+T] is set to open a new `gnome-terminal`.
 
 == Testing
 

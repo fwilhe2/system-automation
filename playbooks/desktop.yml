@@ -46,3 +46,5 @@
         user: "{{ ansible_user_id }}"
         key: org.gnome.Terminal.Legacy.Settings.menu-accelerator-enabled
         value: "false"
+
+    - include: gnome-terminal.yml
