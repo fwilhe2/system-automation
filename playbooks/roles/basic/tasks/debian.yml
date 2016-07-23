@@ -3,14 +3,14 @@
   - name: Upgrade all Packages
     become: yes
     become_user: root
-    dnf:
-      state: latest
-      name: "*"
+    apt:
+      upgrade: dist
+    when: ansible_os_family == 'Debian'
 
   - name: Install Basic Packages
     become: yes
     become_user: root
-    dnf:
+    apt:
       state: latest
       name: "{{ item }}"
     with_items:
@@ -22,8 +22,5 @@
       - git
       - tree
       - autojump
-      - autojump-zsh
       - unzip
-      - rubygem-asciidoctor
-      - rubygem-asciidoctor-pdf
-    when: ansible_os_family == 'RedHat'
+    when: ansible_os_family == 'Debian'
