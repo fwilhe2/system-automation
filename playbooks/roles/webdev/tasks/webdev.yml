@@ -1,0 +1,20 @@
+---
+
+  - name: Check for existing Firefox Developer Edition Installation
+    stat:
+      path: /opt/firefox/firefox
+    register: firefox_dev_binary
+
+  - name: Download and Extract Firefox Developer Edition
+    become: yes
+    become_user: root
+    unarchive:
+      src: https://download.mozilla.org/?product=firefox-aurora-latest-ssl&os=linux64&lang=en-US
+      dest: /opt
+      copy: no
+    when: not firefox_dev_binary.stat.exists
+
+  - name: Create Shortcut for Firefox Developer Edition
+    copy:
+      src: Firefox_Developer_Edition.desktop
+      dest: ~/.local/share/applications/

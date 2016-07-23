@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Firefox Developer Edition
+Type=Application
+Exec=/opt/firefox/firefox
+Icon=/opt/firefox/browser/icons/mozicon128.png

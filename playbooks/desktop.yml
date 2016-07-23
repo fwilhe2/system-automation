@@ -49,3 +49,5 @@
 
     - script: set-gnome-keybindings.sh
 
+  roles:
+    - webdev
