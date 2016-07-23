@@ -24,4 +24,6 @@
       - autojump
       - autojump-zsh
       - unzip
+      - rubygem-asciidoctor
+      - rubygem-asciidoctor-pdf
     when: ansible_os_family == 'RedHat'

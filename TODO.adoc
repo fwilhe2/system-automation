@@ -17,6 +17,4 @@ Latest upstream version is preferred over the distribution's repository
 
 https://github.com/tkrille/infra-ansible/blob/master/roles/dotfiles/tasks/dotfiles.yml#L6[Example]
 
-* Install Asciidoctor (via `gem`)
-
 * Maybe ship a default configuration file for `autojump` with some custom directories pre-set?
