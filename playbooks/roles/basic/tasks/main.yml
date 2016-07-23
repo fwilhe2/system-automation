@@ -1,9 +1,23 @@
 ---
 
-- include: fedora.yml
-  when: ansible_os_family == 'RedHat'
-  tags: basic
+  - name: Install Basic Packages
+    become: yes
+    become_user: root
+    package:
+      state: latest
+      name: "{{ item }}"
+    with_items:
+      - vim
+      - zsh
+      - htop
+      - rdiff-backup
+      - curl
+      - git
+      - tree
+      - autojump
+      - unzip
+    tags: basic
 
-- include: debian.yml
-  when: ansible_os_family == 'Debian'
-  tags: basic
+  - include: fedora.yml
+    when: ansible_os_family == 'RedHat'
+    tags: basic

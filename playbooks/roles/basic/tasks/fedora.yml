@@ -1,12 +1,5 @@
 ---
 
-  - name: Upgrade all Packages
-    become: yes
-    become_user: root
-    dnf:
-      state: latest
-      name: "*"
-
   - name: Install Basic Packages
     become: yes
     become_user: root
@@ -14,16 +7,7 @@
       state: latest
       name: "{{ item }}"
     with_items:
-      - vim
-      - zsh
-      - htop
-      - rdiff-backup
-      - curl
-      - git
-      - tree
-      - autojump
       - autojump-zsh
-      - unzip
       - rubygem-asciidoctor
       - rubygem-asciidoctor-pdf
     when: ansible_os_family == 'RedHat'
