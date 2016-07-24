@@ -1,0 +1,24 @@
+---
+
+- name: Install dnf-automatic
+  become: yes
+  become_user: root
+  dnf:
+    name: dnf-automatic
+    state: present
+
+- name: Apply Updates
+  become: yes
+  become_user: root
+  lineinfile:
+    dest: /etc/dnf/automatic.conf
+    regexp: "^apply_updates"
+    line: apply_updates = yes
+
+- name: Enable and Start dnf-automatic Daemon
+  become: yes
+  become_user: root
+  service:
+    name: dnf-automatic.timer
+    enabled: yes
+    state: started
