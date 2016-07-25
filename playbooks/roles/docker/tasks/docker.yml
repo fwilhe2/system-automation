@@ -18,6 +18,13 @@
     shell: /tmp/installDocker.sh
     when: not docker_binary.stat.exists
 
+  - name: Ensure Group "docker" exists
+    become: yes
+    become_user: root
+    group:
+      name: docker
+      state: present
+
   - name: Add User to Group "docker"
     become: yes
     become_user: root
