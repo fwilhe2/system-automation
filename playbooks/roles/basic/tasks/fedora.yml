@@ -27,4 +27,5 @@
       - rubygem-asciidoctor
       - rubygem-asciidoctor-pdf
       - python3-httpie
+      - the_silver_searcher
     when: ansible_os_family == 'RedHat'
