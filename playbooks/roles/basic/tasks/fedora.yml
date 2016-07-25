@@ -26,4 +26,5 @@
       - unzip
       - rubygem-asciidoctor
       - rubygem-asciidoctor-pdf
+      - python3-httpie
     when: ansible_os_family == 'RedHat'
