@@ -1,0 +1,22 @@
+---
+  - name: Download VirtualBox Repo Definition
+    become: yes
+    become_user: root
+    get_url:
+      url: http://download.virtualbox.org/virtualbox/rpm/fedora/virtualbox.repo
+      dest: /etc/yum.repos.d/
+    when: ansible_os_family == 'RedHat'
+
+  - name: Install VirtualBox and Vagrant
+    become: yes
+    become_user: root
+    dnf:
+      state: latest
+      name: "{{ item }}"
+      disable_gpg_check: yes
+    with_items:
+      - dkms
+      - kernel-devel
+      - VirtualBox-5.0
+      - vagrant
+    when: ansible_os_family == 'RedHat'
