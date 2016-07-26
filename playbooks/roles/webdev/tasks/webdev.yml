@@ -14,6 +14,14 @@
       copy: no
     when: not firefox_dev_binary.stat.exists
 
+  - name: Change Owner of Firefox Files so that the User can install Updates
+    become: yes
+    become_user: root
+    file:
+      path: /opt/firefox
+      owner: "{{ ansible_user_id }}"
+      recurse: yes
+
   - name: Create Shortcut for Firefox Developer Edition
     copy:
       src: Firefox_Developer_Edition.desktop
