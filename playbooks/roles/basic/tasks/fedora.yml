@@ -28,4 +28,5 @@
       - rubygem-asciidoctor-pdf
       - python3-httpie
       - the_silver_searcher
+      - apg
     when: ansible_os_family == 'RedHat'
