@@ -17,6 +17,7 @@
       - vim
       - zsh
       - htop
+      - mc
       - rdiff-backup
       - curl
       - git
