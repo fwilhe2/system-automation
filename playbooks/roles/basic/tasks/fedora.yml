@@ -30,4 +30,6 @@
       - python3-httpie
       - the_silver_searcher
       - apg
+      - jq
     when: ansible_os_family == 'RedHat'
+
