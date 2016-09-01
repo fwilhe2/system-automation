@@ -34,7 +34,7 @@ ansible-playbook -K -i inventory system-automation.yml
 ansible-playbook -K -v -i inventory playbooks/desktop.yml
 ----
 
-WARNING: Running the `desktop` playbook will override the custom keybindings in GNOME. kbd:[Ctrl+Alt+T] is set to open a new `gnome-terminal`, kbd:[Ctrl+Alt+F] starts `firefox` and kbd:[Ctrl+Alt+C] starts `google-chrome`.
+WARNING: Running the `desktop` playbook will override the custom keybindings in GNOME. kbd:[Ctrl+Alt+T] is set to open a new `gnome-terminal`.
 
 == Testing
 
