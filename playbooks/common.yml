@@ -11,4 +11,5 @@
     - c
     - docker
     - virtualization
+    - ssh
     - automatic_update

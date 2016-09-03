@@ -1,0 +1,10 @@
+---
+
+  - name: Enable and Start SSH Daemon
+    become: yes
+    become_user: root
+    service:
+      name: sshd
+      enabled: yes
+      state: started
+
