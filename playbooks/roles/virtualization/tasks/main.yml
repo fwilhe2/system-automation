@@ -3,3 +3,7 @@
 - include: fedora.yml
   when: ansible_os_family == 'RedHat'
   tags: virtualization
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags: virtualization

@@ -1,0 +1,13 @@
+---
+
+  - name: Install VirtualBox and Vagrant
+    become: yes
+    become_user: root
+    apt:
+      state: latest
+      name: "{{ item }}"
+    with_items:
+      - virtualbox
+      - vagrant
+    when: ansible_os_family == 'Debian'
+
