@@ -31,5 +31,6 @@
       - the_silver_searcher
       - apg
       - jq
+      - pandoc-static
     when: ansible_os_family == 'RedHat'
 
