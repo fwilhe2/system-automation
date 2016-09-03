@@ -27,5 +27,8 @@
       - jq
       - silversearcher-ag
       - pandoc
+      - asciidoctor
+      - apg
+      - httpie
     when: ansible_os_family == 'Debian'
 
