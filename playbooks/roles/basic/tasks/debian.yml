@@ -25,5 +25,6 @@
       - autojump
       - unzip
       - jq
+      - silversearcher-ag
     when: ansible_os_family == 'Debian'
 
