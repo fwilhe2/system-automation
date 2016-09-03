@@ -1,0 +1,14 @@
+---
+
+  - name: Install OpenJDK and Java Build Tools
+    become: yes
+    become_user: root
+    apt:
+      state: latest
+      name: "{{ item }}"
+    with_items:
+      - openjdk-8-jdk
+      - gradle
+      - maven
+      - ant
+
