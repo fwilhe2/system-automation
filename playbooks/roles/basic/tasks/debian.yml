@@ -27,6 +27,7 @@
       - jq
       - silversearcher-ag
       - pandoc
+      - texlive-latex-recommended
       - asciidoctor
       - apg
       - httpie
