@@ -30,5 +30,6 @@
       - asciidoctor
       - apg
       - httpie
+      - iotop
     when: ansible_os_family == 'Debian'
 
