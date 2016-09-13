@@ -32,6 +32,7 @@
       - apg
       - jq
       - pandoc-static
+      - pandoc-pdf
       - iotop
     when: ansible_os_family == 'RedHat'
 
