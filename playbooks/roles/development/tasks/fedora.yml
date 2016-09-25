@@ -1,0 +1,14 @@
+---
+
+  - name: Install Development Packages
+    become: yes
+    become_user: root
+    dnf:
+      state: latest
+      name: "{{ item }}"
+    with_items:
+      - maven
+      - gradle
+      - ant
+    when: ansible_os_family == 'RedHat'
+
