@@ -20,7 +20,6 @@
       - mc
       - rdiff-backup
       - curl
-      - git
       - tree
       - autojump
       - unzip

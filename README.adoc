@@ -24,6 +24,12 @@ Tested ansible version: `2.0.2.0`
 
 Make sure that `python-dnf` is installed.
 
+Install third party roles using `ansible-galaxy`:
+
+----
+ansible-galaxy install -r requirements.yml
+----
+
 .Run `common` playbook
 ----
 ansible-playbook -K -i inventory system-automation.yml
