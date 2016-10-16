@@ -17,8 +17,9 @@ Tested ansible version: `2.1.1.0`
 
 == Project Layout
 
-* `playbooks/common.yml`: Setup for a (in my personal view) minimal system. Does not require an X server.
-* `playbooks/desktop.yml`: Setup for desktop computers.
+* `common.yml`: Setup for a (in my personal view) minimal system. Does not require an X server.
+* `desktop.yml`: Setup for desktop computers.
+* `software-development.yml`: Setup for a software development machine.
 
 == Setup
 
@@ -32,12 +33,12 @@ ansible-galaxy install -r requirements.yml
 
 .Run `common` playbook
 ----
-ansible-playbook -K -i inventory system-automation.yml
+ansible-playbook -K -i inventory common.yml
 ----
 
 .Run `desktop` playbook
 ----
-ansible-playbook -K -v -i inventory playbooks/desktop.yml
+ansible-playbook -K -v -i inventory desktop.yml
 ----
 
 WARNING: Running the `desktop` playbook will override the custom keybindings in GNOME. kbd:[Ctrl+Alt+T] is set to open a new `gnome-terminal`.
