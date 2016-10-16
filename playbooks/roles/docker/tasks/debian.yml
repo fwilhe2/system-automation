@@ -1,11 +1,11 @@
 ---
 
 - name: Install Docker Packages
-become: yes
-become_user: root
-apt:
-    state: latest
-    name: "{{ item }}"
-with_items:
-    - docker.io
-when: ansible_os_family == 'Debian'
+  become: yes
+  become_user: root
+  apt:
+      state: latest
+      name: "{{ item }}"
+  with_items:
+      - docker.io
+  when: ansible_os_family == 'Debian'
