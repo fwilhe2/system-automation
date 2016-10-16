@@ -12,3 +12,8 @@
       - ant
     when: ansible_os_family == 'Debian'
 
+  - name: Set `JAVA_HOME`
+    become: yes
+    lineinfile:
+      dest: /etc/environment
+      line: JAVA_HOME="/usr/lib/jvm/default-java"
