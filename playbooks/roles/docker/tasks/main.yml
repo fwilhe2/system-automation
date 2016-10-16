@@ -2,3 +2,11 @@
 
 - include: docker.yml
   tags: docker
+
+- include: fedora.yml
+  when: ansible_os_family == 'RedHat'
+  tags: docker
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags: docker

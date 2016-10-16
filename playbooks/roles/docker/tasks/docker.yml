@@ -1,42 +1,24 @@
 ---
 
-  - name: Check for existing Docker Installation
-    stat:
-      path: /usr/bin/docker
-    register: docker_binary
+- name: Ensure Group "docker" exists
+  become: yes
+  become_user: root
+  group:
+    name: docker
+    state: present
 
-  - name: Download Docker Install Script
-    get_url:
-      url: https://get.docker.com
-      dest: /tmp/installDocker.sh
-      mode: 0777
-    when: not docker_binary.stat.exists
+- name: Add User to Group "docker"
+  become: yes
+  become_user: root
+  user:
+    name: "{{ ansible_user_id }}"
+    groups: docker
+    append: yes
 
-  - name: Run Docker Install Script
-    become: yes
-    become_user: root
-    shell: /tmp/installDocker.sh
-    when: not docker_binary.stat.exists
-
-  - name: Ensure Group "docker" exists
-    become: yes
-    become_user: root
-    group:
-      name: docker
-      state: present
-
-  - name: Add User to Group "docker"
-    become: yes
-    become_user: root
-    user:
-      name: "{{ ansible_user_id }}"
-      groups: docker
-      append: yes
-
-  - name: Enable and Start Docker Daemon
-    become: yes
-    become_user: root
-    service:
-      name: docker
-      enabled: yes
-      state: started
+- name: Enable and Start Docker Daemon
+  become: yes
+  become_user: root
+  service:
+    name: docker
+    enabled: yes
+    state: started
