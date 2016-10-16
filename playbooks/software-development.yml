@@ -1,0 +1,25 @@
+---
+
+- hosts: all
+  tasks:
+    - name: Install Basic Desktop Packages
+      become: yes
+      become_user: root
+      dnf:
+        state: latest
+        name: "{{ item }}"
+      with_items:
+        - thunderbird
+        - keepassx
+        - https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+      when: ansible_os_family == 'RedHat'
+
+    - name: Set Inotify Watches Limit
+      become: yes
+      copy:
+        dest: /etc/sysctl.d/idea.conf
+        content: fs.inotify.max_user_watches = 524288
+    - name: Apply Inotify Watches Limit
+      become: yes
+      shell: sysctl -p --system
+
