@@ -10,3 +10,7 @@
     - name: Apply Inotify Watches Limit
       become: yes
       shell: sysctl -p --system
+
+  roles:
+    - java
+    - c

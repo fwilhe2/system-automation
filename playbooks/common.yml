@@ -6,21 +6,11 @@
     - basic
     - role: geerlingguy.git
       become: yes
-    - role: geerlingguy.java
-      become: yes
-      when: "ansible_os_family == 'Debian'"
-    - role: geerlingguy.java
-      become: yes
-      when: "ansible_os_family == 'RedHat'"
-      java_packages:
-      - java-1.8.0-openjdk-devel
     - role: geerlingguy.ansible
       become: yes
     - dotfiles
     - bin
     - directories
-    - c
-    - development
     - docker
     - virtualization
     - ssh

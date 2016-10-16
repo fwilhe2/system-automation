@@ -2,8 +2,8 @@
 
 - include: fedora.yml
   when: ansible_os_family == 'RedHat'
-  tags: development
+  tags: java
 
 - include: debian.yml
   when: ansible_os_family == 'Debian'
-  tags: development
+  tags: java
