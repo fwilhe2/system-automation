@@ -11,6 +11,7 @@
         - thunderbird
         - keepassx
         - https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+        - libreoffice-langpack-de
       when: ansible_os_family == 'RedHat'
 
     - name: Install Basic Desktop Packages
