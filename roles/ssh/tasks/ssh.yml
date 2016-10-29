@@ -1,10 +1,16 @@
 ---
 
-  - name: Enable and Start SSH Daemon
-    become: yes
-    become_user: root
-    service:
-      name: sshd
-      enabled: yes
-      state: started
+- name: Ensure sshd is installed
+  become: yes
+  package:
+    name: openssh-server
+    state: latest
+
+- name: Enable and Start SSH Daemon
+  become: yes
+  become_user: root
+  service:
+    name: sshd
+    enabled: yes
+    state: started
 
