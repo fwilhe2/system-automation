@@ -6,8 +6,6 @@
     - basic
     - role: geerlingguy.git
       become: yes
-    - role: geerlingguy.ansible
-      become: yes
     - dotfiles
     - bin
     - directories
