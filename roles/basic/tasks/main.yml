@@ -7,3 +7,11 @@
 - include: debian.yml
   when: ansible_os_family == 'Debian'
   tags: basic
+
+- name: Set vim as default editor
+  become: yes
+  alternatives:
+    name: editor
+    path: /usr/bin/vim
+  tags: basic
+
