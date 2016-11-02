@@ -10,6 +10,5 @@
     - bin
     - directories
     - docker
-    - virtualization
     - ssh
     - automatic_update
