@@ -9,6 +9,9 @@
     - dotfiles
     - bin
     - directories
-    - docker
+    - role: franklinkim.docker
+      become: yes
+    - docker_support
     - ssh
     - automatic_update
+
