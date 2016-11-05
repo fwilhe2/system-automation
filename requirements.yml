@@ -2,4 +2,5 @@
 
 - src: geerlingguy.git
 - src: franklinkim.docker
+- src: franklinkim.docker-compose
 

@@ -12,6 +12,8 @@
     - role: franklinkim.docker
       become: yes
     - docker_support
+    - role: franklinkim.docker-compose
+      become: yes
     - ssh
     - automatic_update
 
