@@ -11,7 +11,9 @@
     - directories
     - role: franklinkim.docker
       become: yes
-    - docker_support
+      when: not(ansible_distribution == 'Ubuntu' or ansible_distribution_release == "yakkety")
+    - role: docker_support
+      when: not(ansible_distribution == 'Ubuntu' or ansible_distribution_release == "yakkety")
     - role: franklinkim.docker-compose
       become: yes
     - ssh
