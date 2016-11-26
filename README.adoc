@@ -13,7 +13,7 @@ endif::[]
 
 System Automation powered by Ansible™
 
-Tested ansible version: `2.1.1.0`
+Tested ansible version: `2.2.0.0`
 
 == Project Layout
 
