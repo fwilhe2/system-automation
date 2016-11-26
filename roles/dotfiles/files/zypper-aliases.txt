@@ -1,0 +1,6 @@
+alias i='sudo zypper install'
+alias I='sudo zypper install --no-confirm'
+alias up='sudo zypper update'
+alias se='zypper search'
+alias sho='zypper info'
+alias re='sudo zypper remove'
