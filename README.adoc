@@ -23,7 +23,7 @@ Tested ansible version: `2.1.1.0`
 
 == Setup
 
-Make sure that `python-dnf` is installed.
+Make sure that `python-dnf` and `libselinux-python` are installed.
 
 Install third party roles using `ansible-galaxy`:
 
