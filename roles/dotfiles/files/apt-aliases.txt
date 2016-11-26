@@ -1,4 +1,5 @@
 alias i='sudo apt install'
+alias I='sudo apt install --assume-yes'
 alias up='sudo apt update && sudo apt upgrade'
 alias se='apt search'
 alias sho='apt show'
