@@ -1,0 +1,17 @@
+---
+
+  - name: Ensure `~/software` directory exists
+    file:
+      path: ~/software
+      state: directory
+
+  - name: Clone `blackbox` Repository
+    git:
+      repo: https://github.com/StackExchange/blackbox.git
+      dest: ~/software/blackbox
+
+  - name: Install `blackbox` for all users
+    become: yes
+    make:
+      chdir: "{{ ansible_env.HOME }}/software/blackbox"
+      target: manual-install
