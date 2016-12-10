@@ -27,6 +27,18 @@
       dest: ~/.dotfiles/aliases_package_manager
     when: ansible_os_family == 'Debian'
 
+  - name: Copy Package Manager Aliases File
+    copy:
+      src: files/pacman-aliases.txt
+      dest: ~/.dotfiles/aliases_package_manager
+    when: ansible_os_family == 'Archlinux'
+
+  - name: Copy Package Manager Aliases File
+    copy:
+      src: files/zypper-aliases.txt
+      dest: ~/.dotfiles/aliases_package_manager
+    when: ansible_os_family == 'Suse'
+
   - name: Make Symlink for Package Manager Aliases File
     file:
       state: link
