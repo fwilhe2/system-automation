@@ -23,7 +23,10 @@ Tested ansible version: `2.2.0.0`
 
 == Setup
 
-Make sure that `python-dnf` and `libselinux-python` are installed.
+.Preparations for Fedora
+----
+sudo dnf install ansible python-dnf libselinux-python
+----
 
 Install third party roles using `ansible-galaxy`:
 
