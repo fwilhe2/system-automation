@@ -19,3 +19,4 @@
     - ssh
     - automatic_update
     - blackbox
+    - virtualization
