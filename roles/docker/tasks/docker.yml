@@ -1,5 +1,19 @@
 ---
 
+- name: Install Docker
+  become: yes
+  dnf:
+    state: latest
+    name: docker
+  when: ansible_os_family == 'RedHat'
+
+- name: Install Docker
+  become: yes
+  apt:
+    state: latest
+    name: docker.io
+  when: ansible_os_family == 'Debian'
+
 - name: Ensure Group "docker" exists
   become: yes
   become_user: root

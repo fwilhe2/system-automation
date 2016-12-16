@@ -9,11 +9,7 @@
     - dotfiles
     - bin
     - directories
-    - role: franklinkim.docker
-      become: yes
-      when: not(ansible_distribution == 'Ubuntu' or ansible_distribution_release == "yakkety")
-    - role: docker_support
-      when: not(ansible_distribution == 'Ubuntu' or ansible_distribution_release == "yakkety")
+    - docker
     - role: franklinkim.docker-compose
       become: yes
     - ssh
