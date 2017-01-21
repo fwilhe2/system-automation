@@ -1,0 +1,8 @@
+---
+
+- name: Setup user 'fwilhe'
+  become: yes
+  user:
+    name: fwilhe
+    comment: "Florian Wilhelm"
+    shell: /usr/bin/zsh
