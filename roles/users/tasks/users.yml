@@ -6,3 +6,9 @@
     name: fwilhe
     comment: "Florian Wilhelm"
     shell: /usr/bin/zsh
+
+- name: Enable passwordless sudo for 'fwilhe'
+  become: yes
+  copy:
+    content: "fwilhe ALL=(ALL) NOPASSWD: ALL"
+    dest: /etc/sudoers.d/fwilhe
