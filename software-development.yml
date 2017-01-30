@@ -10,6 +10,11 @@
     - name: Apply Inotify Watches Limit
       become: yes
       shell: sysctl -p --system
+    - name: Install diff-so-fancy
+      become: yes
+      npm:
+        name: diff-so-fancy
+        global: yes
 
   roles:
     - java
