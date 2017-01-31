@@ -16,6 +16,12 @@
         name: diff-so-fancy
         global: yes
 
+    - name: Install tldr pages
+      become: yes
+      npm:
+        name: tldr
+        global: yes
+
   roles:
     - java
     - c
