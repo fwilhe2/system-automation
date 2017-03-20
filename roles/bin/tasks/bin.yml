@@ -1,6 +1,15 @@
 ---
 
-  - name: Clone `bin` Repository
-    git:
-      repo: https://github.com/fwilhe/bin.git
-      dest: ~/bin
+- name: Install `bin` package (Debian)
+  become: yes
+  apt:
+    deb: "{{ role_path }}/files/bin_20170320202243-1_all.deb"
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: Install `bin` package (RedHat)
+  become: yes
+  dnf:
+    name: "{{ role_path }}/bin-20170320202243-1.noarch.rpm"
+    state: present
+  when: ansible_os_family == 'RedHat'
