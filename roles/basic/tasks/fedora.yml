@@ -33,5 +33,6 @@
       - pandoc-static
       - pandoc-pdf
       - iotop
+      - direnv
     when: ansible_os_family == 'RedHat'
 
