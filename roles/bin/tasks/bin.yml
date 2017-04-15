@@ -1,15 +1,17 @@
 ---
 
-- name: Install `bin` package (Debian)
-  become: yes
-  apt:
-    deb: "{{ role_path }}/files/bin_20170320202243-1_all.deb"
-    state: present
-  when: ansible_os_family == 'Debian'
+  - name: Ensure `~/software` directory exists
+    file:
+      path: ~/software
+      state: directory
 
-- name: Install `bin` package (RedHat)
-  become: yes
-  dnf:
-    name: "{{ role_path }}/bin-20170320202243-1.noarch.rpm"
-    state: present
-  when: ansible_os_family == 'RedHat'
+  - name: Clone `fwilhe/bin` Repository
+    git:
+      repo: https://github.com/fwilhe/bin.git
+      dest: ~/software/fwilhe-bin
+
+  - name: Install `fwilhe-bin` for all users
+    become: yes
+    make:
+      chdir: "{{ ansible_env.HOME }}/software/fwilhe-bin"
+      target: install

@@ -26,7 +26,7 @@
       - unzip
       - rubygem-asciidoctor
       - rubygem-asciidoctor-pdf
-      - python3-httpie
+      - httpie
       - the_silver_searcher
       - apg
       - jq
