@@ -7,9 +7,17 @@
       copy:
         dest: /etc/sysctl.d/idea.conf
         content: fs.inotify.max_user_watches = 524288
+
     - name: Apply Inotify Watches Limit
       become: yes
       shell: sysctl -p --system
+
+    - name: Install NPM (fedora)
+      become: yes
+      dnf:
+        name: npm
+      when: ansible_os_family == 'RedHat'
+
     - name: Install diff-so-fancy
       become: yes
       npm:
