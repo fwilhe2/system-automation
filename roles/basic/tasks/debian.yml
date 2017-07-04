@@ -31,5 +31,6 @@
       - apg
       - httpie
       - iotop
+      - make
     when: ansible_os_family == 'Debian'
 
