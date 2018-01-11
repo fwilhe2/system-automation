@@ -32,6 +32,9 @@
       - jq
       - pandoc-static
       - pandoc-pdf
+      - texlive-nag
+      - texlive-blindtext
+      - texlive-refcheck
       - iotop
       - direnv
     when: ansible_os_family == 'RedHat'
