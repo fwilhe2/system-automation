@@ -4,16 +4,10 @@
 
   roles:
     - basic
-    - role: geerlingguy.git
-      become: yes
     - dotfiles
     - bin
     - directories
     - docker
-    - role: franklinkim.docker-compose
-      become: yes
     - ssh
     - automatic_update
-    - blackbox
-    - virtualization
-    - users
+

@@ -24,18 +24,9 @@
       - autojump
       - autojump-zsh
       - unzip
-      - rubygem-asciidoctor
-      - rubygem-asciidoctor-pdf
       - httpie
       - the_silver_searcher
       - apg
       - jq
-      - pandoc-static
-      - pandoc-pdf
-      - texlive-nag
-      - texlive-blindtext
-      - texlive-refcheck
-      - iotop
-      - direnv
     when: ansible_os_family == 'RedHat'
 
