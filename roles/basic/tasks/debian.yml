@@ -32,5 +32,6 @@
       - httpie
       - iotop
       - make
+      - direnv
     when: ansible_os_family == 'Debian'
 
