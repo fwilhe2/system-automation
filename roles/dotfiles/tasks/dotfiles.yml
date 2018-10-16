@@ -11,6 +11,11 @@
       dest: ~/.dotfiles
     register: clone_dotfiles
 
+  - name: Make `~/.config/Code/User` if not exists
+    file:
+      path: ~/.config/Code/User
+      state: directory
+
   - name: Symlink Dotfiles
     shell: ~/.dotfiles/install
     when: clone_dotfiles.changed

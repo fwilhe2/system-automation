@@ -28,5 +28,8 @@
       - the_silver_searcher
       - apg
       - jq
+      - git
+      - make
+      - direnv
     when: ansible_os_family == 'RedHat'
 
