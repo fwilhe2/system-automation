@@ -6,22 +6,14 @@
       become: yes
       dnf:
         state: latest
-        name: "{{ item }}"
-      with_items:
-        - thunderbird
-        - keepassx
-        - https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
-        - libreoffice-langpack-de
+        name: ['thunderbird', 'keepassx', 'https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm', 'libreoffice-langpack-de']
       when: ansible_os_family == 'RedHat'
 
     - name: Install Basic Desktop Packages
       become: yes
       apt:
         state: latest
-        name: "{{ item }}"
-      with_items:
-        - thunderbird
-        - keepassx
+        name: ['thunderbird', 'keepassx']
       when: ansible_os_family == 'Debian'
 
     # cf. https://help.gnome.org/users/gnome-help/stable/tips-specialchars.html.en

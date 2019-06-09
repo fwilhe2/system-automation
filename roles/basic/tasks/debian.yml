@@ -12,26 +12,5 @@
     become_user: root
     apt:
       state: latest
-      name: "{{ item }}"
-    with_items:
-      - vim
-      - zsh
-      - htop
-      - mc
-      - rdiff-backup
-      - curl
-      - tree
-      - autojump
-      - unzip
-      - jq
-      - silversearcher-ag
-      - pandoc
-      - texlive-latex-recommended
-      - asciidoctor
-      - apg
-      - httpie
-      - iotop
-      - make
-      - direnv
+      name: ['vim', 'zsh', 'htop', 'mc', 'rdiff-backup', 'curl', 'tree', 'autojump', 'unzip', 'jq', 'silversearcher-ag', 'pandoc', 'texlive-latex-recommended', 'asciidoctor', 'apg', 'httpie', 'iotop', 'make', 'direnv']
     when: ansible_os_family == 'Debian'
-

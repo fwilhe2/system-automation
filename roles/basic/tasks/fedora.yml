@@ -12,24 +12,6 @@
     become_user: root
     dnf:
       state: latest
-      name: "{{ item }}"
-    with_items:
-      - vim
-      - zsh
-      - htop
-      - mc
-      - rdiff-backup
-      - curl
-      - tree
-      - autojump
-      - autojump-zsh
-      - unzip
-      - httpie
-      - the_silver_searcher
-      - apg
-      - jq
-      - git
-      - make
-      - direnv
+      name: ['vim', 'zsh', 'htop', 'mc', 'rdiff-backup', 'curl', 'tree', 'autojump', 'autojump-zsh', 'unzip', 'httpie', 'the_silver_searcher', 'apg', 'jq', 'git', 'make', 'direnv']
     when: ansible_os_family == 'RedHat'
 
