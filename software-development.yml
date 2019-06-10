@@ -24,12 +24,6 @@
         name: npm
       when: ansible_os_family == 'Debian'
 
-    - name: Install diff-so-fancy
-      become: yes
-      npm:
-        name: diff-so-fancy
-        global: yes
-
     - name: Install tldr pages
       become: yes
       npm:
