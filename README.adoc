@@ -16,7 +16,7 @@ System Automation powered by Ansible™
 Tested ansible version:
 
 ----
-ansible 2.8.0
+ansible 2.8.5
 ----
 
 == Project Layout
@@ -29,13 +29,7 @@ ansible 2.8.0
 
 .Preparations for Fedora
 ----
-sudo dnf install ansible python3-dnf libselinux-python
-----
-
-Install third party roles using `ansible-galaxy`:
-
-----
-ansible-galaxy install -r requirements.yml
+sudo dnf install ansible python3-dnf libselinux-python3
 ----
 
 .Run `common` playbook
