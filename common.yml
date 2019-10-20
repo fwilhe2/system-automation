@@ -7,7 +7,5 @@
     - dotfiles
     - bin
     - directories
-    - docker
     - ssh
     - automatic_update
-
