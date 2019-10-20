@@ -1,2 +1,2 @@
 [user]
-    email = florian-wilhelm@onlinehome.de
+    email = fwilhelm.wgt+github@gmail.com
