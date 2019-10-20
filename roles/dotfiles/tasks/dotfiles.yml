@@ -7,7 +7,7 @@
 
   - name: Clone `dotfiles` Repository
     git:
-      repo: https://github.com/fwilhe/dotfiles.git
+      repo: https://github.com/fwilhe2/dotfiles.git
       dest: ~/.dotfiles
     register: clone_dotfiles
 

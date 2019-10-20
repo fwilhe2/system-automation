@@ -7,7 +7,7 @@
 
   - name: Clone `fwilhe/bin` Repository
     git:
-      repo: https://github.com/fwilhe/bin.git
+      repo: https://github.com/fwilhe2/bin.git
       dest: ~/software/fwilhe-bin
 
   - name: Install `fwilhe-bin` for all users
