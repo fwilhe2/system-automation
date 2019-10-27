@@ -1,0 +1,15 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: ansible-lint
+      uses: ansible/ansible-lint-action@v4.1.0.post0
+      env:
+        ACTION_PLAYBOOK_NAME: common.yml
