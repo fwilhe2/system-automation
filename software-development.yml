@@ -24,12 +24,6 @@
         name: npm
       when: ansible_os_family == 'Debian'
 
-    - name: Install tldr pages
-      become: yes
-      npm:
-        name: tldr
-        global: yes
-
   roles:
     - java
     - c
