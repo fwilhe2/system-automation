@@ -3,9 +3,7 @@
 - hosts: all
 
   roles:
-    # - basic
-    # - dotfiles
+    - basic
+    - dotfiles
     - bin
-    # - directories
-    # - ssh
-    # - automatic_update
+    - directories

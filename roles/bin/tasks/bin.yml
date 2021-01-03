@@ -10,26 +10,20 @@
       repo: https://github.com/fwilhe2/bin.git
       dest: ~/software/fwilhe-bin
 
-  # - name: Install `fwilhe-bin` for all users
-  #   become: yes
-  #   make:
-  #     chdir: "{{ ansible_env.HOME }}/software/fwilhe-bin"
-  #     target: install
-
-  # - name: Install Development Tools
-  #   unarchive:
-  #     src: "{{ item }}"
-  #     dest: ~/software/
-  #     remote_src: yes
-  #   with_items:
-  #     - https://github.com/SAP/SapMachine/releases/download/sapmachine-{{ JDK_VERSION }}/sapmachine-jdk-{{ JDK_VERSION }}_linux-x64_bin.tar.gz
-  #     - https://mirror.netcologne.de/apache.org/maven/maven-3/{{ MAVEN_VERSION }}/binaries/apache-maven-{{ MAVEN_VERSION }}-bin.tar.gz
-  #     - https://downloads.gradle-dn.com/distributions/gradle-{{ GRADLE_VERSION }}-bin.zip
-  #     - https://nodejs.org/dist/v{{ NODE_VERSION }}/node-v{{ NODE_VERSION }}-linux-x64.tar.xz
-  #     - https://golang.org/dl/go{{ GO_VERSION }}.linux-amd64.tar.gz
+  - name: Install Development Tools
+    unarchive:
+      src: "{{ item }}"
+      dest: ~/software/
+      remote_src: yes
+    with_items:
+      - https://github.com/SAP/SapMachine/releases/download/sapmachine-{{ JDK_VERSION }}/sapmachine-jdk-{{ JDK_VERSION }}_linux-x64_bin.tar.gz
+      - https://mirror.netcologne.de/apache.org/maven/maven-3/{{ MAVEN_VERSION }}/binaries/apache-maven-{{ MAVEN_VERSION }}-bin.tar.gz
+      - https://downloads.gradle-dn.com/distributions/gradle-{{ GRADLE_VERSION }}-bin.zip
+      - https://nodejs.org/dist/v{{ NODE_VERSION }}/node-v{{ NODE_VERSION }}-linux-x64.tar.xz
+      - https://golang.org/dl/go{{ GO_VERSION }}.linux-amd64.tar.gz
+      - https://ftp.halifax.rwth-aachen.de/apache//ant/binaries/apache-ant-{{ ANT_VERSION }}-bin.tar.xz
 
   - name: Update Path
-    become: yes
-    copy:
-      dest: /etc/profile.d/custom-path.sh
-      content: 'PATH={{ ansible_env.HOME }}/software/gradle-{{ GRADLE_VERSION }}/bin:{{ ansible_env.HOME }}/software/apache-maven-{{ MAVEN_VERSION }}/bin:$PATH'
+    template:
+      dest: ~/.custom-path.sh
+      src: custom-path.sh.j2
