@@ -1,4 +1,0 @@
-docker run --detach --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --volume=$PWD:/etc/ansible/roles/role_under_test:ro --name=system-automation-test-ubuntu geerlingguy/docker-ubuntu2004-ansible:latest
-docker exec --tty system-automation-test-ubuntu apt-get --yes update
-docker exec --tty system-automation-test-ubuntu apt-get --yes install git
-docker exec --tty system-automation-test-ubuntu env TERM=xterm ansible-playbook /etc/ansible/roles/role_under_test/common.yml
