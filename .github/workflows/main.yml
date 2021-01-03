@@ -7,6 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - run: |
+      curl -fsSL https://get.docker.com -o get-docker.sh
+      sudo sh get-docker.sh
     - run: docker run --detach --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --volume=$PWD:/etc/ansible/roles/role_under_test:ro --name=system-automation-test-ubuntu geerlingguy/docker-ubuntu2004-ansible:latest
     - run: docker exec --tty system-automation-test-ubuntu apt-get --yes --allow-unauthenticated update
     - run: docker exec --tty system-automation-test-ubuntu env TERM=xterm ansible-playbook -vv /etc/ansible/roles/role_under_test/common.yml
@@ -16,6 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - run: |
+      curl -fsSL https://get.docker.com -o get-docker.sh
+      sudo sh get-docker.sh
     - run: docker run --detach --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --volume=$PWD:/etc/ansible/roles/role_under_test:ro --name=system-automation-test-fedora geerlingguy/docker-fedora33-ansible:latest
     - run: docker exec --tty system-automation-test-fedora dnf -y update
     - run: docker exec --tty system-automation-test-fedora env TERM=xterm ansible-playbook -vv /etc/ansible/roles/role_under_test/common.yml
