@@ -4,9 +4,7 @@ on: [push, workflow_dispatch]
 
 jobs:
   lint:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - name: ansible-lint
@@ -14,13 +12,20 @@ jobs:
       env:
         ACTION_PLAYBOOK_NAME: common.yml
 
-  run-in-container:
-
+  run-in-container-deb:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - run: docker run --detach --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --volume=$PWD:/etc/ansible/roles/role_under_test:ro --name=system-automation-test-ubuntu geerlingguy/docker-ubuntu2004-ansible:latest
     - run: docker exec --tty system-automation-test-ubuntu apt-get --yes update
     - run: docker exec --tty system-automation-test-ubuntu apt-get --yes install git
-    - run: docker exec --tty system-automation-test-ubuntu env TERM=xterm ansible-playbook /etc/ansible/roles/role_under_test/common.yml
+    - run: docker exec --tty system-automation-test-ubuntu env TERM=xterm ansible-playbook -vvv /etc/ansible/roles/role_under_test/common.yml
+
+  run-in-container-yum:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - run: docker run --detach --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --volume=$PWD:/etc/ansible/roles/role_under_test:ro --name=system-automation-test-fedora geerlingguy/docker-fedora33-ansible:latest
+    - run: docker exec --tty system-automation-test-ubuntu dnf -y update
+    - run: docker exec --tty system-automation-test-ubuntu dnf -y install git
+    - run: docker exec --tty system-automation-test-ubuntu env TERM=xterm ansible-playbook -vvv /etc/ansible/roles/role_under_test/common.yml
