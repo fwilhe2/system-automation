@@ -16,14 +16,13 @@ System Automation powered by Ansible™
 Tested ansible version:
 
 ----
-ansible 2.8.5
+ansible 2.9.6
 ----
 
 == Project Layout
 
-* `common.yml`: Setup for a (in my personal view) minimal system. Does not require an X server.
+* `common.yml`: Software that does not require a graphical environment.
 * `desktop.yml`: Setup for desktop computers.
-* `software-development.yml`: Setup for a software development machine.
 
 == Setup
 
@@ -34,12 +33,12 @@ sudo dnf install ansible python3-dnf libselinux-python3
 
 .Run `common` playbook
 ----
-ansible-playbook -K -i inventory common.yml
+ansible-playbook --ask-become-pass --inventory inventory common.yml
 ----
 
 .Run `desktop` playbook
 ----
-ansible-playbook -K -v -i inventory desktop.yml
+ansible-playbook --ask-become-pass --inventory inventory desktop.yml
 ----
 
 WARNING: Running the `desktop` playbook will override the custom keybindings in GNOME. kbd:[Ctrl+Alt+T] is set to open a new `gnome-terminal`.
