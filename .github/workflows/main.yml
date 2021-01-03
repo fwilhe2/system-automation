@@ -26,6 +26,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - run: docker run --detach --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --volume=$PWD:/etc/ansible/roles/role_under_test:ro --name=system-automation-test-fedora geerlingguy/docker-fedora33-ansible:latest
-    - run: docker exec --tty system-automation-test-ubuntu dnf -y update
-    - run: docker exec --tty system-automation-test-ubuntu dnf -y install git
-    - run: docker exec --tty system-automation-test-ubuntu env TERM=xterm ansible-playbook -vvv /etc/ansible/roles/role_under_test/common.yml
+    - run: docker exec --tty system-automation-test-fedora dnf -y update
+    - run: docker exec --tty system-automation-test-fedora dnf -y install git
+    - run: docker exec --tty system-automation-test-fedora env TERM=xterm ansible-playbook -vvv /etc/ansible/roles/role_under_test/common.yml
