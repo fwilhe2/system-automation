@@ -24,7 +24,17 @@ ansible 2.9.6
 * `common.yml`: Software that does not require a graphical environment.
 * `desktop.yml`: Setup for desktop computers.
 
-== Setup
+== Kickstart (experimental)
+
+If you don't mind the `curl | bash` thing, you might try running the playbook directly via:
+
+----
+curl https://raw.githubusercontent.com/fwilhe2/system-automation/master/bootstrap.sh | bash
+----
+
+This requires `ansible`, `curl`, `bash` and `unzip`.
+
+== Setup (traditional)
 
 .Preparations for Fedora
 ----
