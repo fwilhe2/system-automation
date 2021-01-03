@@ -10,7 +10,7 @@ jobs:
     - run: docker run --detach --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --volume=$PWD:/etc/ansible/roles/role_under_test:ro --name=system-automation-test-ubuntu geerlingguy/docker-ubuntu2004-ansible:latest
     - run: docker exec --tty system-automation-test-ubuntu apt-get --yes --allow-unauthenticated update
     - run: docker exec --tty system-automation-test-ubuntu env TERM=xterm ansible-playbook -vv /etc/ansible/roles/role_under_test/common.yml
-    - run: docker exec --tty system-automation-test-ubuntu mvn --version
+    - run: docker exec --tty system-automation-test-ubuntu env JAVA_HOME=/root/software/sapmachine-jdk-11.0.9.1/ /root/software/apache-maven-3.6.3/bin/mvn --version
 
   run-in-container-yum:
     runs-on: ubuntu-latest
@@ -19,4 +19,4 @@ jobs:
     - run: docker run --detach --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --volume=$PWD:/etc/ansible/roles/role_under_test:ro --name=system-automation-test-fedora geerlingguy/docker-fedora33-ansible:latest
     - run: docker exec --tty system-automation-test-fedora dnf -y update
     - run: docker exec --tty system-automation-test-fedora env TERM=xterm ansible-playbook -vv /etc/ansible/roles/role_under_test/common.yml
-    - run: docker exec --tty system-automation-test-fedora mvn --version
+    - run: docker exec --tty system-automation-test-fedora env JAVA_HOME=/root/software/sapmachine-jdk-11.0.9.1/ /root/software/apache-maven-3.6.3/bin/mvn --version
