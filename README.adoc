@@ -11,6 +11,8 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
+image::https://github.com/fwilhe2/system-automation/workflows/CI/badge.svg[CI Job]
+
 System Automation powered by Ansible™
 
 Tested ansible version:
@@ -84,5 +86,5 @@ https://github.com/jistr/ansible-gsetting[ansible-gsetting module] (`playbooks/l
 
 == References
 
-* http://docs.ansible.com/ansible/list_of_all_modules.html[Ansible Docs: All Modules]
+* https://docs.ansible.com/ansible/2.9/modules/list_of_all_modules.html[Ansible Docs: All Modules]
 * http://www.whitewashing.de/2013/11/19/setting_up_development_machines_ansible_edition.html[Setting up development machines: Ansible edition]
