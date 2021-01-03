@@ -43,6 +43,11 @@ This requires `ansible`, `curl`, `bash` and `unzip`.
 sudo dnf install ansible python3-dnf libselinux-python3
 ----
 
+.Preparations for Ubuntu
+----
+sudo apt install curl unzip ansible
+----
+
 .Run `common` playbook
 ----
 ansible-playbook --ask-become-pass --inventory inventory common.yml
