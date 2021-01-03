@@ -3,7 +3,7 @@ name: CI
 on: [push, workflow_dispatch]
 
 jobs:
-  build:
+  lint:
 
     runs-on: ubuntu-latest
 
@@ -13,3 +13,14 @@ jobs:
       uses: ansible/ansible-lint-action@v4.1.0.post0
       env:
         ACTION_PLAYBOOK_NAME: common.yml
+
+  run-in-container:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - run: docker run --detach --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --volume=$PWD:/etc/ansible/roles/role_under_test:ro --name=system-automation-test-ubuntu geerlingguy/docker-ubuntu2004-ansible:latest
+    - run: docker exec --tty system-automation-test-ubuntu apt-get --yes update
+    - run: docker exec --tty system-automation-test-ubuntu apt-get --yes install git
+    - run: docker exec --tty system-automation-test-ubuntu env TERM=xterm ansible-playbook /etc/ansible/roles/role_under_test/common.yml
