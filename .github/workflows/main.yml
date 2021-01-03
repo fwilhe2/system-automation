@@ -4,7 +4,7 @@ on: [push, workflow_dispatch]
 
 jobs:
   run-in-container-deb:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v1
     - run: docker run --detach --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --volume=$PWD:/etc/ansible/roles/role_under_test:ro --name=system-automation-test-ubuntu geerlingguy/docker-ubuntu2004-ansible:latest
@@ -13,7 +13,7 @@ jobs:
     - run: docker exec --tty system-automation-test-ubuntu env JAVA_HOME=/root/software/sapmachine-jdk-11.0.9.1/ /root/software/apache-maven-3.6.3/bin/mvn --version
 
   run-in-container-yum:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v1
     - run: docker run --detach --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --volume=$PWD:/etc/ansible/roles/role_under_test:ro --name=system-automation-test-fedora geerlingguy/docker-fedora33-ansible:latest
