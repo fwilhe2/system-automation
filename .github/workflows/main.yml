@@ -23,4 +23,4 @@ jobs:
       # replace "master" with any valid ref
       uses: roles-ansible/check-ansible-fedora-33-action@master
       with:
-        targets: "./"
+        targets: "common.yml"
