@@ -7,11 +7,8 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v1
-    - run: |
-        curl -fsSL https://get.docker.com -o get-docker.sh
-        sudo sh get-docker.sh
     - run: docker build -t system-automation-test-ubuntu test/ubuntu/
-    - run: docker run --tty --volume $PWD:/mnt system-automation-test-ubuntu env TERM=xterm ansible-playbook -vv /mnt/common.yml
+    - run: docker run --tty --volume $PWD:/mnt system-automation-test-ubuntu
 
   run-in-container-yum:
     runs-on: ubuntu-20.04
