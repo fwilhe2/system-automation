@@ -1,5 +1,7 @@
 #!/bin/bash -l
 
+set -x
+
 echo "::group::Run Playbook"
 ansible-playbook -vv /mnt/common.yml
 source ~/.custom-path.sh # Make sure path is updated
