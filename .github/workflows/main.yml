@@ -10,10 +10,8 @@ jobs:
     - run: |
         curl -fsSL https://get.docker.com -o get-docker.sh
         sudo sh get-docker.sh
-    - run: docker run --detach --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --volume=$PWD:/etc/ansible/roles/role_under_test:ro --name=system-automation-test-ubuntu geerlingguy/docker-ubuntu2004-ansible:latest
-    - run: docker exec --tty system-automation-test-ubuntu apt-get --yes --allow-unauthenticated update
-    - run: docker exec --tty system-automation-test-ubuntu env TERM=xterm ansible-playbook -vv /etc/ansible/roles/role_under_test/common.yml
-    - run: docker exec --tty system-automation-test-ubuntu env JAVA_HOME=/root/software/sapmachine-jdk-11.0.9.1/ /root/software/apache-maven-3.6.3/bin/mvn --version
+    - run: docker build -t system-automation-test-ubuntu test/ubuntu/
+    - run: docker run --tty --volume $PWD:/mnt system-automation-test-ubuntu env TERM=xterm ansible-playbook -vv /mnt/common.yml
 
   run-in-container-yum:
     runs-on: ubuntu-20.04
