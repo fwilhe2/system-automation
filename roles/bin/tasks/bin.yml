@@ -22,8 +22,14 @@
       - https://nodejs.org/dist/v{{ NODE_VERSION }}/node-v{{ NODE_VERSION }}-linux-x64.tar.xz
       - https://golang.org/dl/go{{ GO_VERSION }}.linux-amd64.tar.gz
       - https://ftp.halifax.rwth-aachen.de/apache//ant/binaries/apache-ant-{{ ANT_VERSION }}-bin.tar.xz
+      - https://github.com/cli/cli/releases/download/v{{ GH_VERSION }}/gh_{{ GH_VERSION }}_linux_amd64.tar.gz
 
   - name: Update Path
     template:
       dest: ~/.custom-path.sh
       src: custom-path.sh.j2
+
+  - name: Make ~/.custom-path.sh executable
+    file:
+      dest: ~/.custom-path.sh
+      mode: a+x
