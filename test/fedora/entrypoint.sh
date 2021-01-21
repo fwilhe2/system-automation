@@ -11,9 +11,6 @@ echo "::group::Test Installed Commands"
 declare -a EXPECTED_COMMANDS=("java" "mvn" "gradle" "go" "kotlinc" "node")
 for i in "${EXPECTED_COMMANDS[@]}"
 do
-    if ! [ -x "$(command -v $i)" ]; then
-        echo "Error: Expected $i to be installed." >&2
-        exit 1
-    fi
+    which $i
 done
 echo "::endgroup::"
