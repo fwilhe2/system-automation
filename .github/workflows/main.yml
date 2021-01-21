@@ -17,5 +17,5 @@ jobs:
         version: [latest, rawhide]
     steps:
     - uses: actions/checkout@v1
-    - run: docker build --build-arg=version=${{ matrix.version }} -t system-automation-test-fedora${{ matrix.version }} test/fedora/
+    - run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora${{ matrix.version }} test/fedora/
     - run: docker run --tty --volume $PWD:/mnt system-automation-test-fedora${{ matrix.version }}
