@@ -1,15 +1,18 @@
 ---
-  - name: Create `~/code/github` Directory
+  - name: Create `~/code` Directory
     file:
-      path: ~/code/github
+      path: ~/code
       state: directory
+      mode: "644"
 
   - name: Create `~/temp` Directory
     file:
       path: ~/temp
       state: directory
+      mode: "644"
 
   - name: Create `~/no_backup` Directory
     file:
       path: ~/no_backup
       state: directory
+      mode: "644"
