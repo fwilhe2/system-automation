@@ -10,7 +10,7 @@ jobs:
         version: [latest, rolling, devel]
     steps:
     - uses: actions/checkout@v1
-    - run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-ubuntu${{ matrix.version }} --file test/container/Containerfile.ubuntu
+    - run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-ubuntu${{ matrix.version }} --file test/container/Containerfile.ubuntu .
     - run: docker run --tty --volume $PWD:/mnt system-automation-test-ubuntu${{ matrix.version }}
 
   run-in-container-yum:
@@ -20,5 +20,5 @@ jobs:
         version: [latest, rawhide]
     steps:
     - uses: actions/checkout@v1
-    - run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora${{ matrix.version }} --file test/container/Containerfile.fedora
+    - run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora${{ matrix.version }} --file test/container/Containerfile.fedora .
     - run: docker run --tty --volume $PWD:/mnt system-automation-test-fedora${{ matrix.version }}
