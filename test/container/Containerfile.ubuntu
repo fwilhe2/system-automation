@@ -1,4 +1,6 @@
-FROM ubuntu:20.04
+ARG VERSION
+
+FROM ubuntu:$VERSION
 
 ENV TERM=xterm
 

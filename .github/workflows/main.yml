@@ -5,10 +5,13 @@ on: [push, workflow_dispatch]
 jobs:
   run-in-container-deb:
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        version: [latest, rolling, devel]
     steps:
     - uses: actions/checkout@v1
-    - run: docker build -t system-automation-test-ubuntu test/ubuntu/
-    - run: docker run --tty --volume $PWD:/mnt system-automation-test-ubuntu
+    - run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-ubuntu${{ matrix.version }} --file Containerfile.ubuntu test/container/
+    - run: docker run --tty --volume $PWD:/mnt system-automation-test-ubuntu${{ matrix.version }}
 
   run-in-container-yum:
     runs-on: ubuntu-20.04
@@ -17,5 +20,5 @@ jobs:
         version: [latest, rawhide]
     steps:
     - uses: actions/checkout@v1
-    - run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora${{ matrix.version }} test/fedora/
+    - run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora${{ matrix.version }} --file Containerfile.fedora test/container/
     - run: docker run --tty --volume $PWD:/mnt system-automation-test-fedora${{ matrix.version }}
