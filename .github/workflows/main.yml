@@ -5,19 +5,20 @@ on: [push, workflow_dispatch]
 jobs:
   run-in-container-deb:
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        version: [latest, rolling, devel]
     steps:
     - uses: actions/checkout@v1
-    - run: docker build -t system-automation-test-ubuntu test/ubuntu/
-    - run: docker run --tty --volume $PWD:/mnt system-automation-test-ubuntu
+    - run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-ubuntu${{ matrix.version }} --file test/container/Containerfile.ubuntu .
+    - run: docker run --tty --volume $PWD:/mnt system-automation-test-ubuntu${{ matrix.version }}
 
   run-in-container-yum:
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        version: [latest, rawhide]
     steps:
     - uses: actions/checkout@v1
-    - run: |
-        curl -fsSL https://get.docker.com -o get-docker.sh
-        sudo sh get-docker.sh
-    - run: docker run --detach --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --volume=$PWD:/etc/ansible/roles/role_under_test:ro --name=system-automation-test-fedora geerlingguy/docker-fedora33-ansible:latest
-    - run: docker exec --tty system-automation-test-fedora dnf -y update
-    - run: docker exec --tty system-automation-test-fedora env TERM=xterm ansible-playbook -vv /etc/ansible/roles/role_under_test/common.yml
-    - run: docker exec --tty system-automation-test-fedora env JAVA_HOME=/root/software/sapmachine-jdk-11.0.9.1/ /root/software/apache-maven-3.6.3/bin/mvn --version
+    - run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora${{ matrix.version }} --file test/container/Containerfile.fedora .
+    - run: docker run --tty --volume $PWD:/mnt system-automation-test-fedora${{ matrix.version }}

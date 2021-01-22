@@ -1,6 +1,9 @@
-FROM ubuntu:20.04
+ARG VERSION
+
+FROM ubuntu:$VERSION
 
 ENV TERM=xterm
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
   ansible \
@@ -13,5 +16,5 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir -p /etc/ansible
 RUN echo "[local]\nlocalhost ansible_connection=local" > /etc/ansible/hosts
 
-COPY entrypoint.sh /entrypoint.sh
+COPY test/container/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
