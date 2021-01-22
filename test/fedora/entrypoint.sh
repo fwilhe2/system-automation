@@ -1,6 +1,7 @@
 #!/bin/bash -l
 
 set -x
+set -o errexit
 
 echo "::group::Run Playbook"
 ansible-playbook -vv /mnt/common.yml
