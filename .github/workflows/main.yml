@@ -19,7 +19,7 @@ jobs:
           ./test/container/Containerfile.ubuntu
         build-args: |
           VERSION=${{ matrix.version }}
-    - run: docker run --tty --volume $PWD:/mnt system-automation-test-ubuntu-${{ matrix.version }}
+    - run: docker run --tty --volume $PWD:/mnt system-automation-test-ubuntu-${{ matrix.version }}:latest
 
   run-in-container-yum:
     runs-on: ubuntu-20.04
