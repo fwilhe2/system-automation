@@ -11,5 +11,5 @@ RUN dnf --assumeyes update && dnf --assumeyes install git ansible curl unzip bas
 RUN mkdir -p /etc/ansible
 RUN echo -e '[local]\nlocalhost ansible_connection=local' > /etc/ansible/hosts
 
-COPY entrypoint.sh /entrypoint.sh
+COPY test/container/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
