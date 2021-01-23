@@ -12,24 +12,24 @@
     become_user: root
     dnf:
       state: latest
-    name:
-      - xz
-      - vim
-      - zsh
-      - htop
-      - mc
-      - rdiff-backup
-      - curl
-      - tree
-      - autojump
-      - autojump-zsh
-      - unzip
-      - httpie
-      - the_silver_searcher
-      - apg
-      - jq
-      - git
-      - make
-      - direnv
+      name:
+        - xz
+        - vim
+        - zsh
+        - htop
+        - mc
+        - rdiff-backup
+        - curl
+        - tree
+        - autojump
+        - autojump-zsh
+        - unzip
+        - httpie
+        - the_silver_searcher
+        - apg
+        - jq
+        - git
+        - make
+        - direnv
     when: ansible_os_family == 'RedHat'
 
