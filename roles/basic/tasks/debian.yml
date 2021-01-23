@@ -13,25 +13,25 @@
     apt:
       state: latest
       pkg:
-        - git
-        - vim
-        - zsh
-        - htop
-        - mc
-        - rdiff-backup
-        - curl
-        - tree
-        - autojump
-        - unzip
-        - jq
-        - silversearcher-ag
-        - pandoc
-        - texlive-latex-recommended
-        - asciidoctor
         - apg
+        - asciidoctor
+        - autojump
+        - backblaze-b2
+        - curl
+        - direnv
+        - git
+        - htop
         - httpie
         - iotop
+        - jq
         - make
-        - direnv
-        - backblaze-b2
+        - mc
+        - pandoc
+        - rdiff-backup
+        - silversearcher-ag
+        - texlive-latex-recommended
+        - tree
+        - unzip
+        - vim
+        - zsh
     when: ansible_os_family == 'Debian'
