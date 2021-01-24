@@ -17,6 +17,7 @@
         - asciidoctor
         - autojump
         - backblaze-b2
+        - build-essential
         - curl
         - direnv
         - git
@@ -27,6 +28,8 @@
         - make
         - mc
         - pandoc
+        - python-is-python3
+        - python3
         - rdiff-backup
         - silversearcher-ag
         - texlive-latex-recommended

@@ -4,5 +4,7 @@
   become_user: root
   dnf:
     state: latest
-    name: "@C Development Tools and Libraries"
+    name:
+      - "@C Development Tools and Libraries"
+      - cmake
   when: ansible_os_family == 'RedHat'

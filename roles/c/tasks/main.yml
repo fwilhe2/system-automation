@@ -2,4 +2,8 @@
 
 - include: fedora.yml
   when: ansible_os_family == 'RedHat'
-  tags: c
+  tags: basic
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags: basic

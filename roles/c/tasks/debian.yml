@@ -1,0 +1,10 @@
+---
+
+  - name: Install Development Packages
+    become: yes
+    become_user: root
+    apt:
+      state: latest
+      name:
+        - build-essential
+        - cmake
