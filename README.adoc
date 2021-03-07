@@ -36,6 +36,10 @@ curl https://raw.githubusercontent.com/fwilhe2/system-automation/master/bootstra
 
 This requires `ansible`, `curl`, `bash` and `unzip`.
 
+----
+sudo apt -y install ansible curl bash unzip
+----
+
 == Setup (traditional)
 
 .Preparations for Fedora
