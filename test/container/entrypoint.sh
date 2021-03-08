@@ -6,7 +6,7 @@ set -o errexit
 cat /etc/os-release
 
 echo "::group::Install rust (requirement of dotfiles)"
-curl https://sh.rustup.rs -sSf | sh -s -- -y
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -- -y
 source $HOME/.cargo/env
 echo "::endgroup::"
 
