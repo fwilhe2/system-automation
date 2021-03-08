@@ -5,6 +5,11 @@ set -o errexit
 
 cat /etc/os-release
 
+echo "::group::Install rust (requirement of dotfiles)"
+curl https://sh.rustup.rs -sSf | sh -s -- -y
+source $HOME/.cargo/env
+echo "::endgroup::"
+
 echo "::group::Run Playbook"
 ansible-playbook -vv /mnt/common.yml
 source ~/.custom-path.sh # Make sure path is updated
