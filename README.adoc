@@ -18,13 +18,25 @@ System Automation powered by Ansible™
 Tested ansible version:
 
 ----
-ansible 2.9.6
+ansible 2.9.18
 ----
 
 == Project Layout
 
 * `common.yml`: Software that does not require a graphical environment.
 * `desktop.yml`: Setup for desktop computers.
+
+== Preparation
+
+.Preparation for Fedora
+----
+sudo dnf install -y ansible curl bash unzip
+----
+
+.Preparation for Ubuntu
+----
+sudo apt -y install ansible curl bash unzip
+----
 
 == Kickstart (experimental)
 
@@ -36,21 +48,7 @@ curl https://raw.githubusercontent.com/fwilhe2/system-automation/master/bootstra
 
 This requires `ansible`, `curl`, `bash` and `unzip`.
 
-----
-sudo apt -y install ansible curl bash unzip
-----
-
 == Setup (traditional)
-
-.Preparations for Fedora
-----
-sudo dnf install ansible python3-dnf libselinux-python3
-----
-
-.Preparations for Ubuntu
-----
-sudo apt install curl unzip ansible
-----
 
 .Run `common` playbook
 ----
