@@ -91,6 +91,9 @@ This project ships the following 3rd party software:
 https://github.com/jistr/ansible-gsetting[ansible-gsetting module] (`playbooks/library/gsetting`)::
   Copyright © Jiří Stránský under the _Apache License, Version 2.0_
 
+https://github.com/green-leader/ansible-role-codium[ansible-role-codium] (`roles/greenleader.codium`)::
+  Copyright © Sion Fandrick under the _MIT License_
+
 == References
 
 * https://docs.ansible.com/ansible/2.9/modules/list_of_all_modules.html[Ansible Docs: All Modules]

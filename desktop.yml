@@ -16,4 +16,5 @@
         name: ['keepassxc', 'xclip']
       when: ansible_os_family == 'Debian'
 
-
+  roles:
+    - { role: greenleader.codium, become: yes }
