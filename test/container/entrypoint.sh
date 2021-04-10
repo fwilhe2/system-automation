@@ -37,7 +37,7 @@ echo "::endgroup::"
 
 echo "::group::Run Desktop Playbook"
 codium --user-data-dir=/tmp --version
-keepassxc --version
+keepassxc-cli --version
 echo "::endgroup::"
 
 echo "::group::Idempotence check"
