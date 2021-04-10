@@ -35,7 +35,7 @@ echo "::group::Run Desktop Playbook"
 ansible-playbook -vv /mnt/desktop.yml
 echo "::endgroup::"
 
-echo "::group::Run Desktop Playbook"
+echo "::group::Check Desktop App Versions"
 codium --user-data-dir=/tmp --version
 keepassxc-cli --version
 echo "::endgroup::"
