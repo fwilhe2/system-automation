@@ -36,7 +36,7 @@ ansible-playbook -vv /mnt/desktop.yml
 echo "::endgroup::"
 
 echo "::group::Run Desktop Playbook"
-codium --version
+codium --user-data-dir=/tmp --version
 keepassxc --version
 echo "::endgroup::"
 
