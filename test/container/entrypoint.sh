@@ -34,3 +34,14 @@ echo "::endgroup::"
 echo "::group::Run Desktop Playbook"
 ansible-playbook -vv /mnt/desktop.yml
 echo "::endgroup::"
+
+echo "::group::Run Desktop Playbook"
+codium --version
+keepassxc --version
+echo "::endgroup::"
+
+echo "::group::Idempotence check"
+idempotence=$(mktemp)
+ansible-playbook /mnt/desktop.yml | tee -a ${idempotence}
+tail ${idempotence} | grep -q 'changed=0.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)
+echo "::endgroup::"
