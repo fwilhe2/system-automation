@@ -37,6 +37,7 @@ echo "::endgroup::"
 
 echo "::group::Check Desktop App Versions"
 codium --user-data-dir=/tmp --version
+codium --user-data-dir=/tmp --list-extensions
 keepassxc-cli --version
 echo "::endgroup::"
 
