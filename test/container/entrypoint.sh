@@ -30,3 +30,7 @@ idempotence=$(mktemp)
 ansible-playbook /mnt/common.yml | tee -a ${idempotence}
 tail ${idempotence} | grep -q 'changed=0.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)
 echo "::endgroup::"
+
+echo "::group::Run Desktop Playbook"
+ansible-playbook -vv /mnt/desktop.yml
+echo "::endgroup::"
