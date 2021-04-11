@@ -10,12 +10,10 @@ RUN apt-get update && apt-get install -y \
   curl \
   bash \
   unzip \
-  sudo \
   && mkdir -p /home/user && echo "user:x:1001:1001:user:/home/user:/bin/bash" >> /etc/passwd \
   && chown -R user /home/user
 
-RUN adduser user sudo
-RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+RUN echo 'root:' | chpasswd
 
 # Install Ansible inventory file.
 # Taken from https://github.com/geerlingguy/docker-ubuntu1804-ansible/blob/97a8d76f87dc4a15e24c88214806448246fbfb98/Dockerfile#L37
