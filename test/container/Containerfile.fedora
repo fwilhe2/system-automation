@@ -14,4 +14,7 @@ RUN mkdir -p /etc/ansible
 RUN echo -e '[local]\nlocalhost ansible_connection=local' > /etc/ansible/hosts
 
 COPY test/container/entrypoint.sh /entrypoint.sh
+
+USER user
+
 ENTRYPOINT ["/entrypoint.sh"]
