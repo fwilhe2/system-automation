@@ -13,7 +13,7 @@ source $HOME/.cargo/env
 echo "::endgroup::"
 
 echo "::group::Run Playbook"
-ansible-playbook --become --become-method=su -vv /mnt/common.yml
+ansible-playbook --become-method=su -vv /mnt/common.yml
 source ~/.custom-path.sh # Make sure path is updated
 source ~/.bashrc
 echo "::endgroup::"
@@ -34,7 +34,7 @@ tail ${idempotence} | grep -q 'changed=0.*failed=0' && (echo 'Idempotence test: 
 echo "::endgroup::"
 
 echo "::group::Run Desktop Playbook"
-ansible-playbook --become --become-method=su -vv /mnt/desktop.yml
+ansible-playbook --become-method=su -vv /mnt/desktop.yml
 echo "::endgroup::"
 
 echo "::group::Check Desktop App Versions"
