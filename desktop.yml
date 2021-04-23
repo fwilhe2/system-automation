@@ -33,5 +33,6 @@
         - redhat.java
         - redhat.vscode-xml
         - rust-lang.rust
+        - streetsidesoftware.code-spell-checker
       tags:
         - notest
