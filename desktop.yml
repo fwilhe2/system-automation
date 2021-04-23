@@ -33,3 +33,5 @@
         - redhat.java
         - redhat.vscode-xml
         - rust-lang.rust
+      tags:
+        - notest
