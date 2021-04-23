@@ -26,7 +26,7 @@ do
 done
 echo "::endgroup::"
 
-Idempotence check, via https://github.com/geerlingguy/mac-dev-playbook/blob/7382e0241fe27cf17fabe31582af0269551e7004/.github/workflows/ci.yml#L71
+# Idempotence check, via https://github.com/geerlingguy/mac-dev-playbook/blob/7382e0241fe27cf17fabe31582af0269551e7004/.github/workflows/ci.yml#L71
 echo "::group::Idempotence check"
 idempotence=$(mktemp)
 ansible-playbook --skip-tags notest /mnt/common.yml | tee -a ${idempotence}
