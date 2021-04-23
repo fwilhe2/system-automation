@@ -27,11 +27,11 @@ done
 echo "::endgroup::"
 
 # Idempotence check, via https://github.com/geerlingguy/mac-dev-playbook/blob/7382e0241fe27cf17fabe31582af0269551e7004/.github/workflows/ci.yml#L71
-echo "::group::Idempotence check"
-idempotence=$(mktemp)
-ansible-playbook --become-method=su /mnt/common.yml | tee -a ${idempotence}
-tail ${idempotence} | grep -q 'changed=0.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)
-echo "::endgroup::"
+# echo "::group::Idempotence check"
+# idempotence=$(mktemp)
+# ansible-playbook --become-method=su /mnt/common.yml | tee -a ${idempotence}
+# tail ${idempotence} | grep -q 'changed=0.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)
+# echo "::endgroup::"
 
 echo "::group::Run Desktop Playbook"
 ansible-playbook --become-method=su -vv /mnt/desktop.yml
@@ -43,8 +43,8 @@ codium --user-data-dir=/tmp --list-extensions
 keepassxc-cli --version
 echo "::endgroup::"
 
-echo "::group::Idempotence check"
-idempotence=$(mktemp)
-ansible-playbook --become-method=su /mnt/desktop.yml | tee -a ${idempotence}
-tail ${idempotence} | grep -q 'changed=0.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)
-echo "::endgroup::"
+# echo "::group::Idempotence check"
+# idempotence=$(mktemp)
+# ansible-playbook --become-method=su /mnt/desktop.yml | tee -a ${idempotence}
+# tail ${idempotence} | grep -q 'changed=0.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)
+# echo "::endgroup::"
