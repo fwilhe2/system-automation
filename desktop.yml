@@ -1,6 +1,10 @@
 ---
 
 - hosts: all
+
+  roles:
+    - { role: greenleader.codium, become: yes }
+
   tasks:
     - name: Install Basic Desktop Packages
       become: yes
@@ -16,5 +20,19 @@
         name: ['keepassxc', 'xclip']
       when: ansible_os_family == 'Debian'
 
-  roles:
-    - { role: greenleader.codium, become: yes }
+    - name: install extensions
+      codium-extensions:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - fwcd.kotlin
+        - golang.go
+        - mathiasfrohlich.Kotlin
+        - ms-azuretools.vscode-docker
+        - ms-python.python
+        - redhat.java
+        - redhat.vscode-xml
+        - rust-lang.rust
+        - streetsidesoftware.code-spell-checker
+      tags:
+        - notest
