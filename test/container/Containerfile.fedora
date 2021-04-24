@@ -13,10 +13,10 @@ RUN dnf --assumeyes update && dnf --assumeyes install git ansible curl unzip bas
 RUN mkdir -p /etc/ansible
 RUN echo -e '[local]\nlocalhost ansible_connection=local ansible_become_password=toor123' > /etc/ansible/hosts
 
-COPY test/container/entrypoint.sh /entrypoint.sh
+COPY . /home/user
 
 RUN echo 'root:toor123' | chpasswd
 
 USER user
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/home/user/entrypoint.sh"]
