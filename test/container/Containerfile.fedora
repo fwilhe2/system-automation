@@ -19,4 +19,4 @@ RUN echo 'root:toor123' | chpasswd
 
 USER user
 
-ENTRYPOINT ["/home/user/entrypoint.sh"]
+ENTRYPOINT ["/home/user/test/container/entrypoint.sh"]
