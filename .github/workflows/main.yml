@@ -6,6 +6,7 @@ jobs:
   run-in-container-deb:
     runs-on: ubuntu-20.04
     strategy:
+      fail-fast: false
       matrix:
         version: [latest, rolling, devel]
     steps:
@@ -18,6 +19,7 @@ jobs:
   run-in-container-yum:
     runs-on: ubuntu-20.04
     strategy:
+      fail-fast: false
       matrix:
         version: [latest, rawhide]
     steps:
