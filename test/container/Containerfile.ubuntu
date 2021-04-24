@@ -10,7 +10,9 @@ RUN apt-get update && apt-get install -y \
   curl \
   bash \
   unzip \
-  && mkdir -p /home/user && echo "user:x:1001:1001:user:/home/user:/bin/bash" >> /etc/passwd \
+  && mkdir -p /home/user \
+  && echo "user:x:1001:1001:user:/home/user:/bin/bash" >> /etc/passwd \
+  && echo "user:x:1001:" >> /etc/group \
   && chown -R user /home/user
 
 # Install Ansible inventory file.
