@@ -28,3 +28,10 @@ jobs:
       run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora${{ matrix.version }} --file test/container/Containerfile.fedora .
     - name: Run Test Fedora ${{ matrix.version }}
       run: docker run --tty --volume $PWD:/mnt system-automation-test-fedora${{ matrix.version }}
+
+  syntax-check:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v1
+    - run: ansible-playbook -vvvv --inventory inventory --syntax-check desktop.yml
+    - run: ansible-playbook -vvvv --inventory inventory --syntax-check desktop.yml
