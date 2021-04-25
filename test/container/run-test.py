@@ -1,10 +1,8 @@
 import subprocess
-import shutil
 import os
 import re
 import sys
 import pathlib
-from stat import *
 
 def assert_equals(first, second, message):
     if not first == second:
