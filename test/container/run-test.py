@@ -4,6 +4,7 @@ import os
 import re
 import sys
 import pathlib
+from stat import *
 
 def assert_equals(first, second, message):
     if not first == second:
@@ -65,8 +66,10 @@ run_ansible("/mnt/desktop.yml")
 expected_binaries = ['javac', 'kotlinc', 'mvn', 'gradle', 'go', 'gh']
 
 for binary in expected_binaries:
-    ff = pathlib.Path('/').glob(binary)
-    for f in ff:
+    file_list = pathlib.Path('/').glob(binary)
+    for f in file_list:
         print(f)
         print(f.stat)
+        mode = f.stat
         assert f.is_file()
+        subprocess.run([f, '--version'])
