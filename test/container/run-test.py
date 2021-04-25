@@ -17,6 +17,9 @@ def run_ansible(playbook):
         ["ansible-playbook", "--skip-tags", "notest", "-vv", playbook], capture_output=True
     )
     assert(rerun.returncode == 0)
+
+
+    print(rerun.stdout.decode("utf-8"))
     assert(re.match("changed=0.*failed=0", rerun.stdout.decode("utf-8")))
     print("::endgroup::")
 
