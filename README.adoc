@@ -64,23 +64,26 @@ WARNING: Running the `desktop` playbook will override the custom keybindings in 
 
 == Testing
 
-Vagrant can be used to test this project.
+Containerfiles are available for testing.
+They are run automatically via the CI workflow.
 
-Various Vagrantfiles are provided in the `test` directory.
+For running them locally, use:
 
-.Fire up Vagrant VM with Ansible Provisioning
+.Test on Ubuntu
 ----
-vagrant up
+docker build --build-arg=VERSION=latest -t system-automation-test-ubuntu-latest --file test/container/Containerfile.ubuntu .
+docker run --tty --volume $PWD:/mnt system-automation-test-ubuntu-latest
 ----
 
-.Provision running VM
+.Test on Fedora
 ----
-vagrant provision
+docker build --build-arg=VERSION=latest -t system-automation-test-fedora-latest --file test/container/Containerfile.fedora .
+docker run --tty --volume $PWD:/mnt system-automation-test-fedora-latest
 ----
 
 == License
 
-Copyright © 2016 Florian Wilhelm
+Copyright © 2016-2021 Florian Wilhelm
 
 Free use of this software is granted under the terms of the MIT License.
 
