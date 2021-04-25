@@ -2,6 +2,7 @@ import subprocess
 import shutil
 import os
 from pathlib import Path
+import re
 
 def run_ansible(playbook):
     assert (
@@ -10,6 +11,12 @@ def run_ansible(playbook):
         ).returncode
         == 0
     )
+    # Idempotence check
+    rerun = subprocess.run(
+        ["ansible-playbook", "--skip-tags", "notest", "-vv", playbook], capture_output=True
+    )
+    assert(rerun.returncode == 0)
+    assert(re.match("changed=0.*failed=0", rerun.stdout))
 
 subprocess.run(
     [
@@ -20,8 +27,4 @@ subprocess.run(
 )
 
 run_ansible("/mnt/common.yml")
-run_ansible("/mnt/common.yml")
-run_ansible("/mnt/common.yml")
-run_ansible("/mnt/desktop.yml")
-run_ansible("/mnt/desktop.yml")
 run_ansible("/mnt/desktop.yml")
