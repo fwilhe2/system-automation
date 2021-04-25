@@ -65,11 +65,13 @@ run_ansible("/mnt/desktop.yml")
 # Assertions in set-up system follow here
 expected_binaries = ['javac', 'kotlinc', 'mvn', 'gradle', 'go', 'gh']
 
+print("::group::Assertions")
+
 for binary in expected_binaries:
-    file_list = pathlib.Path('/').glob(binary)
-    for f in file_list:
-        print(f)
-        print(f.stat)
-        mode = f.stat
-        assert f.is_file()
-        subprocess.run([f, '--version'])
+    for root, dirs, files in os.walk("/"):
+        if binary in files:
+            binary_with_path = os.path.join(root, binary)
+            print(binary_with_path)
+            subprocess.run([binary_with_path, '--version'])
+
+print("::endgroup::")
