@@ -61,7 +61,7 @@ run_ansible("/mnt/common.yml")
 run_ansible("/mnt/desktop.yml")
 
 # Assertions in set-up system follow here
-expected_binaries = ['javac', 'kotlinc', 'mvn', 'gradle', 'go', 'keepassxc-cli']
+expected_binaries = ['javac', 'mvn', 'gradle', 'go', 'keepassxc-cli']
 
 print("::group::Assertions")
 
