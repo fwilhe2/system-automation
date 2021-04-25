@@ -26,4 +26,4 @@ COPY . /home/user
 
 USER user
 
-ENTRYPOINT ["/home/user/test/container/entrypoint.sh"]
+ENTRYPOINT ["python3", "/home/user/test/container/run-test.py"]
