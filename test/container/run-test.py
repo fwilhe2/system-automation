@@ -70,9 +70,8 @@ for binary in expected_binaries:
         if binary in files:
             binary_with_path = os.path.join(root, binary)
             print(f"Found binary at '{binary_with_path}'")
-            script = f'source ~/.custom-path.sh; source ~/.bashrc; {binary_with_path}'
-            subprocess.run(["bash", '-c', f"{script} --version"])
-            subprocess.run(["bash", '-c', f"{script} --help"])
+            script = f'set -e && source ~/.custom-path.sh && {binary_with_path}'
+            assert_equals(subprocess.run(["bash", '-c', f"{script} --help"]).returncode, 0, f"Expected {script} to run with exit code 0.")
 
 subprocess.run(["bash", '-c', "codium --user-data-dir=/tmp --version"])
 subprocess.run(["bash", '-c', "codium --user-data-dir=/tmp --list-extensions"])
