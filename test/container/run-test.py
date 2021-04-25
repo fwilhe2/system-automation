@@ -21,7 +21,7 @@ def run_ansible(playbook):
     # debug
     print(rerun.stdout.decode("utf-8"))
 
-    dbg = re.fullmatch(".*changed=0.*", rerun.stdout.decode("utf-8"))
+    dbg = re.fullmatch(".*changed=0.*", rerun.stdout.decode("utf-8"), re.DOTALL)
     print(dbg)
 
     assert(dbg)
