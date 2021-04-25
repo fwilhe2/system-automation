@@ -12,7 +12,7 @@ subprocess.run(
 )
 assert (
     subprocess.run(
-        ["ansible-playbook", "--skip-tags", "notest", "-vv", "/home/user/common.yml"]
+        ["ansible-playbook", "--skip-tags", "notest", "-vv", "/mnt/common.yml"]
     ).returncode
     == 0
 )
