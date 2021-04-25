@@ -18,9 +18,10 @@ def run_ansible(playbook):
     )
     assert(rerun.returncode == 0)
 
-
+    # debug
     print(rerun.stdout.decode("utf-8"))
-    assert(re.match("changed=0.*failed=0", rerun.stdout.decode("utf-8")))
+    
+    assert(re.match(".*changed=0.*failed=0.*", rerun.stdout.decode("utf-8")))
     print("::endgroup::")
 
 print("::group::Install Rust")
