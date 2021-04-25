@@ -1,10 +1,9 @@
 import subprocess
 import shutil
 import os
-from pathlib import Path
 import re
 import sys
-
+import pathlib
 
 def assert_equals(first, second, message):
     if not first == second:
@@ -61,3 +60,13 @@ print("::endgroup::")
 
 run_ansible("/mnt/common.yml")
 run_ansible("/mnt/desktop.yml")
+
+# Assertions in set-up system follow here
+expected_binaries = ['javac', 'kotlinc', 'mvn', 'gradle', 'go', 'gh']
+
+for binary in expected_binaries:
+    ff = pathlib.Path('/').glob(binary)
+    for f in ff:
+        print(f)
+        print(f.stat)
+        assert f.is_file()
