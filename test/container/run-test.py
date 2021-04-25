@@ -63,6 +63,16 @@ run_ansible("/mnt/desktop.yml")
 # Assertions in set-up system follow here
 expected_binaries = ['javac', 'mvn', 'gradle', 'go', 'keepassxc-cli']
 
+expected_binaries_command = {
+    "javac": "-version",
+    "kotlinc": "-version",
+    "mvn": "-version",
+    "gradle": "-version",
+    "go": "version",
+    "keepassxc-cli": "-version",
+    "codium": "--user-data-dir=/tmp --version"
+}
+
 print("::group::Assertions")
 
 for binary in expected_binaries:
@@ -70,10 +80,7 @@ for binary in expected_binaries:
         if binary in files:
             binary_with_path = os.path.join(root, binary)
             print(f"Found binary at '{binary_with_path}'")
-            script = f'set -e && source ~/.custom-path.sh && {binary_with_path}'
-            assert_equals(subprocess.run(["bash", '-c', f"{script} --help"]).returncode, 0, f"Expected {script} to run with exit code 0.")
-
-subprocess.run(["bash", '-c', "codium --user-data-dir=/tmp --version"])
-subprocess.run(["bash", '-c', "codium --user-data-dir=/tmp --list-extensions"])
+            script = f'set -e && source ~/.custom-path.sh && {binary_with_path} {expected_binaries_command[binary]}'
+            assert_equals(subprocess.run(["bash", '-c', f"{script}"]).returncode, 0, f"Expected {script} to run with exit code 0.")
 
 print("::endgroup::")
