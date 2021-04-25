@@ -69,10 +69,12 @@ for binary in expected_binaries:
     for root, dirs, files in os.walk("/"):
         if binary in files:
             binary_with_path = os.path.join(root, binary)
-            print(binary_with_path)
-            subprocess.run([binary_with_path, '--help'])
+            print(f"Found binary at '{binary_with_path}'")
+            script = f'source ~/.custom-path.sh; source ~/.bashrc; {binary_with_path}'
+            subprocess.run(["bash", '-c', f"{script} --version"])
+            subprocess.run(["bash", '-c', f"{script} --help"])
 
-
-subprocess.run(["codium", "--user-data-dir=/tmp", "--list-extensions"])
+subprocess.run(["bash", '-c', "codium --user-data-dir=/tmp --version"])
+subprocess.run(["bash", '-c', "codium --user-data-dir=/tmp --list-extensions"])
 
 print("::endgroup::")
