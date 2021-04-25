@@ -61,7 +61,7 @@ run_ansible("/mnt/common.yml")
 run_ansible("/mnt/desktop.yml")
 
 # Assertions in set-up system follow here
-expected_binaries = ['javac', 'kotlinc', 'mvn', 'gradle', 'go']
+expected_binaries = ['javac', 'kotlinc', 'mvn', 'gradle', 'go', 'keepassxc-cli']
 
 print("::group::Assertions")
 
@@ -71,5 +71,8 @@ for binary in expected_binaries:
             binary_with_path = os.path.join(root, binary)
             print(binary_with_path)
             subprocess.run([binary_with_path, '--help'])
+
+
+subprocess.run(["codium", "--user-data-dir=/tmp", "--list-extensions"])
 
 print("::endgroup::")
