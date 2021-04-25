@@ -63,7 +63,7 @@ run_ansible("/mnt/common.yml")
 run_ansible("/mnt/desktop.yml")
 
 # Assertions in set-up system follow here
-expected_binaries = ['javac', 'kotlinc', 'mvn', 'gradle', 'go', 'gh']
+expected_binaries = ['javac', 'kotlinc', 'mvn', 'gradle', 'go']
 
 print("::group::Assertions")
 
@@ -72,6 +72,6 @@ for binary in expected_binaries:
         if binary in files:
             binary_with_path = os.path.join(root, binary)
             print(binary_with_path)
-            subprocess.run([binary_with_path, '--version'])
+            subprocess.run([binary_with_path, '--help'])
 
 print("::endgroup::")
