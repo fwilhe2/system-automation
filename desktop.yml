@@ -20,7 +20,7 @@
         name: ['keepassxc', 'xclip']
       when: ansible_os_family == 'Debian'
 
-    - name: install extensions
+    - name: Install VS Codium Extensions
       codium-extensions:
         name: "{{ item }}"
         state: present

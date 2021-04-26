@@ -23,8 +23,10 @@ ansible 2.9.18
 
 == Project Layout
 
-* `common.yml`: Software that does not require a graphical environment.
-* `desktop.yml`: Setup for desktop computers.
+This project contains two playbooks:
+
+* `common.yml`: Software and setup which does not require a graphical environment
+* `desktop.yml`: Setup for desktop computers
 
 == Preparation
 
@@ -60,8 +62,6 @@ ansible-playbook --ask-become-pass --inventory inventory common.yml
 ansible-playbook --ask-become-pass --inventory inventory desktop.yml
 ----
 
-WARNING: Running the `desktop` playbook will override the custom keybindings in GNOME. kbd:[Ctrl+Alt+T] is set to open a new `gnome-terminal`.
-
 == Testing
 
 Containerfiles are available for testing.
@@ -90,9 +90,6 @@ Free use of this software is granted under the terms of the MIT License.
 === Copyright Notice
 
 This project ships the following 3rd party software:
-
-https://github.com/jistr/ansible-gsetting[ansible-gsetting module] (`library/gsetting`)::
-  Copyright © Jiří Stránský under the _Apache License, Version 2.0_
 
 https://github.com/green-leader/ansible-role-codium[ansible-role-codium] (`roles/greenleader.codium`)::
   Copyright © Sion Fandrick under the _MIT License_
