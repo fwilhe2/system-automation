@@ -69,6 +69,7 @@ def assert_system_properties():
         "go": "version",
         "keepassxc-cli": "-version",
         "cargo": "--version",
+        "topgrade": "--version",
     }
 
     for binary in expected_binaries:
