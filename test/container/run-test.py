@@ -48,7 +48,7 @@ def run_ansible(playbook):
     print(changed_match)
     assert_not_none(
         changed_match,
-        "Idempotence check failed: Could not find 'changed=0' and 'failed=0' in output:\n{rerun_stdout}",
+        f"Idempotence check failed: Could not find 'changed=0' and 'failed=0' in output:\n{rerun_stdout}",
     )
 
 
