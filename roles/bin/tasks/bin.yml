@@ -28,9 +28,7 @@
       - https://github.com/JetBrains/kotlin/releases/download/v{{ KOTLIN_VERSION }}/kotlin-native-linux-{{ KOTLIN_VERSION }}.tar.gz
 
   - name: Install Rust
-    ansible.builtin.script: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-    args:
-      executable: /bin/bash
+    command: bash -c "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
 
   - name: Ensure `~/bin` directory exists
     file:
