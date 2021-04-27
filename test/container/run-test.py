@@ -19,8 +19,13 @@ def assert_not_none(value, message):
         )
 
 
+def run_group(fn, name, *args):
+    print(f"::group::{name}")
+    fn(*args)
+    print("::endgroup::")
+
+
 def run_ansible(playbook):
-    print(f"::group::Running Playbook {playbook}")
     assert_equals(
         subprocess.run(
             ["ansible-playbook", "--skip-tags", "notest", "-vv", playbook]
@@ -45,46 +50,48 @@ def run_ansible(playbook):
         changed_match,
         "Idempotence check failed: Could not find 'changed=0' and 'failed=0' in output:\n{rerun_stdout}",
     )
-    print("::endgroup::")
 
 
-print("::group::Install Rust")
-subprocess.run(
-    [
-        "bash",
-        "-c",
-        "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y",
-    ]
-)
-print("::endgroup::")
+def install_rust():
+    subprocess.run(
+        [
+            "bash",
+            "-c",
+            "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y",
+        ]
+    )
 
-run_ansible("/mnt/common.yml")
-run_ansible("/mnt/desktop.yml")
+
+run_group(install_rust, "Install Rust")
+run_group(run_ansible, "Running Playbook common", "/mnt/common.yml")
+run_group(run_ansible, "Running Playbook desktop", "/mnt/desktop.yml")
 
 # Assertions in set-up system follow here
-expected_binaries = ["javac", "mvn", "gradle", "go", "keepassxc-cli"]
 
-expected_binaries_command = {
-    "javac": "-version",
-    "kotlinc": "-version",
-    "mvn": "-version",
-    "gradle": "-version",
-    "go": "version",
-    "keepassxc-cli": "-version"
-}
 
-print("::group::Assertions")
+def assert_system_properties():
+    expected_binaries = ["javac", "mvn", "gradle", "go", "keepassxc-cli"]
 
-for binary in expected_binaries:
-    for root, dirs, files in os.walk("/"):
-        if binary in files:
-            binary_with_path = os.path.join(root, binary)
-            print(f"Found binary at '{binary_with_path}'")
-            script = f"set -e && source ~/.custom-path.sh && {binary_with_path} {expected_binaries_command[binary]}"
-            assert_equals(
-                subprocess.run(["bash", "-c", f"{script}"]).returncode,
-                0,
-                f"Expected {script} to run with exit code 0.",
-            )
+    expected_binaries_command = {
+        "javac": "-version",
+        "kotlinc": "-version",
+        "mvn": "-version",
+        "gradle": "-version",
+        "go": "version",
+        "keepassxc-cli": "-version",
+    }
 
-print("::endgroup::")
+    for binary in expected_binaries:
+        for root, dirs, files in os.walk("/"):
+            if binary in files:
+                binary_with_path = os.path.join(root, binary)
+                print(f"Found binary at '{binary_with_path}'")
+                script = f"set -e && source ~/.custom-path.sh && {binary_with_path} {expected_binaries_command[binary]}"
+                assert_equals(
+                    subprocess.run(["bash", "-c", f"{script}"]).returncode,
+                    0,
+                    f"Expected {script} to run with exit code 0.",
+                )
+
+
+run_group(assert_system_properties, "Assert Properties of installed System")
