@@ -82,25 +82,6 @@ def assert_system_properties():
                     subprocess.run(["bash", "-c", f"{script}"]).returncode,
                     0,
                     f"Expected {script} to run with exit code 0.",
-                )
-
-    bash_obj = subprocess.run(
-        ["bash", "-c", "set -ex && source ~/.bashrc"]
-    )
-    assert_equals(
-        bash_obj.returncode,
-        0,
-        f"Expected exit code 0 when bash sources bashrc.\n{bash_obj.stdout}",
-    )
-
-    zsh_obj = subprocess.run(
-        ["zsh", "-c", "set -ex && DISABLE_AUTO_UPDATE=true && source ~/.zshrc"]
-    )
-    assert_equals(
-        zsh_obj.returncode,
-        0,
-        f"Expected exit code 0 when zsh sources zshrc.\n{zsh_obj.stdout}",
-    )
-
+                )   
 
 run_group(assert_system_properties, "Assert Properties of installed System")
