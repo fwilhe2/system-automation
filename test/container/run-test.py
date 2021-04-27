@@ -83,5 +83,16 @@ def assert_system_properties():
                     f"Expected {script} to run with exit code 0.",
                 )
 
+    assert_equals(
+        subprocess.run(["bash", "-c", "set -e && source ~/.bashrc"]).returncode,
+        0,
+        "Expected exit code 0 when bash sources bashrc.",
+    )
+    assert_equals(
+        subprocess.run(["zsh", "-c", "set -e && source ~/.zshrc"]).returncode,
+        0,
+        "Expected exit code 0 when zsh sources zshrc.",
+    )
+
 
 run_group(assert_system_properties, "Assert Properties of installed System")
