@@ -89,10 +89,14 @@ def assert_system_properties():
         0,
         "Expected exit code 0 when bash sources bashrc.",
     )
+
+    zsh_obj = subprocess.run(
+        ["zsh", "-c", "set -ex && DISABLE_AUTO_UPDATE=true && source ~/.zshrc"]
+    )
     assert_equals(
-        subprocess.run(["zsh", "-c", "set -e && source ~/.zshrc"]).returncode,
+        zsh_obj.returncode,
         0,
-        "Expected exit code 0 when zsh sources zshrc.",
+        f"Expected exit code 0 when zsh sources zshrc.\n{zsh_obj.stdout}",
     )
 
 
