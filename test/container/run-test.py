@@ -52,17 +52,6 @@ def run_ansible(playbook):
     )
 
 
-def install_rust():
-    subprocess.run(
-        [
-            "bash",
-            "-c",
-            "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y",
-        ]
-    )
-
-
-run_group(install_rust, "Install Rust")
 run_group(run_ansible, "Running Playbook common", "/mnt/common.yml")
 run_group(run_ansible, "Running Playbook desktop", "/mnt/desktop.yml")
 
@@ -79,6 +68,7 @@ def assert_system_properties():
         "gradle": "-version",
         "go": "version",
         "keepassxc-cli": "-version",
+        "cargo": "--version",
     }
 
     for binary in expected_binaries:

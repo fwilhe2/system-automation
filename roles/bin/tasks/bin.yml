@@ -27,6 +27,9 @@
       - https://github.com/JetBrains/kotlin/releases/download/v{{ KOTLIN_VERSION }}/kotlin-compiler-{{ KOTLIN_VERSION }}.zip
       - https://github.com/JetBrains/kotlin/releases/download/v{{ KOTLIN_VERSION }}/kotlin-native-linux-{{ KOTLIN_VERSION }}.tar.gz
 
+  - name: Install Rust
+    ansible.builtin.shell: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
   - name: Ensure `~/bin` directory exists
     file:
       path: ~/bin
