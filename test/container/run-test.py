@@ -52,6 +52,14 @@ def run_ansible(playbook):
     )
 
 
+def print_os_version():
+    os_release = pathlib.Path("/etc/os-release").read_text()
+    for item in os_release.split("\n"):
+        if item.startswith("PRETTY_NAME"):
+            print(f"Running on OS: {item.split('=')[1]}")
+
+
+print_os_version()
 run_group(run_ansible, "Running Playbook common", "/mnt/common.yml")
 run_group(run_ansible, "Running Playbook desktop", "/mnt/desktop.yml")
 
@@ -82,6 +90,7 @@ def assert_system_properties():
                     subprocess.run(["bash", "-c", f"{script}"]).returncode,
                     0,
                     f"Expected {script} to run with exit code 0.",
-                )   
+                )
+
 
 run_group(assert_system_properties, "Assert Properties of installed System")
