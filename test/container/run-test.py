@@ -52,6 +52,8 @@ def run_ansible(playbook):
     )
 
 
+print(Path('/etc/os-release').read_text())
+
 run_group(run_ansible, "Running Playbook common", "/mnt/common.yml")
 run_group(run_ansible, "Running Playbook desktop", "/mnt/desktop.yml")
 
