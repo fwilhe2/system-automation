@@ -81,7 +81,7 @@ def assert_system_properties():
     }
 
     for binary in expected_binaries:
-        for root, dirs, files in os.walk("/"):
+        for root, _, files in os.walk("/"):
             if binary in files:
                 binary_with_path = os.path.join(root, binary)
                 print(f"Found binary at '{binary_with_path}'")
