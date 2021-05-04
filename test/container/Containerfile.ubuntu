@@ -5,15 +5,12 @@ FROM ubuntu:$VERSION
 ENV TERM=xterm
 ENV DEBIAN_FRONTEND=noninteractive
 
-
-
 RUN apt-get update && apt-get install -y \
   curl \
   bash \
-  software-properties-common \
+  python3 \
+  python3-pip \
   unzip \
-  && apt-add-repository --yes --update ppa:ansible/ansible \
-  && apt-get install -y ansible \
   && mkdir -p /home/user \
   && echo "user:x:1001:1001:user:/home/user:/bin/bash" >> /etc/passwd \
   && echo "user:x:1001:" >> /etc/group \
@@ -29,5 +26,7 @@ RUN echo 'root:toor123' | chpasswd
 COPY . /home/user
 
 USER user
+
+RUN python3 -m pip install --user ansible
 
 ENTRYPOINT ["python3", "/home/user/test/container/run-test.py"]
