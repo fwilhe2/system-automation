@@ -28,7 +28,7 @@ def run_group(fn, name, *args):
 def run_ansible(playbook):
     assert_equals(
         subprocess.run(
-            ["ansible-playbook", "--skip-tags", "notest", "-vv", playbook]
+            ["ansible-playbook", "--become-method=su", "--skip-tags", "notest", "-vv", playbook]
         ).returncode,
         0,
         f"Expected running playbook '{playbook}' to return exit code 0.",
@@ -36,7 +36,7 @@ def run_ansible(playbook):
     # Idempotence check: Run again and verify nothing fails or changes the second time
     # Idea via https://github.com/geerlingguy/mac-dev-playbook/blob/7382e0241fe27cf17fabe31582af0269551e7004/.github/workflows/ci.yml#L71
     rerun = subprocess.run(
-        ["ansible-playbook", "--skip-tags", "notest", playbook], capture_output=True
+        ["ansible-playbook", "--become-method=su", "--skip-tags", "notest", playbook], capture_output=True
     )
     assert_equals(
         rerun.returncode,
@@ -60,8 +60,8 @@ def print_os_version():
 
 
 print_os_version()
-run_group(run_ansible, "Running Playbook common", "/mnt/common.yml")
-run_group(run_ansible, "Running Playbook desktop", "/mnt/desktop.yml")
+run_group(run_ansible, "Running Playbook common", "/home/user/common.yml")
+run_group(run_ansible, "Running Playbook desktop", "/home/user/desktop.yml")
 
 # Assertions in set-up system follow here
 
