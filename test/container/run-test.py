@@ -3,7 +3,7 @@ import os
 import re
 import sys
 import pathlib
-
+import shutil
 
 def assert_equals(first, second, message):
     if not first == second:
@@ -29,7 +29,7 @@ def run_ansible(playbook):
     assert_equals(
         subprocess.run(
             [
-                "ansible-playbook",
+                ansible_playbook_executable(),
                 "--become-method=su",
                 "--skip-tags",
                 "notest",
@@ -43,7 +43,7 @@ def run_ansible(playbook):
     # Idempotence check: Run again and verify nothing fails or changes the second time
     # Idea via https://github.com/geerlingguy/mac-dev-playbook/blob/7382e0241fe27cf17fabe31582af0269551e7004/.github/workflows/ci.yml#L71
     rerun = subprocess.run(
-        ["ansible-playbook", "--become-method=su", "--skip-tags", "notest", playbook],
+        [ansible_playbook_executable(), "--become-method=su", "--skip-tags", "notest", playbook],
         capture_output=True,
     )
     assert_equals(
@@ -61,8 +61,14 @@ def run_ansible(playbook):
 
 
 def print_ansible_version():
-    subprocess.run(["ansible-playbook", "--version"])
+    subprocess.run([ansible_playbook_executable(), "--version"])
 
+
+def ansible_playbook_executable():
+    in_path = shutil.which('ansible-playbook')
+    if in_path == None:
+        return '/home/user/.local/bin/ansible-playbook'
+    return in_path
 
 def print_os_version():
     os_release = pathlib.Path("/etc/os-release").read_text()
