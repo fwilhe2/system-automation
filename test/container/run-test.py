@@ -3,7 +3,7 @@ import os
 import re
 import sys
 import pathlib
-
+import shutil
 
 def assert_equals(first, second, message):
     if not first == second:
@@ -28,7 +28,14 @@ def run_group(fn, name, *args):
 def run_ansible(playbook):
     assert_equals(
         subprocess.run(
-            ["ansible-playbook", "--skip-tags", "notest", "-vv", playbook]
+            [
+                ansible_playbook_executable(),
+                "--become-method=su",
+                "--skip-tags",
+                "notest",
+                "-vv",
+                playbook,
+            ]
         ).returncode,
         0,
         f"Expected running playbook '{playbook}' to return exit code 0.",
@@ -36,7 +43,8 @@ def run_ansible(playbook):
     # Idempotence check: Run again and verify nothing fails or changes the second time
     # Idea via https://github.com/geerlingguy/mac-dev-playbook/blob/7382e0241fe27cf17fabe31582af0269551e7004/.github/workflows/ci.yml#L71
     rerun = subprocess.run(
-        ["ansible-playbook", "--skip-tags", "notest", playbook], capture_output=True
+        [ansible_playbook_executable(), "--become-method=su", "--skip-tags", "notest", playbook],
+        capture_output=True,
     )
     assert_equals(
         rerun.returncode,
@@ -52,6 +60,16 @@ def run_ansible(playbook):
     )
 
 
+def print_ansible_version():
+    subprocess.run([ansible_playbook_executable(), "--version"])
+
+
+def ansible_playbook_executable():
+    in_path = shutil.which('ansible-playbook')
+    if in_path == None:
+        return '/home/user/.local/bin/ansible-playbook'
+    return in_path
+
 def print_os_version():
     os_release = pathlib.Path("/etc/os-release").read_text()
     for item in os_release.split("\n"):
@@ -59,9 +77,10 @@ def print_os_version():
             print(f"Running on OS: {item.split('=')[1]}")
 
 
+print_ansible_version()
 print_os_version()
-run_group(run_ansible, "Running Playbook common", "/mnt/common.yml")
-run_group(run_ansible, "Running Playbook desktop", "/mnt/desktop.yml")
+run_group(run_ansible, "Running Playbook common", "/home/user/common.yml")
+run_group(run_ansible, "Running Playbook desktop", "/home/user/desktop.yml")
 
 # Assertions in set-up system follow here
 
