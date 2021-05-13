@@ -1,35 +1,33 @@
 ---
+- name: Upgrade all Packages
+  become: yes
+  become_user: root
+  dnf:
+    state: latest
+    name: "*"
 
-  - name: Upgrade all Packages
-    become: yes
-    become_user: root
-    dnf:
-      state: latest
-      name: "*"
-
-  - name: Install Basic Packages
-    become: yes
-    become_user: root
-    dnf:
-      state: latest
-      name:
-        - apg
-        - autojump
-        - autojump-zsh
-        - curl
-        - direnv
-        - git
-        - htop
-        - httpie
-        - jq
-        - make
-        - mc
-        - rdiff-backup
-        - the_silver_searcher
-        - tree
-        - unzip
-        - vim
-        - xz
-        - zsh
-    when: ansible_os_family == 'RedHat'
-
+- name: Install Basic Packages
+  become: yes
+  become_user: root
+  dnf:
+    state: latest
+    name:
+      - apg
+      - autojump
+      - autojump-zsh
+      - curl
+      - direnv
+      - git
+      - htop
+      - httpie
+      - jq
+      - make
+      - mc
+      - rdiff-backup
+      - the_silver_searcher
+      - tree
+      - unzip
+      - vim
+      - xz
+      - zsh
+  when: ansible_os_family == 'RedHat'

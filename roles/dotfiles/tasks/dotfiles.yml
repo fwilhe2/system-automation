@@ -1,64 +1,63 @@
 ---
+- name: Clone `oh-my-zsh` Repository
+  git:
+    repo: https://github.com/robbyrussell/oh-my-zsh.git
+    dest: ~/.oh-my-zsh
 
-  - name: Clone `oh-my-zsh` Repository
-    git:
-      repo: https://github.com/robbyrussell/oh-my-zsh.git
-      dest: ~/.oh-my-zsh
+- name: Clone `dotfiles` Repository
+  git:
+    repo: https://github.com/fwilhe2/dotfiles.git
+    dest: ~/.dotfiles
+  register: clone_dotfiles
 
-  - name: Clone `dotfiles` Repository
-    git:
-      repo: https://github.com/fwilhe2/dotfiles.git
-      dest: ~/.dotfiles
-    register: clone_dotfiles
+- name: Make `~/.config/Code/User` if not exists
+  file:
+    path: ~/.config/Code/User
+    state: directory
 
-  - name: Make `~/.config/Code/User` if not exists
-    file:
-      path: ~/.config/Code/User
-      state: directory
+- name: Symlink Dotfiles
+  shell: ~/.dotfiles/install
+  when: clone_dotfiles.changed
 
-  - name: Symlink Dotfiles
-    shell: ~/.dotfiles/install
-    when: clone_dotfiles.changed
+- name: Copy Package Manager Aliases File
+  copy:
+    src: files/dnf-aliases.txt
+    dest: ~/.dotfiles/aliases_package_manager
+  when: ansible_os_family == 'RedHat'
 
-  - name: Copy Package Manager Aliases File
-    copy:
-      src: files/dnf-aliases.txt
-      dest: ~/.dotfiles/aliases_package_manager
-    when: ansible_os_family == 'RedHat'
+- name: Copy Package Manager Aliases File
+  copy:
+    src: files/apt-aliases.txt
+    dest: ~/.dotfiles/aliases_package_manager
+  when: ansible_os_family == 'Debian'
 
-  - name: Copy Package Manager Aliases File
-    copy:
-      src: files/apt-aliases.txt
-      dest: ~/.dotfiles/aliases_package_manager
-    when: ansible_os_family == 'Debian'
+- name: Copy Package Manager Aliases File
+  copy:
+    src: files/pacman-aliases.txt
+    dest: ~/.dotfiles/aliases_package_manager
+  when: ansible_os_family == 'Archlinux'
 
-  - name: Copy Package Manager Aliases File
-    copy:
-      src: files/pacman-aliases.txt
-      dest: ~/.dotfiles/aliases_package_manager
-    when: ansible_os_family == 'Archlinux'
+- name: Copy Package Manager Aliases File
+  copy:
+    src: files/zypper-aliases.txt
+    dest: ~/.dotfiles/aliases_package_manager
+  when: ansible_os_family == 'Suse'
 
-  - name: Copy Package Manager Aliases File
-    copy:
-      src: files/zypper-aliases.txt
-      dest: ~/.dotfiles/aliases_package_manager
-    when: ansible_os_family == 'Suse'
+- name: Make Symlink for Package Manager Aliases File
+  file:
+    state: link
+    src: ~/.dotfiles/aliases_package_manager
+    dest: ~/.aliases_package_manager
 
-  - name: Make Symlink for Package Manager Aliases File
-    file:
-      state: link
-      src: ~/.dotfiles/aliases_package_manager
-      dest: ~/.aliases_package_manager
+- name: Make `~/.gitconfig.d` if not exists
+  file:
+    path: ~/.gitconfig.d
+    state: directory
 
-  - name: Make `~/.gitconfig.d` if not exists
-    file:
-      path: ~/.gitconfig.d
-      state: directory
-
-  # This file is not in the dotfiles, because it is different on private and work computers.
-  # I just copy the one with my private address, because I do not install work computers that often.
-  - name: Copy Git Configuration for Email Address if not exists
-    copy:
-      src: files/git-user-details.txt
-      dest: ~/.gitconfig.d/userdetails
-      force: no
+# This file is not in the dotfiles, because it is different on private and work computers.
+# I just copy the one with my private address, because I do not install work computers that often.
+- name: Copy Git Configuration for Email Address if not exists
+  copy:
+    src: files/git-user-details.txt
+    dest: ~/.gitconfig.d/userdetails
+    force: no
