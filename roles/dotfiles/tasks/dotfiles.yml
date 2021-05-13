@@ -14,6 +14,7 @@
   file:
     path: ~/.config/Code/User
     state: directory
+    mode: "750"
 
 - name: Symlink Dotfiles
   command: ~/.dotfiles/install
@@ -58,7 +59,7 @@
   file:
     path: ~/.gitconfig.d
     state: directory
-    mode: "640"
+    mode: "750"
 
 # This file is not in the dotfiles, because it is different on private and work computers.
 # I just copy the one with my private address, because I do not install work computers that often.
@@ -67,3 +68,4 @@
     src: files/git-user-details.txt
     dest: ~/.gitconfig.d/userdetails
     force: false
+    mode: "640"
