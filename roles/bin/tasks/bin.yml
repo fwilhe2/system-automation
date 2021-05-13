@@ -49,8 +49,3 @@
     dest: ~/.custom-path.sh
     src: custom-path.sh.j2
     mode: "750"
-
-- name: Make ~/.custom-path.sh executable
-  file:
-    dest: ~/.custom-path.sh
-    mode: "770"
