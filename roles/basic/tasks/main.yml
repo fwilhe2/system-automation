@@ -14,3 +14,10 @@
     path: /usr/bin/vim
   when: ansible_os_family == 'Debian'
   tags: basic
+
+- name: Configure user
+  become: true
+  ansible.builtin.user:
+    name: florian
+    shell: /usr/bin/zsh
+  tags: basic

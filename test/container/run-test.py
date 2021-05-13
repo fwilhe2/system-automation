@@ -5,10 +5,18 @@ import sys
 import pathlib
 import shutil
 
+
 def assert_equals(first, second, message):
     if not first == second:
         sys.exit(
             f"Assertion failed. '{first}' should equal '{second}', but did not. Message: {message}"
+        )
+
+
+def assert_true(val, message):
+    if val == False:
+        sys.exit(
+            f"Assertion failed. '{val}' should equal 'True', but did not. Message: {message}"
         )
 
 
@@ -43,15 +51,22 @@ def run_ansible(playbook):
     # Idempotence check: Run again and verify nothing fails or changes the second time
     # Idea via https://github.com/geerlingguy/mac-dev-playbook/blob/7382e0241fe27cf17fabe31582af0269551e7004/.github/workflows/ci.yml#L71
     rerun = subprocess.run(
-        [ansible_playbook_executable(), "--become-method=su", "--skip-tags", "notest", playbook],
+        [
+            ansible_playbook_executable(),
+            "--become-method=su",
+            "--skip-tags",
+            "notest",
+            playbook,
+        ],
         capture_output=True,
     )
+
+    rerun_stdout = rerun.stdout.decode("utf-8")
     assert_equals(
         rerun.returncode,
         0,
-        f"Expected running playbook '{playbook}' (second run) to return exit code 0.",
+        f"Expected running playbook '{playbook}' (second run) to return exit code 0.\n{rerun_stdout}",
     )
-    rerun_stdout = rerun.stdout.decode("utf-8")
     changed_match = re.fullmatch(".*changed=0.*failed=0.*", rerun_stdout, re.DOTALL)
     print(changed_match)
     assert_not_none(
@@ -65,10 +80,11 @@ def print_ansible_version():
 
 
 def ansible_playbook_executable():
-    in_path = shutil.which('ansible-playbook')
+    in_path = shutil.which("ansible-playbook")
     if in_path == None:
-        return '/home/user/.local/bin/ansible-playbook'
+        return "/home/user/.local/bin/ansible-playbook"
     return in_path
+
 
 def print_os_version():
     os_release = pathlib.Path("/etc/os-release").read_text()
@@ -111,5 +127,18 @@ def assert_system_properties():
                     f"Expected {script} to run with exit code 0.",
                 )
 
+    has_user = False
+    with open("/etc/passwd", "r") as passwd:
+        for line in passwd.readlines():
+            if line.startswith("florian"):
+                passwd_entry = line.split(":")
+                assert_equals(
+                    passwd_entry[6],
+                    "/usr/bin/zsh\n",
+                    f"Expected /usr/bin/zsh as a shell for user florian.\n{passwd}",
+                )
+                has_user = True
+        assert_true(has_user, f"Could not find expected user in:\n{passwd.readlines()}")
 
-run_group(assert_system_properties, "Assert Properties of installed System")
+
+run_group(assert_system_properties, "Assert Properties of Installed System")
