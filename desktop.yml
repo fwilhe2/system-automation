@@ -9,14 +9,21 @@
       become: yes
       dnf:
         state: latest
-        name: ["keepassxc", "libreoffice-langpack-de", "xclip"]
+        name:
+          - "firefox"
+          - "keepassxc"
+          - "libreoffice"
+          - "libreoffice-langpack-de"
+          - "xclip"
       when: ansible_os_family == 'RedHat'
 
     - name: Install Basic Desktop Packages
       become: yes
       apt:
         state: latest
-        name: ["keepassxc", "xclip"]
+        name:
+          - "keepassxc"
+          - "xclip"
       when: ansible_os_family == 'Debian'
 
     - name: Install VS Codium Extensions
@@ -31,6 +38,7 @@
         - ms-python.python
         - redhat.java
         - redhat.vscode-xml
+        - redhat.vscode-yaml
         - rust-lang.rust
         - streetsidesoftware.code-spell-checker
       tags:
