@@ -1,4 +1,3 @@
 ---
-
 - include: bin.yml
   tags: bin

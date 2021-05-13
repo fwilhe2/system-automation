@@ -1,5 +1,4 @@
 ---
-
 - include: fedora.yml
   when: ansible_os_family == 'RedHat'
   tags: basic
@@ -15,4 +14,3 @@
     path: /usr/bin/vim
   when: ansible_os_family == 'Debian'
   tags: basic
-

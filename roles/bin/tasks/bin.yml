@@ -1,56 +1,55 @@
 ---
+- name: Ensure `~/software` directory exists
+  file:
+    path: ~/software
+    state: directory
+    mode: "755"
 
-  - name: Ensure `~/software` directory exists
-    file:
-      path: ~/software
-      state: directory
-      mode: "755"
+- name: Clone `fwilhe/bin` Repository
+  git:
+    repo: https://github.com/fwilhe2/bin.git
+    dest: ~/software/fwilhe-bin
 
-  - name: Clone `fwilhe/bin` Repository
-    git:
-      repo: https://github.com/fwilhe2/bin.git
-      dest: ~/software/fwilhe-bin
+- name: Install Development Tools
+  unarchive:
+    src: "{{ item }}"
+    dest: ~/software/
+    remote_src: yes
+  with_items:
+    - https://github.com/SAP/SapMachine/releases/download/sapmachine-{{ JDK_VERSION }}/sapmachine-jdk-{{ JDK_VERSION }}_linux-x64_bin.tar.gz
+    - https://mirror.netcologne.de/apache.org/maven/maven-3/{{ MAVEN_VERSION }}/binaries/apache-maven-{{ MAVEN_VERSION }}-bin.tar.gz
+    - https://downloads.gradle-dn.com/distributions/gradle-{{ GRADLE_VERSION }}-bin.zip
+    - https://nodejs.org/dist/v{{ NODE_VERSION }}/node-v{{ NODE_VERSION }}-linux-x64.tar.xz
+    - https://golang.org/dl/go{{ GO_VERSION }}.linux-amd64.tar.gz
+    - https://ftp.halifax.rwth-aachen.de/apache//ant/binaries/apache-ant-{{ ANT_VERSION }}-bin.tar.xz
+    - https://github.com/cli/cli/releases/download/v{{ GH_VERSION }}/gh_{{ GH_VERSION }}_linux_amd64.tar.gz
+    - https://github.com/JetBrains/kotlin/releases/download/v{{ KOTLIN_VERSION }}/kotlin-compiler-{{ KOTLIN_VERSION }}.zip
+    - https://github.com/JetBrains/kotlin/releases/download/v{{ KOTLIN_VERSION }}/kotlin-native-linux-{{ KOTLIN_VERSION }}.tar.gz
 
-  - name: Install Development Tools
-    unarchive:
-      src: "{{ item }}"
-      dest: ~/software/
-      remote_src: yes
-    with_items:
-      - https://github.com/SAP/SapMachine/releases/download/sapmachine-{{ JDK_VERSION }}/sapmachine-jdk-{{ JDK_VERSION }}_linux-x64_bin.tar.gz
-      - https://mirror.netcologne.de/apache.org/maven/maven-3/{{ MAVEN_VERSION }}/binaries/apache-maven-{{ MAVEN_VERSION }}-bin.tar.gz
-      - https://downloads.gradle-dn.com/distributions/gradle-{{ GRADLE_VERSION }}-bin.zip
-      - https://nodejs.org/dist/v{{ NODE_VERSION }}/node-v{{ NODE_VERSION }}-linux-x64.tar.xz
-      - https://golang.org/dl/go{{ GO_VERSION }}.linux-amd64.tar.gz
-      - https://ftp.halifax.rwth-aachen.de/apache//ant/binaries/apache-ant-{{ ANT_VERSION }}-bin.tar.xz
-      - https://github.com/cli/cli/releases/download/v{{ GH_VERSION }}/gh_{{ GH_VERSION }}_linux_amd64.tar.gz
-      - https://github.com/JetBrains/kotlin/releases/download/v{{ KOTLIN_VERSION }}/kotlin-compiler-{{ KOTLIN_VERSION }}.zip
-      - https://github.com/JetBrains/kotlin/releases/download/v{{ KOTLIN_VERSION }}/kotlin-native-linux-{{ KOTLIN_VERSION }}.tar.gz
+- name: Install Rust
+  command: bash -c "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
+  changed_when: False
 
-  - name: Install Rust
-    command: bash -c "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
-    changed_when: False
+- name: Ensure `~/bin` directory exists
+  file:
+    path: ~/bin
+    state: directory
+    mode: "755"
 
-  - name: Ensure `~/bin` directory exists
-    file:
-      path: ~/bin
-      state: directory
-      mode: "755"
+- name: Install Cli Tools
+  unarchive:
+    src: "{{ item }}"
+    dest: ~/bin/
+    remote_src: yes
+  with_items:
+    - https://github.com/r-darwish/topgrade/releases/download/{{ TOPGRADE_VERSION }}/topgrade-{{ TOPGRADE_VERSION }}-x86_64-unknown-linux-gnu.tar.gz
 
-  - name: Install Cli Tools
-    unarchive:
-      src: "{{ item }}"
-      dest: ~/bin/
-      remote_src: yes
-    with_items:
-      - https://github.com/r-darwish/topgrade/releases/download/{{ TOPGRADE_VERSION }}/topgrade-{{ TOPGRADE_VERSION }}-x86_64-unknown-linux-gnu.tar.gz
+- name: Update Path
+  template:
+    dest: ~/.custom-path.sh
+    src: custom-path.sh.j2
 
-  - name: Update Path
-    template:
-      dest: ~/.custom-path.sh
-      src: custom-path.sh.j2
-
-  - name: Make ~/.custom-path.sh executable
-    file:
-      dest: ~/.custom-path.sh
-      mode: "770"
+- name: Make ~/.custom-path.sh executable
+  file:
+    dest: ~/.custom-path.sh
+    mode: "770"

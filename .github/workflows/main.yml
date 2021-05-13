@@ -10,11 +10,11 @@ jobs:
       matrix:
         version: [latest, rolling, devel]
     steps:
-    - uses: actions/checkout@v1
-    - name: Build Test Container Ubuntu ${{ matrix.version }}
-      run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-ubuntu${{ matrix.version }} --file test/container/Containerfile.ubuntu .
-    - name: Run Test Ubuntu ${{ matrix.version }}
-      run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-ubuntu${{ matrix.version }}
+      - uses: actions/checkout@v1
+      - name: Build Test Container Ubuntu ${{ matrix.version }}
+        run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-ubuntu${{ matrix.version }} --file test/container/Containerfile.ubuntu .
+      - name: Run Test Ubuntu ${{ matrix.version }}
+        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-ubuntu${{ matrix.version }}
 
   run-in-container-yum:
     runs-on: ubuntu-20.04
@@ -23,15 +23,22 @@ jobs:
       matrix:
         version: [latest, rawhide]
     steps:
-    - uses: actions/checkout@v1
-    - name: Build Test Container Fedora ${{ matrix.version }}
-      run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora${{ matrix.version }} --file test/container/Containerfile.fedora .
-    - name: Run Test Fedora ${{ matrix.version }}
-      run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-fedora${{ matrix.version }}
+      - uses: actions/checkout@v1
+      - name: Build Test Container Fedora ${{ matrix.version }}
+        run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora${{ matrix.version }} --file test/container/Containerfile.fedora .
+      - name: Run Test Fedora ${{ matrix.version }}
+        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-fedora${{ matrix.version }}
 
   syntax-check:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v1
-    - run: ansible-playbook -vvvv --inventory inventory --syntax-check desktop.yml
-    - run: ansible-playbook -vvvv --inventory inventory --syntax-check desktop.yml
+      - uses: actions/checkout@v1
+      - run: ansible-playbook -vvvv --inventory inventory --syntax-check desktop.yml
+      - run: ansible-playbook -vvvv --inventory inventory --syntax-check desktop.yml
+
+  formatting:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v1
+      - run: npx prettier --write "./**/*.yml"
+      - run: git diff --name-only --exit-code
