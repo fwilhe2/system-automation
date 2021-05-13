@@ -14,7 +14,7 @@
   unarchive:
     src: "{{ item }}"
     dest: ~/software/
-    remote_src: yes
+    remote_src: true
   with_items:
     - https://github.com/SAP/SapMachine/releases/download/sapmachine-{{ JDK_VERSION }}/sapmachine-jdk-{{ JDK_VERSION }}_linux-x64_bin.tar.gz
     - https://mirror.netcologne.de/apache.org/maven/maven-3/{{ MAVEN_VERSION }}/binaries/apache-maven-{{ MAVEN_VERSION }}-bin.tar.gz
@@ -28,7 +28,7 @@
 
 - name: Install Rust
   command: bash -c "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
-  changed_when: False
+  changed_when: false
 
 - name: Ensure `~/bin` directory exists
   file:
@@ -40,7 +40,7 @@
   unarchive:
     src: "{{ item }}"
     dest: ~/bin/
-    remote_src: yes
+    remote_src: true
   with_items:
     - https://github.com/r-darwish/topgrade/releases/download/{{ TOPGRADE_VERSION }}/topgrade-{{ TOPGRADE_VERSION }}-x86_64-unknown-linux-gnu.tar.gz
 
@@ -48,6 +48,7 @@
   template:
     dest: ~/.custom-path.sh
     src: custom-path.sh.j2
+    mode: "750"
 
 - name: Make ~/.custom-path.sh executable
   file:
