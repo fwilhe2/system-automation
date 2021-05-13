@@ -10,7 +10,7 @@ jobs:
       matrix:
         version: [latest, rolling, devel]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Build Test Container Ubuntu ${{ matrix.version }}
         run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-ubuntu${{ matrix.version }} --file test/container/Containerfile.ubuntu .
       - name: Run Test Ubuntu ${{ matrix.version }}
@@ -23,7 +23,7 @@ jobs:
       matrix:
         version: [latest, rawhide]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Build Test Container Fedora ${{ matrix.version }}
         run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora${{ matrix.version }} --file test/container/Containerfile.fedora .
       - name: Run Test Fedora ${{ matrix.version }}
@@ -32,13 +32,20 @@ jobs:
   syntax-check:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - run: ansible-playbook -vvvv --inventory inventory --syntax-check desktop.yml
       - run: ansible-playbook -vvvv --inventory inventory --syntax-check desktop.yml
 
   formatting:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - run: npx prettier --write "./**/*.yml"
       - run: git diff --name-only --exit-code
+
+  lint:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - run: sudo pip3 install "ansible-lint[community,yamllint]"
+      - run: ansible-lint -vv -x git-latest,no-handler -p common.yml desktop.yml roles

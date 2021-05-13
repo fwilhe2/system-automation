@@ -2,13 +2,14 @@
 - hosts: all
 
   roles:
-    - { role: greenleader.codium, become: yes }
+    - role: greenleader.codium
+      become: true
 
   tasks:
     - name: Install Basic Desktop Packages
-      become: yes
+      become: true
       dnf:
-        state: latest
+        state: present
         name:
           - "firefox"
           - "keepassxc"
@@ -18,9 +19,9 @@
       when: ansible_os_family == 'RedHat'
 
     - name: Install Basic Desktop Packages
-      become: yes
+      become: true
       apt:
-        state: latest
+        state: present
         name:
           - "keepassxc"
           - "xclip"

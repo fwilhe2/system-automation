@@ -8,7 +8,7 @@
   tags: basic
 
 - name: Set vim as default editor
-  become: yes
+  become: true
   alternatives:
     name: editor
     path: /usr/bin/vim

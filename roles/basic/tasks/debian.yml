@@ -1,16 +1,9 @@
 ---
-- name: Upgrade all Packages
-  become: yes
-  become_user: root
-  apt:
-    upgrade: dist
-  when: ansible_os_family == 'Debian'
-
 - name: Install Basic Packages
-  become: yes
+  become: true
   become_user: root
   apt:
-    state: latest
+    state: present
     name:
       - apg
       - asciidoctor

@@ -1,16 +1,9 @@
 ---
-- name: Upgrade all Packages
-  become: yes
-  become_user: root
-  dnf:
-    state: latest
-    name: "*"
-
 - name: Install Basic Packages
-  become: yes
+  become: true
   become_user: root
   dnf:
-    state: latest
+    state: present
     name:
       - apg
       - autojump

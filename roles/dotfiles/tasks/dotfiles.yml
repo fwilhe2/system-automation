@@ -14,33 +14,38 @@
   file:
     path: ~/.config/Code/User
     state: directory
+    mode: "750"
 
 - name: Symlink Dotfiles
-  shell: ~/.dotfiles/install
+  command: ~/.dotfiles/install
   when: clone_dotfiles.changed
 
 - name: Copy Package Manager Aliases File
   copy:
     src: files/dnf-aliases.txt
     dest: ~/.dotfiles/aliases_package_manager
+    mode: "640"
   when: ansible_os_family == 'RedHat'
 
 - name: Copy Package Manager Aliases File
   copy:
     src: files/apt-aliases.txt
     dest: ~/.dotfiles/aliases_package_manager
+    mode: "640"
   when: ansible_os_family == 'Debian'
 
 - name: Copy Package Manager Aliases File
   copy:
     src: files/pacman-aliases.txt
     dest: ~/.dotfiles/aliases_package_manager
+    mode: "640"
   when: ansible_os_family == 'Archlinux'
 
 - name: Copy Package Manager Aliases File
   copy:
     src: files/zypper-aliases.txt
     dest: ~/.dotfiles/aliases_package_manager
+    mode: "640"
   when: ansible_os_family == 'Suse'
 
 - name: Make Symlink for Package Manager Aliases File
@@ -48,11 +53,13 @@
     state: link
     src: ~/.dotfiles/aliases_package_manager
     dest: ~/.aliases_package_manager
+    mode: "640"
 
 - name: Make `~/.gitconfig.d` if not exists
   file:
     path: ~/.gitconfig.d
     state: directory
+    mode: "750"
 
 # This file is not in the dotfiles, because it is different on private and work computers.
 # I just copy the one with my private address, because I do not install work computers that often.
@@ -60,4 +67,5 @@
   copy:
     src: files/git-user-details.txt
     dest: ~/.gitconfig.d/userdetails
-    force: no
+    force: false
+    mode: "640"

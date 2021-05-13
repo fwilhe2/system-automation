@@ -1,9 +1,9 @@
 ---
 - name: Install C Development Tools and Libraries
-  become: yes
+  become: true
   become_user: root
   dnf:
-    state: latest
+    state: present
     name:
       - "@C Development Tools and Libraries"
       - cmake

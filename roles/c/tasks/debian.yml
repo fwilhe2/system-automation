@@ -1,9 +1,9 @@
 ---
 - name: Install Development Packages
-  become: yes
+  become: true
   become_user: root
   apt:
-    state: latest
+    state: present
     name:
       - build-essential
       - cmake

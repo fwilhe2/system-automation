@@ -3,16 +3,16 @@
   file:
     path: ~/code
     state: directory
-    mode: "755"
+    mode: "750"
 
 - name: Create `~/temp` Directory
   file:
     path: ~/temp
     state: directory
-    mode: "755"
+    mode: "750"
 
 - name: Create `~/no_backup` Directory
   file:
     path: ~/no_backup
     state: directory
-    mode: "755"
+    mode: "750"
