@@ -16,7 +16,7 @@
   tags: basic
 
 - name: Configure user
-  become: yes
+  become: true
   ansible.builtin.user:
     name: florian
     shell: /usr/bin/zsh
