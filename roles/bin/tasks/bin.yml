@@ -3,7 +3,7 @@
   file:
     path: ~/software
     state: directory
-    mode: "755"
+    mode: "750"
 
 - name: Clone `fwilhe/bin` Repository
   git:
@@ -34,7 +34,7 @@
   file:
     path: ~/bin
     state: directory
-    mode: "755"
+    mode: "750"
 
 - name: Install Cli Tools
   unarchive:

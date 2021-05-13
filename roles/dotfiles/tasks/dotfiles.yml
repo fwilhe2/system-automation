@@ -16,7 +16,7 @@
     state: directory
 
 - name: Symlink Dotfiles
-  shell: ~/.dotfiles/install
+  command: ~/.dotfiles/install
   when: clone_dotfiles.changed
 
 - name: Copy Package Manager Aliases File
