@@ -48,4 +48,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: sudo pip3 install "ansible-lint[community,yamllint]"
-      - run: ansible-lint -x git-latest,no-handler -p common.yml desktop.yml roles
+      - run: ansible-lint -vv -x git-latest,no-handler -p common.yml desktop.yml roles
