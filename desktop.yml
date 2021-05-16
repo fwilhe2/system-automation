@@ -34,6 +34,7 @@
       with_items:
         - fwcd.kotlin
         - golang.go
+        - humao.rest-client
         - mathiasfrohlich.Kotlin
         - ms-azuretools.vscode-docker
         - ms-python.python
