@@ -47,5 +47,5 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - run: sudo pip3 install "ansible-lint[community,yamllint]"
+      - run: sudo pip3 install ansible "ansible-lint[community,yamllint]"
       - run: ansible-lint -vv -x git-latest,no-handler -p common.yml desktop.yml roles
