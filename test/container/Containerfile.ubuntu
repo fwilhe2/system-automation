@@ -27,6 +27,6 @@ COPY . /home/user
 
 USER user
 
-RUN python3 -m pip install --user ansible
+RUN python3 -m pip install --user ansible==4.0.0
 
 ENTRYPOINT ["python3", "/home/user/test/container/run-test.py"]
