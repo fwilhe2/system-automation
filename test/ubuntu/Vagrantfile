@@ -1,17 +1,10 @@
 Vagrant.configure(2) do |config|
+  config.vm.box = "generic/ubuntu2010"
 
-  vm_name = 'system-automation-ubuntu'
-
-  config.vm.box = "ubuntu/cosmic64"
-  config.vm.hostname = vm_name
-
-  config.vm.provider 'virtualbox' do |provider|
-    provider.memory = 1024
+  config.vm.provider 'libvirt' do |provider|
+    provider.memory = 2048
     provider.cpus = 2
-    provider.name = vm_name
   end
-
-  config.vm.provision "shell", inline: "apt-get install -y python2; ln -fs /usr/bin/python2.7 /usr/bin/python"
 
   config.vm.provision "ansible" do |ansible|
       ansible.playbook = "../../common.yml"
