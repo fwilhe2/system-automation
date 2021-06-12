@@ -1,7 +1,4 @@
 Vagrant.configure(2) do |config|
-
-  vm_name = 'system-automation-fedora'
-
   config.vm.box = "f34-cloud-libvirt"
   config.vm.box_url = "https://mirror.23media.com/fedora/linux/releases/34/Cloud/x86_64/images/Fedora-Cloud-Base-Vagrant-34-1.2.x86_64.vagrant-libvirt.box"
 
@@ -10,9 +7,7 @@ Vagrant.configure(2) do |config|
     provider.cpus = 2
   end
 
-  # config.vm.provision "shell", inline: "sudo dnf upgrade -y"
   config.vm.provision "shell", inline: "sudo dnf -y install python3-dnf python3-libselinux"
-
   config.vm.provision "ansible" do |ansible|
       ansible.playbook = "../../common.yml"
       ansible.raw_arguments = [
