@@ -64,6 +64,8 @@ ansible-playbook --ask-become-pass --inventory inventory desktop.yml
 
 == Testing
 
+=== Containerfile
+
 Containerfiles are available for testing.
 They are run automatically via the CI workflow.
 
@@ -79,6 +81,16 @@ docker run --tty --volume $PWD:/mnt system-automation-test-ubuntu-latest
 ----
 docker build --build-arg=VERSION=latest -t system-automation-test-fedora-latest --file test/container/Containerfile.fedora .
 docker run --tty --volume $PWD:/mnt system-automation-test-fedora-latest
+----
+
+=== Vagrantfile
+
+Vagrantfiles with provider `libvirt` are available for testing.
+
+.Change into any of the `Vagrantfile` directories and run
+----
+export VAGRANT_DEFAULT_PROVIDER=libvirt
+vagrant up
 ----
 
 == License
