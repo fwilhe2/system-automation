@@ -87,6 +87,11 @@ docker run --tty --volume $PWD:/mnt system-automation-test-fedora-latest
 
 Vagrantfiles with provider `libvirt` are available for testing.
 
+.Setup on Fedora (on the host)
+----
+sudo dnf install libvirt vagrant vagrant-libvirt
+----
+
 .Change into any of the `Vagrantfile` directories and run
 ----
 export VAGRANT_DEFAULT_PROVIDER=libvirt
