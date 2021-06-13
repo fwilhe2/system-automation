@@ -4,6 +4,6 @@
   become_user: root
   apt:
     state: present
-    name:
-      - build-essential
-      - cmake
+    name: "{{ item.name | default(item) }}"
+  loop: "{{ system_development_packages[ansible_os_family] }}"
+  when: ansible_os_family == 'Debian'
