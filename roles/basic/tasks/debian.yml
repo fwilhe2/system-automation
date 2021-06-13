@@ -5,5 +5,5 @@
   apt:
     state: present
     name: "{{ item.name | default(item) }}"
-  loop: "{{ basic_packages['Debian'] }}"
+  loop: "{{ basic_packages[{{ ansible_os_family }}] }}"
   when: ansible_os_family == 'Debian'
