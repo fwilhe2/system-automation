@@ -4,23 +4,6 @@
   become_user: root
   dnf:
     state: present
-    name:
-      - apg
-      - autojump
-      - autojump-zsh
-      - curl
-      - direnv
-      - git
-      - htop
-      - httpie
-      - jq
-      - make
-      - mc
-      - rdiff-backup
-      - the_silver_searcher
-      - tree
-      - unzip
-      - vim
-      - xz
-      - zsh
+    name: "{{ item.name | default(item) }}"
+  loop: "{{ basic_packages.{{ ansible_os_family }} }}"
   when: ansible_os_family == 'RedHat'

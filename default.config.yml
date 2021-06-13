@@ -1,0 +1,45 @@
+basic_packages:
+  Debian:
+    - apg
+    - asciidoctor
+    - autojump
+    - backblaze-b2
+    - build-essential
+    - curl
+    - direnv
+    - git
+    - htop
+    - httpie
+    - iotop
+    - jq
+    - make
+    - mc
+    - pandoc
+    - python-is-python3
+    - python3
+    - rdiff-backup
+    - silversearcher-ag
+    - texlive-latex-recommended
+    - tree
+    - unzip
+    - vim
+    - zsh
+  RedHat:
+    - apg
+    - autojump
+    - autojump-zsh
+    - curl
+    - direnv
+    - git
+    - htop
+    - httpie
+    - jq
+    - make
+    - mc
+    - rdiff-backup
+    - the_silver_searcher
+    - tree
+    - unzip
+    - vim
+    - xz
+    - zsh

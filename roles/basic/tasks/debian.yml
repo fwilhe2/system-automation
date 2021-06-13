@@ -4,29 +4,6 @@
   become_user: root
   apt:
     state: present
-    name:
-      - apg
-      - asciidoctor
-      - autojump
-      - backblaze-b2
-      - build-essential
-      - curl
-      - direnv
-      - git
-      - htop
-      - httpie
-      - iotop
-      - jq
-      - make
-      - mc
-      - pandoc
-      - python-is-python3
-      - python3
-      - rdiff-backup
-      - silversearcher-ag
-      - texlive-latex-recommended
-      - tree
-      - unzip
-      - vim
-      - zsh
+    name: "{{ item.name | default(item) }}"
+  loop: "{{ basic_packages.{{ ansible_os_family }} }}"
   when: ansible_os_family == 'Debian'
