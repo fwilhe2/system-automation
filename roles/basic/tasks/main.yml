@@ -1,11 +1,11 @@
 ---
-- include: fedora.yml
-  when: ansible_os_family == 'RedHat'
-  tags: basic
-
-- include: debian.yml
-  when: ansible_os_family == 'Debian'
-  tags: basic
+- name: Install Basic Packages
+  become: true
+  become_user: root
+  package:
+    state: present
+    name: "{{ item.name | default(item) }}"
+  loop: "{{ basic_packages[ansible_os_family] }}"
 
 - name: Set vim as default editor
   become: true

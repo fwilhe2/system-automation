@@ -1,9 +1,0 @@
----
-- name: Install Basic Packages
-  become: true
-  become_user: root
-  dnf:
-    state: present
-    name: "{{ item.name | default(item) }}"
-  loop: "{{ basic_packages[ansible_os_family] }}"
-  when: ansible_os_family == 'RedHat'
