@@ -1,9 +1,0 @@
----
-- name: Install Development Packages
-  become: true
-  become_user: root
-  apt:
-    state: present
-    name: "{{ item.name | default(item) }}"
-  loop: "{{ system_development_packages[ansible_os_family] }}"
-  when: ansible_os_family == 'Debian'

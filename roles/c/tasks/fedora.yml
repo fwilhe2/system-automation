@@ -1,9 +1,0 @@
----
-- name: Install C Development Tools and Libraries
-  become: true
-  become_user: root
-  dnf:
-    state: present
-    name: "{{ item.name | default(item) }}"
-  loop: "{{ system_development_packages[ansible_os_family] }}"
-  when: ansible_os_family == 'RedHat'

@@ -1,8 +1,9 @@
 ---
-- include: fedora.yml
-  when: ansible_os_family == 'RedHat'
-  tags: basic
-
-- include: debian.yml
-  when: ansible_os_family == 'Debian'
-  tags: basic
+- name: Install System Development Packages
+  become: true
+  become_user: root
+  package:
+    state: present
+    name: "{{ item.name | default(item) }}"
+  loop: "{{ system_development_packages[ansible_os_family] }}"
+  tags: system_development

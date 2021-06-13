@@ -6,6 +6,7 @@
     state: present
     name: "{{ item.name | default(item) }}"
   loop: "{{ basic_packages[ansible_os_family] }}"
+  tags: basic
 
 - name: Set vim as default editor
   become: true
