@@ -18,6 +18,6 @@
 - name: Configure user
   become: true
   ansible.builtin.user:
-    name: florian
+    name: "{{ username }}"
     shell: /usr/bin/zsh
   tags: basic
