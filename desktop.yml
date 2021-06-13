@@ -21,4 +21,4 @@
       codium-extensions:
         name: "{{ item.name | default(item) }}"
         state: present
-      loop: "{{ codium_packages }}"
+      loop: "{{ codium_extensions }}"
