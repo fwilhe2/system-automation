@@ -44,6 +44,17 @@ basic_packages:
     - xz
     - zsh
 
+desktop_packages:
+  Debian:
+          - "keepassxc"
+          - "xclip"
+  RedHat:
+          - "firefox"
+          - "keepassxc"
+          - "libreoffice"
+          - "libreoffice-langpack-de"
+          - "xclip"
+
 JDK_VERSION: "11.0.11"
 MAVEN_VERSION: "3.8.1"
 GRADLE_VERSION: "7.0"
