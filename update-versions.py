@@ -9,7 +9,7 @@ import urllib.parse
 repos = {
     # "SAP/SapMachine": "JDK_VERSION",
     # "apache/maven": "MAVEN_VERSION",
-    "gradle/gradle": "GRADLE_VERSION",
+    # "gradle/gradle": "GRADLE_VERSION",
     # "apache/ant": "ANT_VERSION",
     "nodejs/node": "NODE_VERSION",
     # "golang/go": "GO_VERSION",
@@ -36,5 +36,6 @@ with open('./versions.yml', "r") as f:
 
 versions.update(current_versions)
 print(versions)
+
 with open('./versions.yml', "w") as f:
-    yaml.safe_dump(versions, f)
+    yaml.safe_dump(versions, f, default_flow_style=False)
