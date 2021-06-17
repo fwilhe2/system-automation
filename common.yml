@@ -1,6 +1,10 @@
 ---
 - hosts: all
 
+  vars_files:
+    - versions.yml
+    - default.config.yml
+
   roles:
     - basic
     - dotfiles

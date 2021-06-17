@@ -1,45 +1,24 @@
 ---
 - hosts: all
 
+  vars_files:
+    - default.config.yml
+
   roles:
     - role: greenleader.codium
       become: true
 
   tasks:
-    - name: Install Basic Desktop Packages
+    - name: Install Desktop Packages
       become: true
-      dnf:
+      become_user: root
+      package:
         state: present
-        name:
-          - "firefox"
-          - "keepassxc"
-          - "libreoffice"
-          - "libreoffice-langpack-de"
-          - "xclip"
-      when: ansible_os_family == 'RedHat'
-
-    - name: Install Basic Desktop Packages
-      become: true
-      apt:
-        state: present
-        name:
-          - "keepassxc"
-          - "xclip"
-      when: ansible_os_family == 'Debian'
+        name: "{{ item }}"
+      loop: "{{ desktop_packages[ansible_os_family] }}"
 
     - name: Install VS Codium Extensions
       codium-extensions:
         name: "{{ item }}"
         state: present
-      with_items:
-        - fwcd.kotlin
-        - golang.go
-        - humao.rest-client
-        - mathiasfrohlich.Kotlin
-        - ms-azuretools.vscode-docker
-        - ms-python.python
-        - redhat.java
-        - redhat.vscode-xml
-        - redhat.vscode-yaml
-        - rust-lang.rust
-        - streetsidesoftware.code-spell-checker
+      loop: "{{ codium_extensions }}"

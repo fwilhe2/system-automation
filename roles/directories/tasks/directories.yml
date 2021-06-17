@@ -1,18 +1,7 @@
 ---
-- name: Create `~/code` Directory
+- name: Create Directories
   file:
-    path: ~/code
+    path: "{{ item }}"
     state: directory
     mode: "750"
-
-- name: Create `~/temp` Directory
-  file:
-    path: ~/temp
-    state: directory
-    mode: "750"
-
-- name: Create `~/no_backup` Directory
-  file:
-    path: ~/no_backup
-    state: directory
-    mode: "750"
+  loop: "{{ directories }}"
