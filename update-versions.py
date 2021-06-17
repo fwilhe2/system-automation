@@ -29,3 +29,12 @@ for r in repos:
     current_versions[repos.get(r)] = tag_name.removeprefix('v')
 
 print(current_versions)
+
+versions = {}
+with open('./versions.yml', "r") as f:
+    versions = yaml.safe_load(f)
+
+versions.update(current_versions)
+print(versions)
+with open('./versions.yml', "w") as f:
+    yaml.safe_dump(versions, f)
