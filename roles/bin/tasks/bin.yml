@@ -12,7 +12,7 @@
 
 - name: Install Development Tools
   unarchive:
-    src: "{{ item.name | default(item) }}"
+    src: "{{ item }}"
     dest: ~/software/
     remote_src: true
   loop: "{{ development_tools['linux'] }}"

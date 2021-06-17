@@ -4,6 +4,6 @@
   become_user: root
   package:
     state: present
-    name: "{{ item.name | default(item) }}"
+    name: "{{ item }}"
   loop: "{{ system_development_packages[ansible_os_family] }}"
   tags: system_development
