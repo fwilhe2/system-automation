@@ -3,6 +3,7 @@
 
   vars_files:
     - default.config.yml
+    - config.yml
 
   roles:
     - role: greenleader.codium
