@@ -24,10 +24,12 @@ RUN echo "[local]\nlocalhost ansible_connection=local ansible_become_password=to
 
 RUN echo 'root:toor123' | chpasswd
 
-COPY . /home/user
-
 USER user
 
 RUN python3 -m pip install --user ansible
+
+COPY . /home/user
+
+WORKDIR /home/user
 
 ENTRYPOINT ["python3", "/home/user/test/container/run-test.py"]

@@ -1,2 +1,0 @@
-podman build --build-arg=VERSION=latest -t system-automation-ubuntu --file test/container/Containerfile.ubuntu .
-podman run -it --rm --entrypoint=bash --volume $PWD:/mnt --privileged system-automation-ubuntu
