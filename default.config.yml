@@ -22,7 +22,7 @@ basic_packages:
     - curl
     - git
     - htop
-    - httpie
+    # - httpie
     - jq
     - make
     - mc
