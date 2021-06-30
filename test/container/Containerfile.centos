@@ -1,4 +1,4 @@
-FROM tgagor/centos-stream:latest
+FROM quay.io/centos/centos:stream8
 
 ENV TERM=xterm
 
