@@ -33,6 +33,12 @@ basic_packages:
     - xz
     - zsh
 
+server_packages:
+  Debian:
+    - apache2
+  RedHat:
+    - httpd
+
 desktop_packages:
   Debian:
     - "keepassxc"

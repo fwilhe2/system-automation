@@ -1,0 +1,14 @@
+---
+- hosts: all
+
+  vars_files:
+    - default.config.yml
+
+  tasks:
+    - name: Install Server Packages
+      become: true
+      become_user: root
+      package:
+        state: present
+        name: "{{ item }}"
+      loop: "{{ server_packages[ansible_os_family] }}"
