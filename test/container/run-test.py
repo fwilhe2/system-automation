@@ -35,16 +35,14 @@ def run_group(fn, name, *args):
 
 def run_ansible(playbook):
     assert_equals(
-        subprocess.run(
-            [
-                ansible_playbook_executable(),
-                "--become-method=su",
-                "--skip-tags",
-                "notest",
-                "-vv",
-                playbook,
-            ]
-        ).returncode,
+        subprocess.run([
+            ansible_playbook_executable(),
+            "--become-method=su",
+            "--skip-tags",
+            "notest",
+            "-vv",
+            playbook,
+        ]).returncode,
         0,
         f"Expected running playbook '{playbook}' to return exit code 0.",
     )
@@ -67,7 +65,8 @@ def run_ansible(playbook):
         0,
         f"Expected running playbook '{playbook}' (second run) to return exit code 0.\n{rerun_stdout}",
     )
-    changed_match = re.fullmatch(".*changed=0.*failed=0.*", rerun_stdout, re.DOTALL)
+    changed_match = re.fullmatch(".*changed=0.*failed=0.*", rerun_stdout,
+                                 re.DOTALL)
     print(changed_match)
     assert_not_none(
         changed_match,
@@ -138,7 +137,8 @@ def assert_system_properties():
                     f"Expected /usr/bin/zsh as a shell for user florian.\n{passwd}",
                 )
                 has_user = True
-        assert_true(has_user, f"Could not find expected user in:\n{passwd.readlines()}")
+        assert_true(has_user,
+                    f"Could not find expected user in:\n{passwd.readlines()}")
 
 
 run_group(assert_system_properties, "Assert Properties of Installed System")

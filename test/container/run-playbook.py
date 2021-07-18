@@ -18,13 +18,11 @@ def playbook_path():
     return "/home/user/common.yml"
 
 
-subprocess.run(
-    [
-        ansible_playbook_executable(),
-        "--become-method=su",
-        # "--skip-tags",
-        # "notest",
-        "-vv",
-        playbook_path(),
-    ]
-)
+subprocess.run([
+    ansible_playbook_executable(),
+    "--become-method=su",
+    # "--skip-tags",
+    # "notest",
+    "-vv",
+    playbook_path(),
+])
