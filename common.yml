@@ -6,8 +6,8 @@
     - [default.config.yml, config.yml]
 
   roles:
-    # - basic
-    # - dotfiles
-    # - bin
-    # - directories
-    - 'virtualization'
+    - basic
+    - dotfiles
+    - bin
+    - directories
+    - virtualization
