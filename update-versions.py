@@ -10,7 +10,6 @@ repos = {
     # "SAP/SapMachine": "JDK_VERSION",
     # "apache/maven": "MAVEN_VERSION",
     # "gradle/gradle": "GRADLE_VERSION",
-    # "apache/ant": "ANT_VERSION",
     "nodejs/node": "NODE_VERSION",
     # "golang/go": "GO_VERSION",
     "cli/cli": "GH_VERSION",

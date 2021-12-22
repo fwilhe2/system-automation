@@ -20,9 +20,8 @@ __metaclass__ = type
 def is_extension_installed(module, executable, name):
     rc, out, err = module.run_command([executable, '--list-extensions', name])
     if rc != 0 or err:
-        module.fail_json(
-            msg='Error querying installed extensions [%s]: %s' % (name,
-                                                                  out + err))
+        module.fail_json(msg='Error querying installed extensions [%s]: %s' %
+                         (name, out + err))
     lowername = name.lower()
     match = next((x for x in out.splitlines() if x.lower() == lowername), None)
     return match is not None
@@ -31,11 +30,12 @@ def is_extension_installed(module, executable, name):
 def list_extension_dirs(module, executable):
     dirname = '.vscode-oss'
 
-    ext_dir = os.path.expanduser(
-        os.path.join('~', dirname, 'extensions'))
+    ext_dir = os.path.expanduser(os.path.join('~', dirname, 'extensions'))
 
-    ext_dirs = sorted([f for f in os.listdir(
-        ext_dir) if os.path.isdir(os.path.join(ext_dir, f))])
+    ext_dirs = sorted([
+        f for f in os.listdir(ext_dir)
+        if os.path.isdir(os.path.join(ext_dir, f))
+    ])
     return ext_dirs
 
 
@@ -45,9 +45,8 @@ def install_extension(module, executable, name):
     # Whitelist: [DEP0005] DeprecationWarning: Buffer() is deprecated due
     # to security and usability issues.
     if rc != 0 or (err and '[DEP0005]' not in err):
-        module.fail_json(
-            msg='Error while installing extension [%s]: (%d) %s' %
-            (name, rc, out + err))
+        module.fail_json(msg='Error while installing extension [%s]: (%d) %s' %
+                         (name, rc, out + err))
     changed = 'already installed' not in out
     return changed, 'install'
 
@@ -61,9 +60,9 @@ def uninstall_extension(module, executable, name):
                 msg='Error while uninstalling extension [%s]: %s' %
                 (name, out + err))
         if 'successfully uninstalled' not in out:
-            module.fail_json(
-                msg=('Error while uninstalling extension [%s]:'
-                     ' unexpected response: %s') % (name, out + err))
+            module.fail_json(msg=('Error while uninstalling extension [%s]:'
+                                  ' unexpected response: %s') %
+                             (name, out + err))
         return True
     else:
         return False
@@ -71,16 +70,10 @@ def uninstall_extension(module, executable, name):
 
 def run_module():
 
-    module_args = dict(
-        name=dict(
-            type='str',
-            required=True),
-        state=dict(
-            type='str',
-            default='present',
-            choices=[
-                'absent',
-                'present']))
+    module_args = dict(name=dict(type='str', required=True),
+                       state=dict(type='str',
+                                  default='present',
+                                  choices=['absent', 'present']))
 
     module = AnsibleModule(argument_spec=module_args,
                            supports_check_mode=False)
