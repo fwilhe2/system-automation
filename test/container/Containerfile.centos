@@ -2,7 +2,7 @@ FROM quay.io/centos/centos:stream9
 
 ENV TERM=xterm
 
-RUN dnf --assumeyes update && dnf --assumeyes install epel-release python39 git curl unzip bash \
+RUN dnf --assumeyes update && dnf --assumeyes install python3 python3-pip git unzip bash \
   && mkdir -p /home/user && echo "user:x:1001:1001:user:/home/user:/bin/bash" >> /etc/passwd \
   && chown -R user /home/user
 
