@@ -18,16 +18,16 @@ basic_packages:
     - vim
     - zsh
   RedHat:
-    - apg
-    - curl
+    # - apg
+    # - curl
     - git
-    - htop
+    # - htop
     # - httpie
     - jq
     - make
     - mc
-    - rdiff-backup
-    - the_silver_searcher
+    # - rdiff-backup
+    # - the_silver_searcher
     - unzip
     - vim
     - xz
