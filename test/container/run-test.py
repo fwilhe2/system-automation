@@ -140,7 +140,7 @@ def assert_system_properties():
 
     # todo: improve once docker is also part of the ubuntu playbook
     if distro.id() == 'fedora':
-        subprocess.run(['docker', 'info'])
+        subprocess.run(['docker', 'version'])
 
 
 run_group(assert_system_properties, "Assert Properties of Installed System")
