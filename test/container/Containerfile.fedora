@@ -4,7 +4,7 @@ FROM fedora:$VERSION
 
 ENV TERM=xterm
 
-RUN dnf --assumeyes update && dnf --assumeyes install git ansible curl unzip bash \
+RUN dnf --assumeyes update && dnf --assumeyes install git ansible curl unzip bash python3-distro \
   && mkdir -p /home/user && echo "user:x:1001:1001:user:/home/user:/bin/bash" >> /etc/passwd \
   && chown -R user /home/user
 

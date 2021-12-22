@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
   bash \
   python3 \
   python3-pip \
+  python3-distro \
   unzip \
   libasound2 \
   && mkdir -p /home/user \

@@ -4,6 +4,7 @@ import re
 import sys
 import pathlib
 import shutil
+import distro
 
 
 def assert_equals(first, second, message):
@@ -87,10 +88,7 @@ def ansible_playbook_executable():
 
 
 def print_os_version():
-    os_release = pathlib.Path("/etc/os-release").read_text()
-    for item in os_release.split("\n"):
-        if item.startswith("PRETTY_NAME"):
-            print(f"Running on OS: {item.split('=')[1]}")
+    print(distro.name(pretty=True))
 
 
 print_ansible_version()
@@ -140,6 +138,10 @@ def assert_system_properties():
                 has_user = True
         assert_true(has_user,
                     f"Could not find expected user in:\n{passwd.readlines()}")
+
+    # todo: improve once docker is also part of the ubuntu playbook
+    if distro.id() == 'fedora':
+        subprocess.run(['docker', 'version'])
 
 
 run_group(assert_system_properties, "Assert Properties of Installed System")
