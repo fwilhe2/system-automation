@@ -21,7 +21,7 @@
   ansible.builtin.systemd:
     name: docker
     state: started
-    enabled: yes
+    enabled: true
   become: true
 
 - name: Ensure group "docker" exists with correct gid
@@ -35,5 +35,5 @@
   ansible.builtin.user:
     name: "{{ username }}"
     groups: docker
-    append: yes
+    append: true
   become: true
