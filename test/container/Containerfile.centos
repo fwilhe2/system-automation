@@ -2,7 +2,7 @@ FROM quay.io/centos/centos:stream9
 
 ENV TERM=xterm
 
-RUN dnf --assumeyes update && dnf --assumeyes install python3 python3-pip git unzip bash \
+RUN dnf --assumeyes update && dnf --assumeyes install python3 python3-pip python3-distro git unzip bash \
   && dnf --assumeyes install 'dnf-command(config-manager)' \
   && dnf --assumeyes config-manager --set-enabled crb \
   && dnf --assumeyes install \
