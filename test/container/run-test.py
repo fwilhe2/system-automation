@@ -6,6 +6,7 @@ import pathlib
 import shutil
 import distro
 
+
 def assert_equals(first, second, message):
     if not first == second:
         sys.exit(
@@ -86,7 +87,8 @@ def ansible_playbook_executable():
 
 
 def print_os_version():
-    print(f"{distro.name()} {distro.version()}")
+    print(distro.name(pretty=True))
+
 
 print_ansible_version()
 print_os_version()
@@ -139,5 +141,6 @@ def assert_system_properties():
     # todo: improve once docker is also part of the ubuntu playbook
     if distro.id() == 'fedora':
         subprocess.run(['docker', 'info'])
+
 
 run_group(assert_system_properties, "Assert Properties of Installed System")
