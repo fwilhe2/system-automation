@@ -10,4 +10,4 @@
     - dotfiles
     - bin
     - directories
-    - docker
+    # - docker
