@@ -2,4 +2,4 @@
 set -o nounset
 set -o errexit
 
-ansible-playbook --ask-become-pass --inventory inventory common.yml
+ansible-playbook --ask-become-pass common.yml
