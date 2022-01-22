@@ -2,7 +2,6 @@
 - hosts: all
 
   tasks:
-
     - name: Create ~/code Directory
       file:
         path: ~/code
