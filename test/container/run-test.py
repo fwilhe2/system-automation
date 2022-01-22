@@ -39,6 +39,7 @@ def run_ansible(playbook):
         subprocess.run([
             ansible_playbook_executable(),
             "--become-method=su",
+            "--inventory=inventory",
             "--skip-tags",
             "notest",
             "-vv",
@@ -53,6 +54,7 @@ def run_ansible(playbook):
         [
             ansible_playbook_executable(),
             "--become-method=su",
+            "--inventory=inventory",
             "--skip-tags",
             "notest",
             playbook,
