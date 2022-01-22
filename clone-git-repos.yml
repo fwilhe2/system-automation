@@ -1,0 +1,20 @@
+---
+- hosts: all
+
+  tasks:
+
+    - name: Create ~/code Directory
+      file:
+        path: ~/code
+        state: directory
+        mode: "750"
+
+    - name: Clone git repos
+      ansible.builtin.git:
+        repo: "{{ item }}"
+        dest: '~/code/{{ item | urlsplit("path") }}'
+      loop:
+        - https://github.com/fwilhe2/system-automation
+        - https://github.com/fwilhe2/system-automation-lite
+        - https://github.com/fwilhe2/Inzell
+        - https://github.com/fwilhe2/silverblue-system-config
