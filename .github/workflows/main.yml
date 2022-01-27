@@ -47,7 +47,6 @@ jobs:
       - name: Run Test archlinux
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-archlinux
 
-
   syntax-check:
     runs-on: ubuntu-20.04
     steps:
