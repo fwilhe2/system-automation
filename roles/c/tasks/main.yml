@@ -7,3 +7,14 @@
     name: "{{ item }}"
   loop: "{{ system_development_packages[ansible_os_family] }}"
   tags: system_development
+  when: ansible_os_family == 'Debian' or ansible_os_family == 'Redhat'
+
+- name: Install System Development Packages (Suse)
+  become: true
+  become_user: root
+  zypper:
+    state: present
+    name: devel_basis
+    type: pattern
+  tags: system_development
+  when: ansible_os_family == 'Suse'
