@@ -38,6 +38,16 @@ jobs:
       - name: Run Test opensuse
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-opensuse
 
+  run-in-container-pacman:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Test Container archlinux
+        run: docker build -t system-automation-test-archlinux --file test/container/Containerfile.archlinux .
+      - name: Run Test archlinux
+        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-archlinux
+
+
   syntax-check:
     runs-on: ubuntu-20.04
     steps:

@@ -50,6 +50,23 @@ basic_packages:
     - vim
     - xz
     - zsh
+  Archlinux:
+    - bzip2
+    - curl
+    - git
+    - gzip
+    - htop
+    - httpie
+    - jq
+    - make
+    - mc
+    - rdiff-backup
+    - tar
+    - the_silver_searcher
+    - unzip
+    - vim
+    - xz
+    - zsh
 
 desktop_packages:
   Debian:
