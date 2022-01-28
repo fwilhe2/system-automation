@@ -29,6 +29,15 @@ jobs:
       - name: Run Test Fedora ${{ matrix.version }}
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-fedora${{ matrix.version }}
 
+  run-in-container-zypper:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Test Container opensuse
+        run: docker build -t system-automation-test-opensuse --file test/container/Containerfile.opensuse .
+      - name: Run Test opensuse
+        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-opensuse
+
   syntax-check:
     runs-on: ubuntu-20.04
     steps:
