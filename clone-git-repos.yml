@@ -44,9 +44,14 @@
         - https://github.com/containers/youki
         - https://github.com/distribution/distribution
         - https://github.com/engineerd/wasm-to-oci
+        - https://github.com/firecracker-microvm/firecracker
+        - https://github.com/firecracker-microvm/firecracker-containerd
         - https://github.com/genuinetools/img
         - https://github.com/google/gvisor
+        - https://github.com/GoogleContainerTools/container-diff
+        - https://github.com/GoogleContainerTools/jib
         - https://github.com/gotoz/runq
+        - https://github.com/krustlet/oci-distribution
         - https://github.com/nabla-containers/runnc
         - https://github.com/opencontainers/distribution-spec
         - https://github.com/opencontainers/image-spec
@@ -54,6 +59,9 @@
         - https://github.com/opencontainers/runc
         - https://github.com/opencontainers/runtime-spec
         - https://github.com/opencontainers/umoci
+        - https://github.com/opencontainers/umoci
         - https://github.com/QuarkContainer/Quark
+        - https://github.com/regclient/regclient
+        - https://github.com/ukontainer/runu
         - https://github.com/weaveworks/footloose
         - https://github.com/weaveworks/ignite
