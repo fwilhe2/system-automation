@@ -8,12 +8,52 @@
         state: directory
         mode: "750"
 
-    - name: Clone git repos
+    - name: Clone personal git repos
       ansible.builtin.git:
         repo: "{{ item }}"
         dest: '~/code/{{ item | urlsplit("path") }}'
       loop:
-        - https://github.com/fwilhe2/system-automation
-        - https://github.com/fwilhe2/system-automation-lite
+        - https://github.com/fwilhe2/distroless
         - https://github.com/fwilhe2/Inzell
         - https://github.com/fwilhe2/silverblue-system-config
+        - https://github.com/fwilhe2/system-automation
+        - https://github.com/fwilhe2/system-automation-lite
+
+    - name: Create ~/code/oci Directory
+      file:
+        path: ~/code/oci
+        state: directory
+        mode: "750"
+
+    - name: Clone container-related git repos
+      ansible.builtin.git:
+        repo: "{{ item }}"
+        dest: '~/code/oci/{{ item | urlsplit("path") }}'
+      loop:
+        - https://github.com/anuvu/stacker
+        - https://github.com/awslabs/oci-add-hooks
+        - https://github.com/containerd/containerd
+        - https://github.com/containers/buildah
+        - https://github.com/containers/crun
+        - https://github.com/containers/krunvm
+        - https://github.com/containers/oci-spec-rs
+        - https://github.com/containers/oci-umount
+        - https://github.com/containers/ocicrypt
+        - https://github.com/containers/podman
+        - https://github.com/containers/podman-compose
+        - https://github.com/containers/youki
+        - https://github.com/distribution/distribution
+        - https://github.com/engineerd/wasm-to-oci
+        - https://github.com/genuinetools/img
+        - https://github.com/google/gvisor
+        - https://github.com/gotoz/runq
+        - https://github.com/nabla-containers/runnc
+        - https://github.com/opencontainers/distribution-spec
+        - https://github.com/opencontainers/image-spec
+        - https://github.com/opencontainers/image-tools
+        - https://github.com/opencontainers/runc
+        - https://github.com/opencontainers/runtime-spec
+        - https://github.com/opencontainers/umoci
+        - https://github.com/QuarkContainer/Quark
+        - https://github.com/weaveworks/footloose
+        - https://github.com/weaveworks/ignite
