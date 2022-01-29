@@ -29,6 +29,7 @@
         repo: "{{ item }}"
         dest: '~/code/oci/{{ item | urlsplit("path") }}'
       loop:
+        - https://github.com/ahamlinman/zeroimage
         - https://github.com/anuvu/stacker
         - https://github.com/awslabs/oci-add-hooks
         - https://github.com/containerd/containerd
@@ -41,6 +42,7 @@
         - https://github.com/containers/podman
         - https://github.com/containers/podman-compose
         - https://github.com/containers/youki
+        - https://github.com/crazy-max/undock
         - https://github.com/distribution/distribution
         - https://github.com/engineerd/wasm-to-oci
         - https://github.com/firecracker-microvm/firecracker
@@ -51,6 +53,8 @@
         - https://github.com/GoogleContainerTools/jib
         - https://github.com/gotoz/runq
         - https://github.com/krustlet/oci-distribution
+        - https://github.com/mafintosh/mkcontainer
+        - https://github.com/mafintosh/raspberry-pi-container
         - https://github.com/nabla-containers/runnc
         - https://github.com/opencontainers/distribution-spec
         - https://github.com/opencontainers/image-spec
@@ -58,9 +62,33 @@
         - https://github.com/opencontainers/runc
         - https://github.com/opencontainers/runtime-spec
         - https://github.com/opencontainers/umoci
-        - https://github.com/opencontainers/umoci
         - https://github.com/QuarkContainer/Quark
         - https://github.com/regclient/regclient
+        - https://github.com/seletskiy/hastur
         - https://github.com/ukontainer/runu
+        - https://github.com/virt-do/run0
+        - https://github.com/weaveworks/flintlock
         - https://github.com/weaveworks/footloose
         - https://github.com/weaveworks/ignite
+        - https://github.com/mhausenblas/cinf
+        - https://github.com/containers/bubblewrap
+        - https://github.com/projectatomic/bwrap-oci
+
+    - name: Install systemd-container
+      apt:
+        state: present
+        name: "{{ item }}"
+      loop:
+        - systemd-container
+      become: true
+      when: ansible_os_family == 'Debian'
+
+    - name: Install build dependencies for runc
+      apt:
+        state: present
+        name: "{{ item }}"
+      loop:
+        - libseccomp2
+        - libseccomp-dev
+      become: true
+      when: ansible_os_family == 'Debian'
