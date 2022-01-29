@@ -26,12 +26,18 @@
     - lsb-release
   become: true
 
-- name: Add Docker's official GPG key
-  apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
-    state: present
-  become: true
+# - name: Add Docker's official GPG key
+#   apt_key:
+#     url: https://download.docker.com/linux/ubuntu/gpg
+#     id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+#     state: present
+#   become: true
+
+- name: Add Docker apt key (alternative for older systems without SNI).
+  shell: >
+    curl -sSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+  args:
+    warn: false
 
 - name: Add Docker APT repository
   apt_repository:
