@@ -16,6 +16,7 @@ basic_packages:
     - silversearcher-ag
     - unzip
     - vim
+    - yapf3
     - zsh
   RedHat:
     - apg
