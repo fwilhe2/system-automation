@@ -88,3 +88,4 @@
   loop:
     - podman
   become: true
+  when: ansible_distribution_release != "focal"

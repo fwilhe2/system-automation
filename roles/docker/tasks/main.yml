@@ -5,4 +5,4 @@
 
 - include: ubuntu.yml
   tags: docker
-  when: ansible_os_family == 'Debian'
+  when: ansible_os_family == 'Debian' and ansible_distribution_release != "jammy"
