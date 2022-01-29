@@ -1,0 +1,81 @@
+---
+
+# References:
+# https://docs.docker.com/engine/install/ubuntu/
+# https://github.com/geerlingguy/ansible-role-docker/blob/master/tasks/setup-Debian.yml
+
+- name: Uninstall old versions
+  apt:
+    state: absent
+    name: "{{ item }}"
+  loop:
+    - docker
+    - docker-engine
+    - docker.io
+    - containerd
+    - runc
+  become: true
+
+- name: Set up the repository
+  apt:
+    state: present
+    name: "{{ item }}"
+  loop:
+    - ca-certificates
+    - curl
+    - gnupg
+    - lsb-release
+  become: true
+
+- name: Add Docker's official GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    state: absent
+  become: true
+
+- name: Add Docker APT repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu   impish stable"
+    state: present
+    update_cache: true
+  become: true
+
+- name: Install Docker Engine
+  apt:
+    state: present
+    name: "{{ item }}"
+  loop:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+  become: true
+
+- name: Start and enable the docker service
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+    enabled: true
+  become: true
+
+- name: Ensure group "docker" exists with correct gid
+  ansible.builtin.group:
+    name: docker
+    state: present
+    gid: 1750
+  become: true
+
+- name: Add user to group
+  ansible.builtin.user:
+    name: "{{ username }}"
+    groups: docker
+    append: true
+  become: true
+
+- name: Install podman
+  apt:
+    state: present
+    name: "{{ item }}"
+  loop:
+    - podman
+  become: true
