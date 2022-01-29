@@ -34,10 +34,13 @@
 #   become: true
 
 - name: Add Docker apt key (alternative for older systems without SNI).
-  shell: >
+  shell: |
+    set -o pipefail
     curl -sSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
   args:
     warn: false
+  changed_when: false
+  become: true
 
 - name: Add Docker APT repository
   apt_repository:
