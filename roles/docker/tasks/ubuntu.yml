@@ -1,5 +1,4 @@
 ---
-
 # References:
 # https://docs.docker.com/engine/install/ubuntu/
 # https://github.com/geerlingguy/ansible-role-docker/blob/master/tasks/setup-Debian.yml
