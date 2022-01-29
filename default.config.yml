@@ -17,6 +17,7 @@ basic_packages:
     - silversearcher-ag
     - unzip
     - vim
+    - yapf3
     - zsh
     - net-tools
     - bridge-utils
