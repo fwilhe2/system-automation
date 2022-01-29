@@ -1,4 +1,4 @@
 ---
-- include: fedora.yml
+- import_tasks: fedora.yml
   tags: docker
   when: ansible_os_family == 'RedHat'
