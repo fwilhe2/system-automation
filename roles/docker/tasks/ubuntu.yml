@@ -45,7 +45,7 @@
 
 - name: Add Docker APT repository
   apt_repository:
-    repo: "deb https://download.docker.com/linux/ubuntu   impish stable"
+    repo: "deb https://download.docker.com/linux/ubuntu   {{ ansible_distribution_release }} stable"
     state: present
     update_cache: true
     validate_certs: "no"
