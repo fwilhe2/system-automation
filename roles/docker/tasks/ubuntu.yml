@@ -26,13 +26,6 @@
     - lsb-release
   become: true
 
-- name: Add Docker's official GPG key
-  apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
-    state: absent
-  become: true
-
 - name: Add Docker APT repository
   apt_repository:
     repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu   impish stable"
