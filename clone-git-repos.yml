@@ -13,6 +13,7 @@
         repo: "{{ item }}"
         dest: '~/code/{{ item | urlsplit("path") }}'
       loop:
+        - https://github.com/fwilhe2/containers-knowledge-base
         - https://github.com/fwilhe2/distroless
         - https://github.com/fwilhe2/Inzell
         - https://github.com/fwilhe2/silverblue-system-config
@@ -33,6 +34,7 @@
         - https://github.com/anuvu/stacker
         - https://github.com/awslabs/oci-add-hooks
         - https://github.com/containerd/containerd
+        - https://github.com/containers/bubblewrap
         - https://github.com/containers/buildah
         - https://github.com/containers/crun
         - https://github.com/containers/krunvm
@@ -50,11 +52,13 @@
         - https://github.com/genuinetools/img
         - https://github.com/google/gvisor
         - https://github.com/GoogleContainerTools/container-diff
+        - https://github.com/GoogleContainerTools/distroless
         - https://github.com/GoogleContainerTools/jib
         - https://github.com/gotoz/runq
         - https://github.com/krustlet/oci-distribution
         - https://github.com/mafintosh/mkcontainer
         - https://github.com/mafintosh/raspberry-pi-container
+        - https://github.com/mhausenblas/cinf
         - https://github.com/nabla-containers/runnc
         - https://github.com/opencontainers/distribution-spec
         - https://github.com/opencontainers/image-spec
@@ -62,6 +66,7 @@
         - https://github.com/opencontainers/runc
         - https://github.com/opencontainers/runtime-spec
         - https://github.com/opencontainers/umoci
+        - https://github.com/projectatomic/bwrap-oci
         - https://github.com/QuarkContainer/Quark
         - https://github.com/regclient/regclient
         - https://github.com/seletskiy/hastur
@@ -70,9 +75,6 @@
         - https://github.com/weaveworks/flintlock
         - https://github.com/weaveworks/footloose
         - https://github.com/weaveworks/ignite
-        - https://github.com/mhausenblas/cinf
-        - https://github.com/containers/bubblewrap
-        - https://github.com/projectatomic/bwrap-oci
 
     - name: Install systemd-container
       apt:
