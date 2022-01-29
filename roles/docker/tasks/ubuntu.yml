@@ -38,6 +38,7 @@
     repo: "deb https://download.docker.com/linux/ubuntu   impish stable"
     state: present
     update_cache: true
+    validate_certs: "no"
   become: true
 
 - name: Install Docker Engine
