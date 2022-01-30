@@ -138,9 +138,4 @@ def assert_system_properties():
         assert_true(has_user,
                     f"Could not find expected user in:\n{passwd.readlines()}")
 
-    # todo: improve once docker is also part of the ubuntu playbook
-    if distro.id() == 'fedora':
-        subprocess.run(['docker', 'version'])
-
-
 run_group(assert_system_properties, "Assert Properties of Installed System")

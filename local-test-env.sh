@@ -17,5 +17,5 @@ CLI=docker
 
 command -v podman >/dev/null 2>&1 && CLI=podman
 
-$CLI build --build-arg=VERSION=latest -t system-automation-$DISTRO --file test/container/Containerfile.$DISTRO .
+$CLI build --build-arg=VERSION=devel -t system-automation-$DISTRO --file test/container/Containerfile.$DISTRO .
 $CLI run -it --rm --volume $PWD:/mnt $ENTRYPOINT --privileged system-automation-$DISTRO

@@ -119,3 +119,4 @@ https://github.com/gantsign/ansible-role-visual-studio-code-extensions[ansible-r
 * https://docs.ansible.com/ansible/2.9/modules/list_of_all_modules.html[Ansible Docs: All Modules]
 * http://www.whitewashing.de/2013/11/19/setting_up_development_machines_ansible_edition.html[Setting up development machines: Ansible edition]
 * https://github.com/geerlingguy/mac-dev-playbook
+* https://github.com/geerlingguy/ansible-role-docker
