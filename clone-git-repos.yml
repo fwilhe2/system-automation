@@ -34,6 +34,8 @@
         - https://github.com/anuvu/stacker
         - https://github.com/awslabs/oci-add-hooks
         - https://github.com/containerd/containerd
+        - https://github.com/containernetworking/cni
+        - https://github.com/containernetworking/plugins
         - https://github.com/containers/bubblewrap
         - https://github.com/containers/buildah
         - https://github.com/containers/crun
@@ -46,6 +48,9 @@
         - https://github.com/containers/youki
         - https://github.com/crazy-max/undock
         - https://github.com/distribution/distribution
+        - https://github.com/docker/buildx
+        - https://github.com/docker/cli
+        - https://github.com/docker/compose
         - https://github.com/engineerd/wasm-to-oci
         - https://github.com/firecracker-microvm/firecracker
         - https://github.com/firecracker-microvm/firecracker-containerd
@@ -59,6 +64,10 @@
         - https://github.com/mafintosh/mkcontainer
         - https://github.com/mafintosh/raspberry-pi-container
         - https://github.com/mhausenblas/cinf
+        - https://github.com/moby/buildkit
+        - https://github.com/moby/buildkit
+        - https://github.com/moby/libnetwork
+        - https://github.com/moby/moby
         - https://github.com/nabla-containers/runnc
         - https://github.com/opencontainers/distribution-spec
         - https://github.com/opencontainers/image-spec
