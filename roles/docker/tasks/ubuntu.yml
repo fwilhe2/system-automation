@@ -48,8 +48,9 @@
   set_fact:
     ubuntu_codename: "{{ 'ansible_distribution_release' if (ansible_distribution_release != 'jammy') else 'impish' }}"
 
-- debug:
-  msg: "Ubuntu codename {{ ubuntu_codename }}"
+- name: dbg
+  ansible.builtin.debug:
+    msg: "Ubuntu codename {{ ubuntu_codename }}"
 
 - name: Print all available facts
   ansible.builtin.debug:
