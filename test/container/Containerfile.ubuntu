@@ -33,4 +33,4 @@ COPY . /home/user
 
 WORKDIR /home/user
 
-ENTRYPOINT ["ansible-playbook", "--tags", "docker", "common.yml"]
+ENTRYPOINT ["python3", "/home/user/test/container/run-test.py"]
