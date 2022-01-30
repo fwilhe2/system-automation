@@ -44,17 +44,14 @@
   changed_when: false
   become: true
 
+# Special handling because Docker provides no packages for Ubuntu's development branch
 - name: Get Ubuntu codename
   set_fact:
-    ubuntu_codename: "{{ ansible_distribution_release if (ansible_distribution_release != 'jammy') else 'impish' }}"
+    ubuntu_codename: "{{ ansible_distribution_release if ('Development Branch' in ansible_lsb.description) else 'impish' }}"
 
 - name: dbg
   ansible.builtin.debug:
-    msg: "Ubuntu codename {{ ubuntu_codename }}, {{ ansible_lsb.description }}"
-
-- name: Print all available facts
-  ansible.builtin.debug:
-    var: ansible_facts
+    msg: "Ubuntu codename for Docker apt repo: {{ ubuntu_codename }}, actual ansible_distribution: {{ ansible_lsb.description }}"
 
 - name: Add Docker APT repository
   apt_repository:
@@ -101,4 +98,5 @@
   loop:
     - podman
   become: true
+  # TODO: Update once focal is not required anymore
   when: ansible_distribution_release != "focal"

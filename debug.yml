@@ -2,10 +2,10 @@
 - hosts: all
 
   tasks:
-    - name: Get Ubuntu codename
-      set_fact:
-        ubuntu_codename: "{{ ansible_distribution_release if (ansible_distribution_release != 'jammy') else 'impish' }}"
+  - name: Get Ubuntu codename
+    set_fact:
+      ubuntu_codename: "{{ ansible_distribution_release if ('Development Branch' in ansible_lsb.description) else 'impish' }}"
 
-    - name: dbg
-      ansible.builtin.debug:
-        msg: "Ubuntu codename {{ ubuntu_codename }}, {{ ansible_lsb.description }}"
+  - name: dbg
+    ansible.builtin.debug:
+      msg: "Ubuntu codename {{ ubuntu_codename }}, {{ ansible_lsb.description }}"
