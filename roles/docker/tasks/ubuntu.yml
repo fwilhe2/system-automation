@@ -47,11 +47,11 @@
 # Special handling because Docker provides no packages for Ubuntu's development branch
 - name: Get Ubuntu codename
   set_fact:
-    ubuntu_codename: "{{ ansible_distribution_release if ('Development Branch' in ansible_lsb.description) else 'impish' }}"
+    ubuntu_codename: "{{ 'impish' if ansible_lsb.description is search('development branch', ignorecase=True) else ansible_distribution_release }}"
 
 - name: dbg
   ansible.builtin.debug:
-    msg: "Ubuntu codename for Docker apt repo: {{ ubuntu_codename }}, actual ansible_distribution: {{ ansible_lsb.description }}"
+    msg: "Ubuntu codename for Docker apt repo: {{ ubuntu_codename }}, actual ansible_distribution: {{ ansible_distribution_release }} ({{ ansible_lsb.description }})"
 
 - name: Add Docker APT repository
   apt_repository:
