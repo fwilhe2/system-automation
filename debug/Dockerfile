@@ -1,4 +1,6 @@
-FROM ubuntu:devel
+ARG VERSION
+
+FROM ubuntu:$VERSION
 
 ENV TERM=xterm
 ENV DEBIAN_FRONTEND=noninteractive

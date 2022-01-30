@@ -1,3 +1,3 @@
 #!/bin/bash
 
-ansible-playbook --inventory inventory debug.yml
+ansible-playbook -vv /debug/debug.yml

@@ -2,10 +2,10 @@
 - hosts: all
 
   tasks:
-  - name: Get Ubuntu codename
-    set_fact:
-      ubuntu_codename: "{{ ansible_distribution_release if ('Development Branch' in ansible_lsb.description) else 'impish' }}"
+    - name: Get Ubuntu codename
+      set_fact:
+        ubuntu_codename: "{{ 'impish' if ansible_lsb.description is search('development branch', ignorecase=True) else ansible_distribution_release }}"
 
-  - name: dbg
-    ansible.builtin.debug:
-      msg: "Ubuntu codename {{ ubuntu_codename }}, {{ ansible_lsb.description }}"
+    - name: dbg
+      ansible.builtin.debug:
+        msg: "Ubuntu codename {{ ubuntu_codename }}, {{ ansible_lsb.description }}, {{ ansible_distribution_release }}"
