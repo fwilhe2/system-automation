@@ -12,6 +12,7 @@
       ansible.builtin.git:
         repo: "{{ item }}"
         dest: '~/code/{{ item | urlsplit("path") }}'
+      tags: personal
       loop:
         - https://github.com/fwilhe2/containers-knowledge-base
         - https://github.com/fwilhe2/distroless
@@ -29,6 +30,7 @@
       ansible.builtin.git:
         repo: "{{ item }}"
         dest: '~/code/oci/{{ item | urlsplit("path") }}'
+      tags: containers
       loop:
         - https://github.com/ahamlinman/zeroimage
         - https://github.com/anuvu/stacker
