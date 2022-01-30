@@ -8,6 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
   curl \
   bash \
+  ansible \
   python3 \
   python3-pip \
   python3-distro \
@@ -26,8 +27,6 @@ RUN echo "[local]\nlocalhost ansible_connection=local ansible_become_password=to
 RUN echo 'root:toor123' | chpasswd
 
 USER user
-
-RUN python3 -m pip install --user ansible
 
 COPY . /home/user
 
