@@ -47,6 +47,7 @@
         - https://github.com/containers/ocicrypt
         - https://github.com/containers/podman
         - https://github.com/containers/podman-compose
+        - https://github.com/containers/skopeo
         - https://github.com/containers/youki
         - https://github.com/crazy-max/undock
         - https://github.com/distribution/distribution
@@ -86,7 +87,6 @@
         - https://github.com/weaveworks/flintlock
         - https://github.com/weaveworks/footloose
         - https://github.com/weaveworks/ignite
-        - https://github.com/containers/skopeo
 
     - name: Install systemd-container
       apt:
@@ -104,5 +104,16 @@
       loop:
         - libseccomp2
         - libseccomp-dev
+      become: true
+      when: ansible_os_family == 'Debian'
+
+    - name: Install build dependencies for skopeo
+      apt:
+        state: present
+        name: "{{ item }}"
+      loop:
+        - libdevmapper-dev
+        - libgpgme-dev
+        - go-md2man
       become: true
       when: ansible_os_family == 'Debian'
