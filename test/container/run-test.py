@@ -138,4 +138,8 @@ def assert_system_properties():
         assert_true(has_user,
                     f"Could not find expected user in:\n{passwd.readlines()}")
 
+
+    subprocess.run(['docker', 'info'])
+    subprocess.run(['podman', 'info'])
+
 run_group(assert_system_properties, "Assert Properties of Installed System")
