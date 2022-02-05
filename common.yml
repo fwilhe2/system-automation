@@ -6,7 +6,7 @@
     - [default.config.yml, config.yml]
 
   roles:
-    - basic
+    # - basic
     - dotfiles
     - bin
     - directories
