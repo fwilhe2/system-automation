@@ -51,6 +51,8 @@ jobs:
     runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
+      - name: Install test dependencies.
+        run: sudo pip3 install ansible
       - run: ansible-playbook common.yml
 
   syntax-check:
