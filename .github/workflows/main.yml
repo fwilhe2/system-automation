@@ -53,7 +53,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install test dependencies.
         run: sudo pip3 install ansible
-      - run: ansible-playbook common.yml
+      - run: ansible-playbook --inventory inventory common.yml
 
   syntax-check:
     runs-on: ubuntu-20.04
