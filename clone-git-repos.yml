@@ -36,6 +36,13 @@
         - https://github.com/anuvu/stacker
         - https://github.com/awslabs/oci-add-hooks
         - https://github.com/containerd/containerd
+        - https://github.com/containerd/cgroups
+        - https://github.com/containerd/nerdctl
+        - https://github.com/containerd/stargz-snapshotter
+        - https://github.com/containerd/go-runc
+        - https://github.com/containerd/btrfs
+        - https://github.com/containerd/zfs
+        - https://github.com/containerd/aufs
         - https://github.com/containernetworking/cni
         - https://github.com/containernetworking/plugins
         - https://github.com/containers/bubblewrap
@@ -77,6 +84,7 @@
         - https://github.com/opencontainers/image-tools
         - https://github.com/opencontainers/runc
         - https://github.com/opencontainers/runtime-spec
+        - https://github.com/opencontainers/runtime-tools
         - https://github.com/opencontainers/umoci
         - https://github.com/projectatomic/bwrap-oci
         - https://github.com/QuarkContainer/Quark
