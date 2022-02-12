@@ -32,6 +32,8 @@
         dest: '~/code/oci/{{ item | urlsplit("path") }}'
       tags: containers
       loop:
+        - https://github.com/Yelp/dumb-init
+        - https://github.com/jpetazzo/layeremove
         - https://github.com/ahamlinman/zeroimage
         - https://github.com/anuvu/stacker
         - https://github.com/awslabs/oci-add-hooks
