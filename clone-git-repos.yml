@@ -25,6 +25,7 @@
         - https://github.com/fwilhe2/Inzell
         - https://github.com/fwilhe2/silverblue-system-config
         - https://github.com/fwilhe2/system-automation-lite
+        - https://github.com/fwilhe2/mininet-containers-playground
 
     - name: Create ~/code/oci Directory
       file:
