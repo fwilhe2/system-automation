@@ -8,12 +8,42 @@
         state: directory
         mode: "750"
 
-    - name: Clone git repos
+    - name: Create ~/code/scratch Directory
+      file:
+        path: ~/code/scratch
+        state: directory
+        mode: "750"
+
+    - name: Clone personal git repos
       ansible.builtin.git:
         repo: "{{ item }}"
         dest: '~/code/{{ item | urlsplit("path") }}'
+      tags: personal
       loop:
-        - https://github.com/fwilhe2/system-automation
-        - https://github.com/fwilhe2/system-automation-lite
+        - https://github.com/fwilhe2/containers-knowledge-base
+        - https://github.com/fwilhe2/distroless
         - https://github.com/fwilhe2/Inzell
         - https://github.com/fwilhe2/silverblue-system-config
+        - https://github.com/fwilhe2/system-automation-lite
+
+    - name: Create ~/code/oci Directory
+      file:
+        path: ~/code/oci
+        state: directory
+        mode: "750"
+
+    - name: Clone container-related git repos
+      ansible.builtin.git:
+        repo: "{{ item }}"
+        dest: '~/code/oci/{{ item | urlsplit("path") }}'
+      tags: containers
+      loop:
+        - https://github.com/fwilhe-containers/runc
+        - https://github.com/fwilhe-containers/containerd
+        - https://github.com/fwilhe-containers/skopeo
+        - https://github.com/fwilhe-containers/cni
+        - https://github.com/fwilhe-containers/plugins
+        - https://github.com/fwilhe-containers/crun
+        - https://github.com/fwilhe-containers/podman
+        - https://github.com/fwilhe-containers/cri-o
+        - https://github.com/fwilhe-containers/container-image
