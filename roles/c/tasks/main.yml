@@ -2,7 +2,7 @@
 - name: Install System Development Packages
   become: true
   become_user: root
-  package:
+  ansible.builtin.package:
     state: present
     name: "{{ item }}"
   loop: "{{ system_development_packages[ansible_os_family] }}"

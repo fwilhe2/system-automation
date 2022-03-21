@@ -1,62 +1,62 @@
 ---
 - name: Clone `oh-my-zsh` Repository
-  git:
+  ansible.builtin.git:
     repo: https://github.com/robbyrussell/oh-my-zsh.git
     dest: ~/.oh-my-zsh
 
 - name: Clone `dotfiles` Repository
-  git:
+  ansible.builtin.git:
     repo: https://github.com/fwilhe2/dotfiles.git
     dest: ~/.dotfiles
   register: clone_dotfiles
 
 - name: Make `~/.config/Code/User` if not exists
-  file:
+  ansible.builtin.file:
     path: ~/.config/Code/User
     state: directory
     mode: "750"
 
 - name: Symlink Dotfiles
-  command: ~/.dotfiles/install
+  ansible.builtin.command: ~/.dotfiles/install
   when: clone_dotfiles.changed
 
 - name: Copy Package Manager Aliases File
-  copy:
+  ansible.builtin.copy:
     src: files/dnf-aliases.txt
     dest: ~/.dotfiles/aliases_package_manager
     mode: "640"
   when: ansible_os_family == 'RedHat'
 
 - name: Copy Package Manager Aliases File
-  copy:
+  ansible.builtin.copy:
     src: files/apt-aliases.txt
     dest: ~/.dotfiles/aliases_package_manager
     mode: "640"
   when: ansible_os_family == 'Debian'
 
 - name: Copy Package Manager Aliases File
-  copy:
+  ansible.builtin.copy:
     src: files/pacman-aliases.txt
     dest: ~/.dotfiles/aliases_package_manager
     mode: "640"
   when: ansible_os_family == 'Archlinux'
 
 - name: Copy Package Manager Aliases File
-  copy:
+  ansible.builtin.copy:
     src: files/zypper-aliases.txt
     dest: ~/.dotfiles/aliases_package_manager
     mode: "640"
   when: ansible_os_family == 'Suse'
 
 - name: Make Symlink for Package Manager Aliases File
-  file:
+  ansible.builtin.file:
     state: link
     src: ~/.dotfiles/aliases_package_manager
     dest: ~/.aliases_package_manager
     mode: "640"
 
 - name: Make `~/.gitconfig.d` if not exists
-  file:
+  ansible.builtin.file:
     path: ~/.gitconfig.d
     state: directory
     mode: "750"
@@ -64,7 +64,7 @@
 # This file is not in the dotfiles, because it is different on private and work computers.
 # I just copy the one with my private address, because I do not install work computers that often.
 - name: Copy Git Configuration for Email Address if not exists
-  copy:
+  ansible.builtin.copy:
     src: files/git-user-details.txt
     dest: ~/.gitconfig.d/userdetails
     force: false
