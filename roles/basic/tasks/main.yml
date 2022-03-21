@@ -2,7 +2,7 @@
 - name: Install Basic Packages
   become: true
   become_user: root
-  package:
+  ansible.builtin.package:
     state: present
     name: "{{ item }}"
   loop: "{{ basic_packages[ansible_os_family] }}"
