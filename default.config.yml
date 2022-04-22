@@ -34,6 +34,8 @@ basic_packages:
     - vim
     - xz
     - zsh
+    - net-tools
+    - bridge-utils
   Suse:
     - apg
     - bzip2
