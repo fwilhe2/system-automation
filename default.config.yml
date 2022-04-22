@@ -17,6 +17,8 @@ basic_packages:
     - unzip
     - vim
     - zsh
+    - net-tools
+    - bridge-utils
   RedHat:
     - apg
     - curl
