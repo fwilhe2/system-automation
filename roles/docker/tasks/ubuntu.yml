@@ -37,20 +37,9 @@
   changed_when: false
   become: true
 
-# Special handling because Docker provides no packages for Ubuntu's development branch
-- name: Get Ubuntu codename
-  ansible.builtin.set_fact:
-    ubuntu_codename: "{{ 'impish' if ansible_lsb.description is search('development branch', ignorecase=True) else ansible_distribution_release }}"
-
-- name: dbg
-  ansible.builtin.debug:
-    msg: |
-      Ubuntu codename for Docker apt repo: {{ ubuntu_codename }}
-      Actual ansible_distribution: {{ ansible_distribution_release }} ({{ ansible_lsb.description }})
-
 - name: Add Docker APT repository
   ansible.builtin.apt_repository:
-    repo: "deb https://download.docker.com/linux/ubuntu   {{ ubuntu_codename }} stable"
+    repo: "deb https://download.docker.com/linux/ubuntu   {{ ansible_distribution_release }} stable"
     state: present
     update_cache: true
   become: true
