@@ -40,7 +40,7 @@
 # Special handling because Docker provides no packages for Ubuntu's development branch
 - name: Get Ubuntu codename
   ansible.builtin.set_fact:
-    ubuntu_codename: "{{ 'impish' if ansible_lsb.description is search('development branch', ignorecase=True) else ansible_distribution_release }}"
+    ubuntu_codename: "{{ 'jammy' if ansible_lsb.description is search('development branch', ignorecase=True) else ansible_distribution_release }}"
 
 - name: dbg
   ansible.builtin.debug:
