@@ -40,6 +40,11 @@ sudo dnf install -y ansible curl bash unzip
 sudo apt -y install ansible curl bash unzip
 ----
 
+.Preparation for Archlinux
+----
+sudo pacman --sync --refresh --noconfirm ansible curl bash unzip git
+----
+
 == Kickstart (experimental)
 
 If you don't mind the `curl | bash` thing, you might try running the playbook directly via:
