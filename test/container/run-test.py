@@ -110,6 +110,7 @@ def assert_system_properties():
         "keepassxc-cli": "-version",
         "cargo": "--version",
         "topgrade": "--version",
+        "limactl": "--version",
     }
 
     for binary in expected_binaries:

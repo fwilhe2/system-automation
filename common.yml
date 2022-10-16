@@ -5,6 +5,9 @@
     - versions.yml
     - [default.config.yml, config.yml]
 
+  vars:
+    home: "{{ lookup('env', 'HOME') }}"
+
   roles:
     - basic
     - dotfiles

@@ -1,39 +1,54 @@
 ---
-- name: Ensure `~/software` directory exists
-  ansible.builtin.file:
-    path: ~/software
-    state: directory
-    mode: "750"
+# - name: Ensure `~/software` directory exists
+#   ansible.builtin.file:
+#     path: ~/software
+#     state: directory
+#     mode: "750"
 
-- name: Clone `fwilhe/bin` Repository
+# - name: Clone `fwilhe/bin` Repository
+#   ansible.builtin.git:
+#     repo: https://github.com/fwilhe2/bin.git
+#     dest: ~/software/fwilhe-bin
+
+# - name: Install Development Tools
+#   ansible.builtin.unarchive:
+#     src: "{{ item }}"
+#     dest: ~/software/
+#     remote_src: true
+#   loop: "{{ development_tools['linux'] }}"
+
+# - name: Install Rust
+#   ansible.builtin.command: bash -c "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
+#   changed_when: false
+
+# - name: Ensure `~/bin` directory exists
+#   ansible.builtin.file:
+#     path: ~/bin
+#     state: directory
+#     mode: "750"
+
+# - name: Install Cli Tools
+#   ansible.builtin.unarchive:
+#     src: "{{ item }}"
+#     dest: ~/bin/
+#     remote_src: true
+#   with_items:
+#     - https://github.com/r-darwish/topgrade/releases/download/{{ TOPGRADE_VERSION }}/topgrade-{{ TOPGRADE_VERSION }}-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz
+
+- name: Get lima-vm source code
   ansible.builtin.git:
-    repo: https://github.com/fwilhe2/bin.git
-    dest: ~/software/fwilhe-bin
+    repo: https://github.com/lima-vm/lima.git
+    dest: ~/software/lima-vm
 
-- name: Install Development Tools
-  ansible.builtin.unarchive:
-    src: "{{ item }}"
-    dest: ~/software/
-    remote_src: true
-  loop: "{{ development_tools['linux'] }}"
+- name: Build lima-vm
+  make:
+    chdir: ~/software/lima-vm
 
-- name: Install Rust
-  ansible.builtin.command: bash -c "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
-  changed_when: false
-
-- name: Ensure `~/bin` directory exists
-  ansible.builtin.file:
-    path: ~/bin
-    state: directory
-    mode: "750"
-
-- name: Install Cli Tools
-  ansible.builtin.unarchive:
-    src: "{{ item }}"
-    dest: ~/bin/
-    remote_src: true
-  with_items:
-    - https://github.com/r-darwish/topgrade/releases/download/{{ TOPGRADE_VERSION }}/topgrade-{{ TOPGRADE_VERSION }}-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz
+- name: Run 'install' target as root
+  make:
+    chdir: "{{ home }}/software/lima-vm"
+    target: install
+  become: true
 
 - name: Update Path
   ansible.builtin.template:
