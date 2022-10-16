@@ -1,39 +1,45 @@
 ---
-# - name: Ensure `~/software` directory exists
-#   ansible.builtin.file:
-#     path: ~/software
-#     state: directory
-#     mode: "750"
+- name: Ensure `~/software` directory exists
+  ansible.builtin.file:
+    path: ~/software
+    state: directory
+    mode: "750"
 
-# - name: Clone `fwilhe/bin` Repository
-#   ansible.builtin.git:
-#     repo: https://github.com/fwilhe2/bin.git
-#     dest: ~/software/fwilhe-bin
+- name: Clone `fwilhe/bin` Repository
+  ansible.builtin.git:
+    repo: https://github.com/fwilhe2/bin.git
+    dest: ~/software/fwilhe-bin
 
-# - name: Install Development Tools
-#   ansible.builtin.unarchive:
-#     src: "{{ item }}"
-#     dest: ~/software/
-#     remote_src: true
-#   loop: "{{ development_tools['linux'] }}"
+- name: Install Development Tools
+  ansible.builtin.unarchive:
+    src: "{{ item }}"
+    dest: ~/software/
+    remote_src: true
+  loop: "{{ development_tools['linux'] }}"
 
-# - name: Install Rust
-#   ansible.builtin.command: bash -c "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
-#   changed_when: false
+- name: Install Rust
+  ansible.builtin.command: bash -c "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
+  changed_when: false
 
-# - name: Ensure `~/bin` directory exists
-#   ansible.builtin.file:
-#     path: ~/bin
-#     state: directory
-#     mode: "750"
+- name: Ensure `~/bin` directory exists
+  ansible.builtin.file:
+    path: ~/bin
+    state: directory
+    mode: "750"
 
-# - name: Install Cli Tools
-#   ansible.builtin.unarchive:
-#     src: "{{ item }}"
-#     dest: ~/bin/
-#     remote_src: true
-#   with_items:
-#     - https://github.com/r-darwish/topgrade/releases/download/{{ TOPGRADE_VERSION }}/topgrade-{{ TOPGRADE_VERSION }}-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz
+- name: Install Cli Tools
+  ansible.builtin.unarchive:
+    src: "{{ item }}"
+    dest: ~/bin/
+    remote_src: true
+  with_items:
+    - https://github.com/r-darwish/topgrade/releases/download/{{ TOPGRADE_VERSION }}/topgrade-{{ TOPGRADE_VERSION }}-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz
+
+- name: Update Path
+  ansible.builtin.template:
+    dest: ~/.custom-path.sh
+    src: custom-path.sh.j2
+    mode: "750"
 
 - name: Get lima-vm source code
   ansible.builtin.git:
@@ -49,9 +55,3 @@
     chdir: "{{ home }}/software/lima-vm"
     target: install
   become: true
-
-- name: Update Path
-  ansible.builtin.template:
-    dest: ~/.custom-path.sh
-    src: custom-path.sh.j2
-    mode: "750"
