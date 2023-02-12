@@ -32,7 +32,6 @@
     set -o pipefail
     curl -sSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
   args:
-    warn: false
     executable: /bin/bash
   changed_when: false
   become: true
