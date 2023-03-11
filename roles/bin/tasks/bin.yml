@@ -16,6 +16,10 @@
     state: directory
     mode: "750"
 
+- name: Print all available facts
+  ansible.builtin.debug:
+    var: ansible_facts
+
 - name: Install Development Packages
   become: true
   become_user: root
