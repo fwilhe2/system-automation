@@ -83,6 +83,23 @@ desktop_packages:
     - "libreoffice-langpack-de"
     - "xclip"
 
+development_packages:
+  Debian:
+    - openjdk-17-jdk-headless
+    - golang
+    - nodejs
+    - npm
+    - maven
+    - cargo
+  RedHat:
+    - java-17-openjdk-devel
+    - golang
+    - nodejs
+    - npm
+    - maven
+    - cargo
+    - rust
+
 system_development_packages:
   Debian:
     - build-essential

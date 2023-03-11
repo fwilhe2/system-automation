@@ -103,9 +103,7 @@ def assert_system_properties():
 
     expected_binaries_command = {
         "javac": "-version",
-        "kotlinc": "-version",
         "mvn": "-version",
-        "gradle": "-version",
         "go": "version",
         "keepassxc-cli": "-version",
         "cargo": "--version",
