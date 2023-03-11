@@ -115,7 +115,7 @@ def assert_system_properties():
             if binary in files:
                 binary_with_path = os.path.join(root, binary)
                 print(f"Found binary at '{binary_with_path}'")
-                script = f"set -e && source ~/.custom-path.sh && {binary_with_path} {expected_binaries_command[binary]}"
+                script = f"set -e && {binary_with_path} {expected_binaries_command[binary]}"
                 assert_equals(
                     subprocess.run(["bash", "-c", f"{script}"]).returncode,
                     0,
