@@ -99,6 +99,16 @@ development_packages:
     - maven
     - cargo
     - rust
+  Suse:
+    - java-17-openjdk-devel
+    - go
+    - nodejs-default
+    - npm-default
+    - maven
+    - cargo
+    - rust
+    - rustup
+  Archlinux: {}
 
 system_development_packages:
   Debian:
