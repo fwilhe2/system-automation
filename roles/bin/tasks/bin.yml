@@ -10,33 +10,20 @@
     repo: https://github.com/fwilhe2/bin.git
     dest: ~/software/fwilhe-bin
 
-- name: Install Development Tools
-  ansible.builtin.unarchive:
-    src: "{{ item }}"
-    dest: ~/software/
-    remote_src: true
-  loop: "{{ development_tools['linux'] }}"
-
-- name: Install Rust
-  ansible.builtin.command: bash -c "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
-  changed_when: false
-
 - name: Ensure `~/bin` directory exists
   ansible.builtin.file:
     path: ~/bin
     state: directory
     mode: "750"
 
-- name: Install Cli Tools
-  ansible.builtin.unarchive:
-    src: "{{ item }}"
-    dest: ~/bin/
-    remote_src: true
-  with_items:
-    - https://github.com/r-darwish/topgrade/releases/download/{{ TOPGRADE_VERSION }}/topgrade-{{ TOPGRADE_VERSION }}-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz
+- name: Print all available facts
+  ansible.builtin.debug:
+    var: ansible_facts
 
-- name: Update Path
-  ansible.builtin.template:
-    dest: ~/.custom-path.sh
-    src: custom-path.sh.j2
-    mode: "750"
+- name: Install Development Packages
+  become: true
+  become_user: root
+  ansible.builtin.package:
+    state: present
+    name: "{{ item }}"
+  loop: "{{ development_packages[ansible_os_family] }}"

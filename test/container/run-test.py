@@ -99,13 +99,11 @@ run_group(run_ansible, "Running Playbook desktop", "/home/user/desktop.yml")
 
 
 def assert_system_properties():
-    expected_binaries = ["javac", "mvn", "gradle", "go", "keepassxc-cli"]
+    expected_binaries = ["javac", "mvn", "go", "keepassxc-cli"]
 
     expected_binaries_command = {
         "javac": "-version",
-        "kotlinc": "-version",
         "mvn": "-version",
-        "gradle": "-version",
         "go": "version",
         "keepassxc-cli": "-version",
         "cargo": "--version",
@@ -113,16 +111,16 @@ def assert_system_properties():
     }
 
     for binary in expected_binaries:
-        for root, _, files in os.walk("/"):
-            if binary in files:
-                binary_with_path = os.path.join(root, binary)
-                print(f"Found binary at '{binary_with_path}'")
-                script = f"set -e && source ~/.custom-path.sh && {binary_with_path} {expected_binaries_command[binary]}"
-                assert_equals(
-                    subprocess.run(["bash", "-c", f"{script}"]).returncode,
-                    0,
-                    f"Expected {script} to run with exit code 0.",
-                )
+        binary_with_path = shutil.which(binary)
+        if binary_with_path == None:
+            sys.exit(f"Error: Could not find {binary}")
+        print(f"Found binary for {binary} at '{binary_with_path}'")
+        script = f"set -e && {binary_with_path} {expected_binaries_command[binary]}"
+        assert_equals(
+            subprocess.run(["bash", "-c", f"{script}"]).returncode,
+            0,
+            f"Expected {script} to run with exit code 0.",
+        )
 
     has_user = False
     with open("/etc/passwd", "r") as passwd:
