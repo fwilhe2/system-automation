@@ -108,7 +108,7 @@ development_packages:
     - cargo
     - rust
   Archlinux:
-    - jdk17-openjdk-headless
+    - jdk-openjdk
     - go
     - nodejs
     - npm
