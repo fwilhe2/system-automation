@@ -107,8 +107,13 @@ development_packages:
     - maven
     - cargo
     - rust
-    - rustup
-  Archlinux: {}
+  Archlinux:
+    - jdk17-openjdk-headless
+    - go
+    - nodejs
+    - npm
+    - maven
+    - rust
 
 system_development_packages:
   Debian:
