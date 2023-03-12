@@ -27,4 +27,3 @@
     state: present
     name: "{{ item }}"
   loop: "{{ development_packages[ansible_os_family] }}"
-  when: ansible_os_family == 'Debian' or ansible_os_family == 'Redhat'

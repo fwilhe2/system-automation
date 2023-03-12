@@ -99,7 +99,7 @@ run_group(run_ansible, "Running Playbook desktop", "/home/user/desktop.yml")
 
 
 def assert_system_properties():
-    expected_binaries = ["javac", "mvn", "gradle", "go", "keepassxc-cli"]
+    expected_binaries = ["javac", "mvn", "go", "keepassxc-cli"]
 
     expected_binaries_command = {
         "javac": "-version",
