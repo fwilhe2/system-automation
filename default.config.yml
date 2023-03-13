@@ -75,6 +75,9 @@ basic_packages:
 desktop_packages:
   Debian:
     - "keepassxc"
+    - "libreoffice-help-de"
+    - "libreoffice-l10n-de"
+    - "libreoffice"
     - "xclip"
   RedHat:
     - "firefox"
@@ -85,34 +88,34 @@ desktop_packages:
 
 development_packages:
   Debian:
+    - cargo
+    - golang
+    - maven
+    - nodejs
+    - npm
     - openjdk-17-jdk-headless
-    - golang
-    - nodejs
-    - npm
-    - maven
-    - cargo
   RedHat:
-    - java-17-openjdk-devel
+    - cargo
     - golang
+    - java-17-openjdk-devel
+    - maven
     - nodejs
     - npm
-    - maven
-    - cargo
     - rust
   Suse:
-    - java-17-openjdk-devel
+    - cargo
     - go
+    - java-17-openjdk-devel
+    - maven
     - nodejs-default
     - npm-default
-    - maven
-    - cargo
     - rust
   Archlinux:
-    - jdk-openjdk
     - go
+    - jdk-openjdk
+    - maven
     - nodejs
     - npm
-    - maven
     - rust
 
 system_development_packages:
