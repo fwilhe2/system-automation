@@ -15,12 +15,6 @@ image::https://github.com/fwilhe2/system-automation/workflows/CI/badge.svg[CI Jo
 
 System Automation powered by Ansible™
 
-Tested ansible version:
-
-----
-ansible 2.9.18
-----
-
 == Project Layout
 
 This project contains two playbooks:
