@@ -12,7 +12,7 @@
 - name: Install System Development Packages (Suse)
   become: true
   become_user: root
-  zypper:
+  community.general.zypper:
     state: present
     name: devel_basis
     type: pattern

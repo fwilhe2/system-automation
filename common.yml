@@ -1,5 +1,6 @@
 ---
 - hosts: all
+  name: Common Playbook
 
   vars_files:
     - [default.config.yml, config.yml]

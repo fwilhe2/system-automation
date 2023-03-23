@@ -1,3 +1,3 @@
 ---
-- import_tasks: directories.yml
+- ansible.builtin.import_tasks: directories.yml
   tags: directories
