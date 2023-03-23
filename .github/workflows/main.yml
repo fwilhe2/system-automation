@@ -4,7 +4,7 @@ on: [push, workflow_dispatch]
 
 jobs:
   run-in-container-deb:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -17,7 +17,7 @@ jobs:
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-ubuntu${{ matrix.version }}
 
   run-in-container-yum:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -30,7 +30,7 @@ jobs:
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-fedora${{ matrix.version }}
 
   run-in-container-zypper:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - name: Build Test Container opensuse
@@ -39,7 +39,7 @@ jobs:
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-opensuse
 
   run-in-container-pacman:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - name: Build Test Container archlinux
@@ -48,7 +48,7 @@ jobs:
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-archlinux
 
   syntax-check:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -59,7 +59,7 @@ jobs:
       - run: ansible-playbook -vvvv --inventory inventory --syntax-check desktop.yml
 
   formatting:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - run: pip install yapf
@@ -67,7 +67,7 @@ jobs:
       - run: git diff --name-only --exit-code
 
   lint:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
