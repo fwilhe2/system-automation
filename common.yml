@@ -2,7 +2,6 @@
 - hosts: all
 
   vars_files:
-    - versions.yml
     - [default.config.yml, config.yml]
 
   roles:
