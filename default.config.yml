@@ -21,16 +21,16 @@ basic_packages:
     - net-tools
     - bridge-utils
   RedHat:
-    # - apg
-    # - curl
+    - apg
+    - curl
     - git
-    # - htop
-    # - httpie
+    - htop
+    - httpie
     - jq
     - make
     - mc
-    # - rdiff-backup
-    # - the_silver_searcher
+    - rdiff-backup
+    - the_silver_searcher
     - unzip
     - vim
     - xz
