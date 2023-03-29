@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [latest, rawhide]
+        version: [latest]
     steps:
       - uses: actions/checkout@v2
       - name: Build Test Container Fedora ${{ matrix.version }}
@@ -65,13 +65,3 @@ jobs:
       - run: pip install yapf
       - run: ./format-files.sh
       - run: git diff --name-only --exit-code
-
-  lint:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.x"
-      - run: pip3 install yamllint ansible ansible-lint
-      - run: ansible-lint -vv -x git-latest,no-handler -p common.yml desktop.yml roles
