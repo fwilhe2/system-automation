@@ -10,6 +10,7 @@ basic_packages:
     - jq
     - make
     - mc
+    - nala
     - python-is-python3
     - python3
     - rdiff-backup
@@ -17,6 +18,8 @@ basic_packages:
     - unzip
     - vim
     - zsh
+    - net-tools
+    - bridge-utils
   RedHat:
     # - apg
     # - curl
@@ -32,10 +35,50 @@ basic_packages:
     - vim
     - xz
     - zsh
+    - net-tools
+    - bridge-utils
+  Suse:
+    - apg
+    - bzip2
+    - curl
+    - git
+    - gzip
+    - htop
+    - httpie
+    - jq
+    - make
+    - mc
+    - rdiff-backup
+    - tar
+    - the_silver_searcher
+    - unzip
+    - vim
+    - xz
+    - zsh
+  Archlinux:
+    - bzip2
+    - curl
+    - git
+    - gzip
+    - htop
+    - httpie
+    - jq
+    - make
+    - mc
+    - rdiff-backup
+    - tar
+    - the_silver_searcher
+    - unzip
+    - vim
+    - xz
+    - zsh
 
 desktop_packages:
   Debian:
     - "keepassxc"
+    - "libreoffice-help-de"
+    - "libreoffice-l10n-de"
+    - "libreoffice"
     - "xclip"
   RedHat:
     - "firefox"
@@ -43,6 +86,38 @@ desktop_packages:
     - "libreoffice"
     - "libreoffice-langpack-de"
     - "xclip"
+
+development_packages:
+  Debian:
+    - cargo
+    - golang
+    - maven
+    - nodejs
+    - npm
+    - openjdk-17-jdk-headless
+  RedHat:
+    - cargo
+    - golang
+    - java-17-openjdk-devel
+    - maven
+    - nodejs
+    - npm
+    - rust
+  Suse:
+    - cargo
+    - go
+    - java-17-openjdk-devel
+    - maven
+    - nodejs-default
+    - npm-default
+    - rust
+  Archlinux:
+    - go
+    - jdk-openjdk
+    - maven
+    - nodejs
+    - npm
+    - rust
 
 system_development_packages:
   Debian:

@@ -1,8 +1,8 @@
 ---
 - hosts: all
+  name: Common Playbook
 
   vars_files:
-    - versions.yml
     - [default.config.yml, config.yml]
 
   roles:
@@ -10,4 +10,5 @@
     - dotfiles
     - bin
     - directories
-    # - docker
+    - docker
+    - c

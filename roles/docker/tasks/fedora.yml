@@ -3,13 +3,13 @@
 # https://fedoramagazine.org/docker-and-fedora-35/
 
 - name: Make sure podman-docker is not installed because it conflicts with docker
-  dnf:
+  ansible.builtin.dnf:
     state: absent
     name: podman-docker
   become: true
 
 - name: Install the docker packages
-  dnf:
+  ansible.builtin.dnf:
     state: present
     name: "{{ item }}"
   loop:

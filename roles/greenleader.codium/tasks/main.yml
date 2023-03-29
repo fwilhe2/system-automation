@@ -1,7 +1,7 @@
 ---
 # tasks file for ansible-role-codium
 - name: Ensure GPG key for repo is installed (RedHat)
-  rpm_key:
+  ansible.builtin.rpm_key:
     state: present
     key: https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg
     fingerprint: "{{ gpg_fingerprint }}"
@@ -9,7 +9,7 @@
     - ansible_os_family == 'RedHat'
 
 - name: Ensure repo is installed (RedHat)
-  yum_repository:
+  ansible.builtin.yum_repository:
     name: codium
     description: gitlab.com_paulcarroty_vscodium_repo
     baseurl: https://paulcarroty.gitlab.io/vscodium-deb-rpm-repo/rpms/
@@ -22,7 +22,7 @@
     - ansible_os_family == 'RedHat'
 
 - name: Ensure GPG key for repo is installed (Debian)
-  apt_key:
+  ansible.builtin.apt_key:
     url: https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg
     id: "{{ gpg_fingerprint }}"
     state: present
@@ -30,7 +30,7 @@
     - ansible_os_family == 'Debian'
 
 - name: Ensure repo is installed (Debian)
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb https://paulcarroty.gitlab.io/vscodium-deb-rpm-repo/debs/ vscodium main"
     filename: codium
     state: present
@@ -39,6 +39,6 @@
     - ansible_os_family == 'Debian'
 
 - name: Ensure codium is installed
-  package:
+  ansible.builtin.package:
     name: codium
     state: present

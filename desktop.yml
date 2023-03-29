@@ -1,5 +1,6 @@
 ---
 - hosts: all
+  name: Desktop (GNOME) Playbook
 
   vars_files:
     - default.config.yml
@@ -12,7 +13,7 @@
     - name: Install Desktop Packages
       become: true
       become_user: root
-      package:
+      ansible.builtin.package:
         state: present
         name: "{{ item }}"
       loop: "{{ desktop_packages[ansible_os_family] }}"

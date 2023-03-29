@@ -1,17 +1,16 @@
 ARG VERSION
 
-FROM ubuntu:$VERSION
+FROM ubuntu:${VERSION}
 
 ENV TERM=xterm
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
-  ansible \
   curl \
   bash \
   python3 \
   python3-pip \
-  python3-distro \
+  ansible \
   unzip \
   libasound2 \
   && mkdir -p /home/user \
@@ -28,8 +27,8 @@ RUN echo 'root:toor123' | chpasswd
 
 USER user
 
-COPY . /home/user
-
 WORKDIR /home/user
 
-ENTRYPOINT ["python3", "/home/user/test/container/run-test.py"]
+COPY entrypoint.sh .
+
+ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
