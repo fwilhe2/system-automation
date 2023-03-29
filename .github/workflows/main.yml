@@ -32,7 +32,7 @@ jobs:
   run-in-container-yum-el:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Build Test Container CentOS
         run: docker build -t system-automation-test-centos --file test/container/Containerfile.centos .
       - name: Run Test CentOS
