@@ -1,0 +1,24 @@
+Vagrant.configure(2) do |config|
+  config.vm.box = "centos"
+
+  config.vm.provider 'libvirt' do |provider|
+    config.vm.box_url = "https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-Vagrant-9-20230313.0.x86_64.vagrant-libvirt.box"
+    provider.memory = 1024
+    provider.cpus = 2
+  end
+
+
+  config.vm.provider "virtualbox" do |provider|
+    config.vm.box_url = "https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-Vagrant-9-20230313.0.x86_64.vagrant-virtualbox.box"
+    provider.memory = 1024
+    provider.cpus = 2
+  end
+
+  config.vm.provision "shell", inline: "sudo dnf -y install python3-dnf python3-libselinux"
+  config.vm.provision "ansible" do |ansible|
+      ansible.playbook = "../../common.yml"
+      ansible.raw_arguments = [
+          '--verbose'
+      ]
+  end
+end
