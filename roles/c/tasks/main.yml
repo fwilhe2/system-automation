@@ -2,8 +2,19 @@
 - name: Install System Development Packages
   become: true
   become_user: root
-  package:
+  ansible.builtin.package:
     state: present
     name: "{{ item }}"
   loop: "{{ system_development_packages[ansible_os_family] }}"
   tags: system_development
+  when: ansible_os_family == 'Debian' or ansible_os_family == 'Redhat'
+
+- name: Install System Development Packages (Suse)
+  become: true
+  become_user: root
+  community.general.zypper:
+    state: present
+    name: devel_basis
+    type: pattern
+  tags: system_development
+  when: ansible_os_family == 'Suse'

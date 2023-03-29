@@ -1,0 +1,6 @@
+{
+    "recommendations": [
+        "redhat.ansible",
+        "asciidoctor.asciidoctor-vscode"
+    ]
+}

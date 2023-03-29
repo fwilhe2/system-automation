@@ -19,4 +19,6 @@ RUN echo 'root:toor123' | chpasswd
 
 USER user
 
-ENTRYPOINT ["python3", "/home/user/test/container/run-test.py"]
+COPY entrypoint.sh .
+
+ENTRYPOINT ["/bin/bash", "entrypoint.sh"]

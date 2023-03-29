@@ -15,12 +15,6 @@ image::https://github.com/fwilhe2/system-automation/workflows/CI/badge.svg[CI Jo
 
 System Automation powered by Ansible™
 
-Tested ansible version:
-
-----
-ansible 2.9.18
-----
-
 == Project Layout
 
 This project contains two playbooks:
@@ -38,6 +32,11 @@ sudo dnf install -y ansible curl bash unzip
 .Preparation for Ubuntu
 ----
 sudo apt -y install ansible curl bash unzip
+----
+
+.Preparation for Archlinux
+----
+sudo pacman --sync --refresh --noconfirm ansible curl bash unzip git
 ----
 
 == Kickstart (experimental)
@@ -119,3 +118,4 @@ https://github.com/gantsign/ansible-role-visual-studio-code-extensions[ansible-r
 * https://docs.ansible.com/ansible/2.9/modules/list_of_all_modules.html[Ansible Docs: All Modules]
 * http://www.whitewashing.de/2013/11/19/setting_up_development_machines_ansible_edition.html[Setting up development machines: Ansible edition]
 * https://github.com/geerlingguy/mac-dev-playbook
+* https://github.com/geerlingguy/ansible-role-docker

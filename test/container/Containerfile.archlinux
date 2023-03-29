@@ -1,12 +1,11 @@
-ARG VERSION
-
-FROM fedora:$VERSION
+FROM archlinux
 
 ENV TERM=xterm
 
-RUN dnf --assumeyes update && dnf --assumeyes install git ansible curl unzip bash python3-distro \
+RUN pacman -Sy && pacman --noconfirm -S git ansible curl unzip bash sudo \
   && mkdir -p /home/user && echo "user:x:1001:1001:user:/home/user:/bin/bash" >> /etc/passwd \
-  && chown -R user /home/user
+  && chown -R user /home/user \
+  && echo 'user ALL=(ALL:ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Install Ansible inventory file.
 # Taken from https://github.com/geerlingguy/docker-fedora33-ansible/blob/bd54ebebc836c10e76938a7d52e2386b7f16960e/Dockerfile#L35
@@ -16,7 +15,8 @@ RUN echo -e '[local]\nlocalhost ansible_connection=local ansible_become_password
 COPY . /home/user
 
 RUN echo 'root:toor123' | chpasswd
+RUN echo 'user:toor123' | chpasswd
 
 USER user
-
-ENTRYPOINT ["python3", "/home/user/test/container/run-test.py"]
+WORKDIR /home/user
+ENTRYPOINT ["ansible-playbook", "common.yml"]

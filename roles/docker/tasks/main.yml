@@ -1,0 +1,8 @@
+---
+- import_tasks: fedora.yml
+  tags: docker
+  when: ansible_os_family == 'RedHat'
+
+- include: ubuntu.yml
+  tags: docker
+  when: ansible_distribution == 'Ubuntu'
