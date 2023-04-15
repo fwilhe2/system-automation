@@ -8,7 +8,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ['ubuntu:latest', 'ubuntu:rolling', 'ubuntu:devel', 'debian:testing']
+        version:
+          ["ubuntu:latest", "ubuntu:rolling", "ubuntu:devel", "debian:testing"]
     steps:
       - uses: actions/checkout@v3
       - name: Build Test Container Ubuntu ${{ matrix.version }}
