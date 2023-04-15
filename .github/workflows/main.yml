@@ -8,11 +8,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [latest, rolling, devel]
+        version: [ubuntu:latest, ubuntu:rolling, ubuntu:devel, debian:testing]
     steps:
       - uses: actions/checkout@v3
       - name: Build Test Container Ubuntu ${{ matrix.version }}
-        run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-ubuntu${{ matrix.version }} --file test/container/Containerfile.ubuntu .
+        run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-ubuntu${{ matrix.version }} --file test/container/Containerfile.dpkg .
       - name: Run Test Ubuntu ${{ matrix.version }}
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-ubuntu${{ matrix.version }}
 

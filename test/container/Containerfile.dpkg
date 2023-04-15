@@ -1,6 +1,6 @@
 ARG VERSION
 
-FROM ubuntu:$VERSION
+FROM $VERSION
 
 ENV TERM=xterm
 ENV DEBIAN_FRONTEND=noninteractive
