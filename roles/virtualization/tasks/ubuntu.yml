@@ -13,6 +13,20 @@
     - vagrant-libvirt
     - virtinst
 
+- name: Set the domain socket group ownership to libvirt
+  ansible.builtin.lineinfile:
+    path: /etc/libvirt/libvirtd.conf
+    regexp: '^#unix_sock_group = "libvirt"'
+    line: 'unix_sock_group = "libvirt"'
+  become: true
+
+- name: Adjust the UNIX socket permissions for the R/W socket
+  ansible.builtin.lineinfile:
+    path: /etc/libvirt/libvirtd.conf
+    regexp: '^#unix_sock_rw_perms = "0770"'
+    line: 'unix_sock_rw_perms = "0770"'
+  become: true
+
 - name: Start and enable the libvirtd service
   ansible.builtin.systemd:
     name: libvirtd
@@ -20,25 +34,9 @@
     enabled: yes
   become: true
 
-- name: Add user to the libvirt group
+- name: Add user to group
   ansible.builtin.user:
     name: "{{ username }}"
     groups: libvirt
     append: yes
-  become: true
-
-- name: Edit libvirtd configuration file
-  ansible.builtin.replace:
-    path: /etc/libvirt/libvirtd.conf
-    regexp: '^(unix_sock_group\s*=\s*).*$'
-    replace: '\1"libvirt"'
-    backup: yes
-  become: true
-
-- name: Set UNIX socket permissions for the R/W socket
-  ansible.builtin.replace:
-    path: /etc/libvirt/libvirtd.conf
-    regexp: '^(unix_sock_rw_perms\s*=\s*).*$'
-    replace: '\10770'
-    backup: yes
   become: true
