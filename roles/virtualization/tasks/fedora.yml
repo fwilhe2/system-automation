@@ -1,11 +1,10 @@
 ---
-
 # See:
 # https://fedoramagazine.org/full-virtualization-system-on-fedora-workstation-30/
 
 - name: Install the 'virtualization' package group
   dnf:
-    name: '@virtualization'
+    name: "@virtualization"
     state: present
   become: true
   when: ansible_os_family == 'RedHat'
