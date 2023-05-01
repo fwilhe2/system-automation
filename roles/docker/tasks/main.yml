@@ -3,6 +3,6 @@
   tags: docker
   when: ansible_os_family == 'RedHat'
 
-- include: ubuntu.yml
+- include: deb.yml
   tags: docker
   when: ansible_os_family == 'Debian'
