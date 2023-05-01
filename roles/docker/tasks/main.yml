@@ -5,4 +5,4 @@
 
 - include: ubuntu.yml
   tags: docker
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_os_family == 'Debian'

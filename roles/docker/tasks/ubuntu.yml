@@ -53,6 +53,15 @@
     state: present
     update_cache: true
   become: true
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Add Docker APT repository
+  ansible.builtin.apt_repository:
+    repo: "deb https://download.docker.com/linux/debian   {{ ubuntu_codename }} stable"
+    state: present
+    update_cache: true
+  become: true
+  when: ansible_distribution == 'Debian'
 
 - name: Install Docker Engine
   ansible.builtin.apt:
