@@ -12,10 +12,10 @@ jobs:
           ["ubuntu:latest", "ubuntu:rolling", "ubuntu:devel", "debian:testing"]
     steps:
       - uses: actions/checkout@v3
-      - name: Build Test Container Ubuntu ${{ matrix.version }}
-        run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-ubuntu${{ matrix.version }} --file test/container/Containerfile.dpkg .
-      - name: Run Test Ubuntu ${{ matrix.version }}
-        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-ubuntu${{ matrix.version }}
+      - name: Build Test Container deb ${{ matrix.version }}
+        run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-deb-${{ matrix.version }} --file test/container/Containerfile.dpkg .
+      - name: Run Test deb ${{ matrix.version }}
+        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-deb-${{ matrix.version }}
 
   run-in-container-yum:
     runs-on: ubuntu-22.04
@@ -26,9 +26,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build Test Container Fedora ${{ matrix.version }}
-        run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora${{ matrix.version }} --file test/container/Containerfile.fedora .
+        run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora-${{ matrix.version }} --file test/container/Containerfile.fedora .
       - name: Run Test Fedora ${{ matrix.version }}
-        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-fedora${{ matrix.version }}
+        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-fedora-${{ matrix.version }}
 
   run-in-container-yum-el:
     runs-on: ubuntu-22.04
