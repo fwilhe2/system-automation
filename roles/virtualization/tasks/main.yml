@@ -3,6 +3,6 @@
   tags: virtualization
   when: ansible_os_family == 'RedHat'
 
-- include: ubuntu.yml
+- include: deb.yml
   tags: virtualization
   when: ansible_os_family == 'Debian'
