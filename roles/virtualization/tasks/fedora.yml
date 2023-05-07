@@ -13,7 +13,6 @@
   dnf:
     name: "@Virtualization Host"
     state: present
-    allowerasing: true
   become: true
   when: ansible_os_family == 'RedHat' and ansible_distribution == 'CentOS'
 
