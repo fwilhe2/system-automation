@@ -127,20 +127,11 @@ system_development_packages:
     - "@C Development Tools and Libraries"
     - cmake
 
-development_tools:
-  linux:
-    - "https://github.com/SAP/SapMachine/releases/download/sapmachine-{{ JDK_VERSION }}/sapmachine-jdk-{{ JDK_VERSION }}_linux-x64_bin.tar.gz"
-    - "https://dlcdn.apache.org/maven/maven-3/{{ MAVEN_VERSION }}/binaries/apache-maven-{{ MAVEN_VERSION }}-bin.tar.gz"
-    - "https://downloads.gradle-dn.com/distributions/gradle-{{ GRADLE_VERSION }}-bin.zip"
-    - "https://nodejs.org/dist/v{{ NODE_VERSION }}/node-v{{ NODE_VERSION }}-linux-x64.tar.xz"
-    - "https://golang.org/dl/go{{ GO_VERSION }}.linux-amd64.tar.gz"
-    - "https://github.com/cli/cli/releases/download/v{{ GH_VERSION }}/gh_{{ GH_VERSION }}_linux_amd64.tar.gz"
-    - "https://github.com/JetBrains/kotlin/releases/download/v{{ KOTLIN_VERSION }}/kotlin-compiler-{{ KOTLIN_VERSION }}.zip"
-    - "https://github.com/JetBrains/kotlin/releases/download/v{{ KOTLIN_VERSION }}/kotlin-native-linux-x86_64-{{ KOTLIN_VERSION }}.tar.gz"
-
 directories:
   - "~/temp"
   - "~/code"
+  - "~/code/scratch"
+  - "~/code/fwilhe2"
   - "~/no_backup"
 
 codium_extensions:

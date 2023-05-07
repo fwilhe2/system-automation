@@ -24,12 +24,12 @@ This project contains two playbooks:
 
 == Preparation
 
-.Preparation for Fedora
+.Preparation for Fedora/*EL-like
 ----
 sudo dnf install -y ansible curl bash unzip
 ----
 
-.Preparation for Ubuntu
+.Preparation for Ubuntu/Debian
 ----
 sudo apt -y install ansible curl bash unzip
 ----
@@ -99,7 +99,7 @@ vagrant up
 
 == License
 
-Copyright © 2016-2021 Florian Wilhelm
+Copyright © 2016-2023 Florian Wilhelm
 
 Free use of this software is granted under the terms of the MIT License.
 
