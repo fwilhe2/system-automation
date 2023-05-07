@@ -30,6 +30,15 @@ jobs:
       - name: Run Test Fedora ${{ matrix.version }}
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-fedora-${{ matrix.version }}
 
+  run-in-container-yum-el:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Test Container CentOS
+        run: docker build -t system-automation-test-centos --file test/container/Containerfile.centos .
+      - name: Run Test CentOS
+        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-centos
+
   run-in-container-zypper:
     runs-on: ubuntu-22.04
     steps:

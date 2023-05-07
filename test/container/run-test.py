@@ -61,10 +61,11 @@ def run_ansible(playbook):
     )
 
     rerun_stdout = rerun.stdout.decode("utf-8")
+    rerun_stderr = rerun.stderr.decode("utf-8")
     assert_equals(
         rerun.returncode,
         0,
-        f"Expected running playbook '{playbook}' (second run) to return exit code 0.\n{rerun_stdout}",
+        f"Expected running playbook '{playbook}' (second run) to return exit code 0.\n{rerun_stdout}\n{rerun_stderr}",
     )
     changed_match = re.fullmatch(".*changed=0.*failed=0.*", rerun_stdout,
                                  re.DOTALL)
