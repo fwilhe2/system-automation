@@ -44,7 +44,7 @@ sudo pacman --sync --refresh --noconfirm ansible curl bash unzip git
 If you don't mind the `curl | bash` thing, you might try running the playbook directly via:
 
 ----
-curl https://raw.githubusercontent.com/fwilhe2/system-automation/master/bootstrap.sh | bash
+curl https://raw.githubusercontent.com/fwilhe2/system-automation/main/bootstrap.sh | bash
 ----
 
 This requires `ansible`, `curl`, `bash` and `unzip`.
