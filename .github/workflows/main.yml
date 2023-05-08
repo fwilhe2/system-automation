@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [latest]
+        version: [latest, rawhide]
     steps:
       - uses: actions/checkout@v3
       - name: Build Test Container Fedora ${{ matrix.version }}
