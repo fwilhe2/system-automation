@@ -3,6 +3,6 @@
   tags: docker
   when: ansible_os_family == 'RedHat' and ansible_distribution == 'Fedora'
 
-- include: deb.yml
+- import_tasks: deb.yml
   tags: docker
   when: ansible_os_family == 'Debian'

@@ -1,8 +1,8 @@
 ---
-- include: fedora.yml
+- import_tasks: fedora.yml
   tags: virtualization
   when: ansible_os_family == 'RedHat'
 
-- include: deb.yml
+- import_tasks: deb.yml
   tags: virtualization
   when: ansible_os_family == 'Debian'
