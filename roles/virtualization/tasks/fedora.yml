@@ -51,6 +51,15 @@
   become: true
   when: ansible_os_family == 'RedHat'
 
+# https://discussion.fedoraproject.org/t/78520/12
+- name: Start and enable the virtnetworkd service
+  ansible.builtin.systemd:
+    name: virtnetworkd
+    state: started
+    enabled: yes
+  become: true
+  when: ansible_os_family == 'RedHat'
+
 - name: Add user to group
   ansible.builtin.user:
     name: "{{ username }}"
