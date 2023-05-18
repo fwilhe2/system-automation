@@ -15,6 +15,7 @@ basic_packages:
     - python3
     - rdiff-backup
     - silversearcher-ag
+    - tldr
     - unzip
     - vim
     - yapf3
@@ -32,6 +33,7 @@ basic_packages:
     - mc
     - rdiff-backup
     - the_silver_searcher
+    - tealdeer
     - unzip
     - vim
     - xz
