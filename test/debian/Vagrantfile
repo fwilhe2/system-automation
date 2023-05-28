@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.provision "ansible" do |ansible|
-      ansible.playbook = "../../common.yml"
+      ansible.playbook = "../../dev.yml"
       ansible.raw_arguments = [
           '--verbose'
       ]
