@@ -94,6 +94,7 @@ def print_os_version():
 print_ansible_version()
 print_os_version()
 run_group(run_ansible, "Running Playbook common", "/home/user/common.yml")
+run_group(run_ansible, "Running Playbook dev", "/home/user/dev.yml")
 run_group(run_ansible, "Running Playbook desktop", "/home/user/desktop.yml")
 
 # Assertions in set-up system follow here

@@ -18,3 +18,11 @@
     type: pattern
   tags: system_development
   when: ansible_os_family == 'Suse'
+
+- name: Install Development Packages
+  become: true
+  become_user: root
+  ansible.builtin.package:
+    state: present
+    name: "{{ item }}"
+  loop: "{{ development_packages[ansible_os_family] }}"

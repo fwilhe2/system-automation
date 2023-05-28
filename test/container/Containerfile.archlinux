@@ -19,4 +19,4 @@ RUN echo 'user:toor123' | chpasswd
 
 USER user
 WORKDIR /home/user
-ENTRYPOINT ["ansible-playbook", "common.yml"]
+ENTRYPOINT ["ansible-playbook", "dev.yml"]

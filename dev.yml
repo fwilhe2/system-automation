@@ -11,3 +11,5 @@
     - bin
     - directories
     - docker
+    - c
+    - virtualization

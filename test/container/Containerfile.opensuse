@@ -21,4 +21,4 @@ USER user
 
 WORKDIR /home/user
 
-ENTRYPOINT ["ansible-playbook", "common.yml"]
+ENTRYPOINT ["ansible-playbook", "dev.yml"]
