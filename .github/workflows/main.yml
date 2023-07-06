@@ -40,7 +40,7 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          ["quay.io/centos/centos:stream9", "redhat/ubi9"]
+          ["quay.io/centos/centos:stream9", "almalinux:latest"]
     steps:
       - uses: actions/checkout@v3
       - name: Build Test Container EL ${{ matrix.version }}
