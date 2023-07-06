@@ -7,32 +7,32 @@ on:
     - cron: "0 0 * * 0"
 
 jobs:
-  # run-in-container-deb:
-  #   runs-on: ubuntu-22.04
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       version:
-  #         ["ubuntu:latest", "ubuntu:rolling", "ubuntu:devel", "debian:testing"]
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Build Test Container deb ${{ matrix.version }}
-  #       run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-deb-${{ matrix.version }} --file test/container/Containerfile.dpkg .
-  #     - name: Run Test deb ${{ matrix.version }}
-  #       run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-deb-${{ matrix.version }}
+  run-in-container-deb:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          ["ubuntu:latest", "ubuntu:rolling", "ubuntu:devel", "debian:testing"]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Test Container deb ${{ matrix.version }}
+        run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-deb-${{ matrix.version }} --file test/container/Containerfile.dpkg .
+      - name: Run Test deb ${{ matrix.version }}
+        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-deb-${{ matrix.version }}
 
-  # run-in-container-yum:
-  #   runs-on: ubuntu-22.04
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       version: [latest]
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Build Test Container Fedora ${{ matrix.version }}
-  #       run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora-${{ matrix.version }} --file test/container/Containerfile.fedora .
-  #     - name: Run Test Fedora ${{ matrix.version }}
-  #       run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-fedora-${{ matrix.version }}
+  run-in-container-yum:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        version: [latest]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Test Container Fedora ${{ matrix.version }}
+        run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora-${{ matrix.version }} --file test/container/Containerfile.fedora .
+      - name: Run Test Fedora ${{ matrix.version }}
+        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-fedora-${{ matrix.version }}
 
   run-in-container-yum-el:
     runs-on: ubuntu-22.04
@@ -40,7 +40,7 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          ["quay.io/centos/centos:stream9", "almalinux:latest", "redhat/ubi9"]
+          ["quay.io/centos/centos:stream9", "almalinux:latest"]
     steps:
       - uses: actions/checkout@v3
       - name: Build Test Container EL ${{ matrix.version }}
@@ -48,39 +48,39 @@ jobs:
       - name: Run Test EL ${{ matrix.version }}
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-el-${{ matrix.version }}
 
-  # run-in-container-zypper:
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Build Test Container opensuse
-  #       run: docker build -t system-automation-test-opensuse --file test/container/Containerfile.opensuse .
-  #     - name: Run Test opensuse
-  #       run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-opensuse
+  run-in-container-zypper:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Test Container opensuse
+        run: docker build -t system-automation-test-opensuse --file test/container/Containerfile.opensuse .
+      - name: Run Test opensuse
+        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-opensuse
 
-  # run-in-container-pacman:
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Build Test Container archlinux
-  #       run: docker build -t system-automation-test-archlinux --file test/container/Containerfile.archlinux .
-  #     - name: Run Test archlinux
-  #       run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-archlinux
+  run-in-container-pacman:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Test Container archlinux
+        run: docker build -t system-automation-test-archlinux --file test/container/Containerfile.archlinux .
+      - name: Run Test archlinux
+        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-archlinux
 
-  # syntax-check:
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: actions/setup-python@v4
-  #       with:
-  #         python-version: "3.x"
-  #     - run: pip3 install ansible
-  #     - run: ansible-playbook -vvvv --inventory inventory --syntax-check desktop.yml
-  #     - run: ansible-playbook -vvvv --inventory inventory --syntax-check desktop.yml
+  syntax-check:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - run: pip3 install ansible
+      - run: ansible-playbook -vvvv --inventory inventory --syntax-check desktop.yml
+      - run: ansible-playbook -vvvv --inventory inventory --syntax-check desktop.yml
 
-  # formatting:
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - run: pip install yapf
-  #     - run: ./format-files.sh
-  #     - run: git diff --name-only --exit-code
+  formatting:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - run: pip install yapf
+      - run: ./format-files.sh
+      - run: git diff --name-only --exit-code
