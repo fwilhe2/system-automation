@@ -1,4 +1,6 @@
-FROM quay.io/centos/centos:stream9
+ARG VERSION
+
+FROM $VERSION
 
 ENV TERM=xterm
 
