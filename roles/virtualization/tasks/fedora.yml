@@ -14,7 +14,7 @@
     name: "@Virtualization Host"
     state: present
   become: true
-  when: ansible_os_family == 'RedHat' and ansible_distribution == 'CentOS'
+  when: ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora'
 
 - name: Install Vagrant Packages
   become: true
@@ -26,6 +26,13 @@
     - vagrant
     - vagrant-libvirt
   when: ansible_os_family == 'RedHat' and ansible_distribution == 'Fedora'
+
+# - name: Change file ownership, group and permissions
+#   ansible.builtin.file:
+#     path: /etc/libvirt/libvirtd.conf
+#     owner: foo
+#     group: foo
+#     mode: '0644'
 
 - name: Set the domain socket group ownership to libvirt
   ansible.builtin.lineinfile:
