@@ -36,12 +36,16 @@ jobs:
 
   run-in-container-yum-el:
     runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["quay.io/centos/centos:stream9", "almalinux:latest"]
     steps:
       - uses: actions/checkout@v3
-      - name: Build Test Container CentOS
-        run: docker build -t system-automation-test-centos --file test/container/Containerfile.centos .
-      - name: Run Test CentOS
-        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-centos
+      - name: Build Test Container EL ${{ matrix.version }}
+        run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-el-${{ matrix.version }} --file test/container/Containerfile.el .
+      - name: Run Test EL ${{ matrix.version }}
+        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-el-${{ matrix.version }}
 
   run-in-container-zypper:
     runs-on: ubuntu-22.04

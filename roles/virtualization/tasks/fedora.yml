@@ -14,7 +14,7 @@
     name: "@Virtualization Host"
     state: present
   become: true
-  when: ansible_os_family == 'RedHat' and ansible_distribution == 'CentOS'
+  when: ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora'
 
 - name: Install Vagrant Packages
   become: true
