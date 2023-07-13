@@ -84,5 +84,7 @@ git config --global alias.fa 'fetch --all'
 git config --global alias.lg 'log --graph --decorate --pretty=oneline --abbrev-commit' 
 git config --global alias.ls 'log --decorate --pretty=oneline --abbrev-commit' 
 
+git config --global credential.helper store
+
 # Display completion message
 echo "System setup complete."
