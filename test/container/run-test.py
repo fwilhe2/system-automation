@@ -123,6 +123,12 @@ def assert_system_properties():
             f"Expected {script} to run with exit code 0.",
         )
 
+        # sbom
+        process = subprocess.run([binary_with_path, expected_binaries_command[binary]])
+        print(f"{binary} SBOM info:")
+        print(process.stdout)
+        print(process.stderr)
+
     has_user = False
     with open("/etc/passwd", "r") as passwd:
         for line in passwd.readlines():
