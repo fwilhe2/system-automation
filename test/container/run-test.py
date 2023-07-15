@@ -91,16 +91,20 @@ def print_os_version():
     print(distro.name(pretty=True))
 
 
+def print_sbom():
+  if distro.id() == 'debian' or distro.id() == 'ubuntu':
+    print(subprocess.run(['dpkg-query', '--list', '--no-pager']).stdout)
+
+  if distro.id() == 'centos' or distro.id() == 'fedora' or distro.id() == 'almalinux':
+    print(subprocess.run(['dnf', 'list', 'installed']).stdout)
+
+
 print_ansible_version()
 print_os_version()
 run_group(run_ansible, "Running Playbook common", "/home/user/common.yml")
 run_group(run_ansible, "Running Playbook desktop", "/home/user/desktop.yml")
+print_sbom()
 
-if distro.id() == 'debian' or distro.id() == 'ubuntu':
-  print(subprocess.run(['dpkg-query', '-l']).stdout)
-
-if distro.id() == 'centos' or distro.id() == 'fedora' or distro.id() == 'almalinux':
-  print(subprocess.run(['dnf', 'list', 'installed']).stdout)
 
 # Assertions in set-up system follow here
 
