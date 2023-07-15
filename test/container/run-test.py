@@ -96,6 +96,12 @@ print_os_version()
 run_group(run_ansible, "Running Playbook common", "/home/user/common.yml")
 run_group(run_ansible, "Running Playbook desktop", "/home/user/desktop.yml")
 
+if distro.id() == 'debian' or distro.id() == 'ubuntu':
+  print(subprocess.run(['dpkg-query', '-l']).stdout)
+
+if distro.id() == 'centos' or distro.id() == 'fedora' or distro.id() == 'almalinux':
+  print(subprocess.run(['dnf', 'list', 'installed']).stdout)
+
 # Assertions in set-up system follow here
 
 
