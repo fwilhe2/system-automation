@@ -88,6 +88,12 @@ def ansible_playbook_executable():
         return "/home/user/.local/bin/ansible-playbook"
     return in_path
 
+def ansible_galaxy_executable():
+    in_path = shutil.which("ansible-galaxy")
+    if in_path == None:
+        return "/home/user/.local/bin/ansible-galaxy"
+    return in_path
+
 def print_os_version():
     print(distro.name(pretty=True))
 
