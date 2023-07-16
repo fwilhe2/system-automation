@@ -95,7 +95,7 @@ def print_sbom():
   if distro.id() == 'debian' or distro.id() == 'ubuntu':
     print(subprocess.run(['dpkg-query', '--list', '--no-pager']).stdout)
 
-  if distro.id() == 'centos' or distro.id() == 'fedora' or distro.id() == 'almalinux':
+  if distro.id() == 'centos' or distro.id() == 'fedora' or distro.id() == 'almalinux' or distro.id() == 'rocky':
     print(subprocess.run(['dnf', 'list', 'installed']).stdout)
 
 
@@ -103,7 +103,7 @@ print_ansible_version()
 print_os_version()
 run_group(run_ansible, "Running Playbook common", "/home/user/common.yml")
 run_group(run_ansible, "Running Playbook desktop", "/home/user/desktop.yml")
-print_sbom()
+run_group(print_sbom, "Print SBOM")
 
 
 # Assertions in set-up system follow here
@@ -132,12 +132,6 @@ def assert_system_properties():
             0,
             f"Expected {script} to run with exit code 0.",
         )
-
-        # sbom
-        process = subprocess.run([binary_with_path, expected_binaries_command[binary]])
-        print(f"{binary} SBOM info:")
-        print(process.stdout)
-        print(process.stderr)
 
     has_user = False
     with open("/etc/passwd", "r") as passwd:
