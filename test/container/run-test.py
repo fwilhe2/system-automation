@@ -34,7 +34,7 @@ def run_group(fn, name, *args):
     print("::endgroup::")
 
 def install_ansible_galaxy_dependencies():
-    subprocess.run(['ansible-galaxy', 'install', '-r', 'requirements.yml'])
+    subprocess.run(['ansible-galaxy', 'install', '-r', '/home/user/requirements.yml'])
 
 def run_ansible(playbook):
     assert_equals(
