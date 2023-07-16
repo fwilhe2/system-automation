@@ -7,7 +7,7 @@ on:
     - cron: "0 0 * * 0"
 
 jobs:
-  run-in-container-deb:
+  deb:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -21,7 +21,7 @@ jobs:
       - name: Run Test deb ${{ matrix.version }}
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-deb-${{ matrix.version }}
 
-  run-in-container-yum:
+  yum:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -34,7 +34,7 @@ jobs:
       - name: Run Test Fedora ${{ matrix.version }}
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-fedora-${{ matrix.version }}
 
-  run-in-container-yum-el:
+  el:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -47,7 +47,7 @@ jobs:
       - name: Run Test EL ${{ matrix.version }}
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-el-${{ matrix.version }}
 
-  run-in-container-zypper:
+  zypper:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
@@ -56,7 +56,7 @@ jobs:
       - name: Run Test opensuse
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-opensuse
 
-  run-in-container-pacman:
+  pacman:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3

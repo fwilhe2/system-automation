@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: 2022 Maxwell G <gotmax@e.email>
+# SPDX-License-Identifier: MIT
+---
+argument_specs:
+  main:
+    short_description: Enable EPEL repository
+    author:
+      - Maxwell G <gotmax@e.email>
+    options:
+      epel_verify_key_fingerprint:
+        default: true
+        type: bool
+        description:
+          - whether to verify EPEL's GPG key fingerprints
+          - It's recommended to keep this option enabled, but
+            if it gives you problems or the key fingerprint stored
+            in this role becomes outdated, then disable it.
