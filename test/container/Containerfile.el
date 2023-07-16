@@ -4,7 +4,7 @@ FROM $VERSION
 
 ENV TERM=xterm
 
-RUN dnf --assumeyes update && dnf --assumeyes --allowerasing install ansible-core python3 python3-pip python3-distro git unzip bash coreutils curl \
+RUN dnf --assumeyes update && dnf --assumeyes --allowerasing install ansible python3 python3-pip python3-distro git unzip bash coreutils curl \
   && mkdir -p /home/user && echo "user:x:1001:1001:user:/home/user:/bin/bash" >> /etc/passwd \
   && chown -R user /home/user
 
