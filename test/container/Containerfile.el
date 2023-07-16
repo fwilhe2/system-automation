@@ -15,12 +15,8 @@ RUN echo -e '[local]\nlocalhost ansible_connection=local ansible_become_password
 
 RUN echo 'root:toor123' | chpasswd
 
-RUN python3 -m pip install --upgrade pip
-
 USER user
 
 COPY . /home/user
-
-RUN ansible-galaxy collection install community.general
 
 ENTRYPOINT ["python3", "/home/user/test/container/run-test.py"]

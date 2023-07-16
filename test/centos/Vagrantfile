@@ -12,6 +12,7 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.provision "shell", inline: "sudo dnf -y install python3-dnf python3-libselinux"
+  config.vm.provision "shell", inline: "ansible-galaxy install -r requirements.yml", privileged: false
 
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "../../epel.yml"

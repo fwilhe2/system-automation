@@ -94,6 +94,7 @@ def print_os_version():
 
 print_ansible_version()
 print_os_version()
+run_group(install_ansible_galaxy_dependencies, "Install Dependencies from Ansible Galaxy")
 run_group(run_ansible, "Running Playbook EPEL", "/home/user/epel.yml")
 run_group(run_ansible, "Running Playbook common", "/home/user/common.yml")
 run_group(run_ansible, "Running Playbook desktop", "/home/user/desktop.yml")
