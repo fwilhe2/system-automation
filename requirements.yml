@@ -1,5 +1,0 @@
----
-collections:
-  - name: gotmax23.epel
-    version: ">=0.2.1"
-    source: https://galaxy.ansible.com

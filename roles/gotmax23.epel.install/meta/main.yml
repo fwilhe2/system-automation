@@ -1,0 +1,8 @@
+# SPDX-FileCopyrightText: 2022 Maxwell G <gotmax@e.email>
+# SPDX-License-Identifier: Unlicense
+---
+galaxy_info:
+  description: >
+    meta role to install EPEL, EPEL Next (if on CentOS Stream), and CRB (if on
+    EL 8 or above)
+  standalone: false

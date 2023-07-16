@@ -7,7 +7,7 @@ on:
     - cron: "0 0 * * 0"
 
 jobs:
-  test-deb:
+  deb:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -21,20 +21,20 @@ jobs:
       - name: Run Test deb ${{ matrix.version }}
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-deb-${{ matrix.version }}
 
-  # test-yum:
-  #   runs-on: ubuntu-22.04
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       version: [latest]
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Build Test Container Fedora ${{ matrix.version }}
-  #       run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora-${{ matrix.version }} --file test/container/Containerfile.fedora .
-  #     - name: Run Test Fedora ${{ matrix.version }}
-  #       run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-fedora-${{ matrix.version }}
+  yum:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        version: [latest]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Test Container Fedora ${{ matrix.version }}
+        run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora-${{ matrix.version }} --file test/container/Containerfile.fedora .
+      - name: Run Test Fedora ${{ matrix.version }}
+        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-fedora-${{ matrix.version }}
 
-  test-yum-el:
+  el:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -47,23 +47,23 @@ jobs:
       - name: Run Test EL ${{ matrix.version }}
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-el-${{ matrix.version }}
 
-  # test-zypper:
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Build Test Container opensuse
-  #       run: docker build -t system-automation-test-opensuse --file test/container/Containerfile.opensuse .
-  #     - name: Run Test opensuse
-  #       run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-opensuse
+  zypper:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Test Container opensuse
+        run: docker build -t system-automation-test-opensuse --file test/container/Containerfile.opensuse .
+      - name: Run Test opensuse
+        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-opensuse
 
-  # test-pacman:
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Build Test Container archlinux
-  #       run: docker build -t system-automation-test-archlinux --file test/container/Containerfile.archlinux .
-  #     - name: Run Test archlinux
-  #       run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-archlinux
+  pacman:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Test Container archlinux
+        run: docker build -t system-automation-test-archlinux --file test/container/Containerfile.archlinux .
+      - name: Run Test archlinux
+        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-archlinux
 
   syntax-check:
     runs-on: ubuntu-22.04

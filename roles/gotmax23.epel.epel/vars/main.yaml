@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2022 Maxwell G (@gotmax23)
+# SPDX-License-Identifier: MIT
+---
+epel_release_url: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
+epel_key: "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}"
+
+_epel_key_finger:
+  "7": "91E9 7D7C 4A5E 96F1 7F3E  888F 6A2F AEA2 352C 64E5"
+  "8": "94E2 79EB 8D8F 25B2 1810  ADF1 21EA 45AB 2F86 D6A1"
+  "9": "FF8A D134 4597 106E CE81  3B91 8A38 72BF 3228 467C"
+epel_key_fingerprint: "{{ _epel_key_finger[ansible_distribution_major_version] }}"

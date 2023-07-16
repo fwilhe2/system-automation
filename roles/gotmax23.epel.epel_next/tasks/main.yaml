@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Maxwell G (@gotmax23)
+# SPDX-License-Identifier: MIT
+---
+- name: Install EPEL Next repository
+  ansible.builtin.package:
+    name: epel-next-release
+    update_cache: true
