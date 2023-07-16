@@ -21,4 +21,6 @@ USER user
 
 COPY . /home/user
 
+RUN ansible-galaxy collection install community.general
+
 ENTRYPOINT ["python3", "/home/user/test/container/run-test.py"]
