@@ -33,6 +33,8 @@ def run_group(fn, name, *args):
     fn(*args)
     print("::endgroup::")
 
+def install_ansible_galaxy_dependencies():
+    subprocess.run(['ansible-galaxy', 'install', '-r', 'requirements.yml'])
 
 def run_ansible(playbook):
     assert_equals(
@@ -93,6 +95,8 @@ def print_os_version():
 
 print_ansible_version()
 print_os_version()
+run_group(install_ansible_galaxy_dependencies, "Install Ansible Dependencies")
+run_group(run_ansible, "Running Playbook EPEL", "/home/user/epel.yml")
 run_group(run_ansible, "Running Playbook common", "/home/user/common.yml")
 run_group(run_ansible, "Running Playbook desktop", "/home/user/desktop.yml")
 
