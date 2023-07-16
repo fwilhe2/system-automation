@@ -34,7 +34,7 @@ def run_group(fn, name, *args):
     print("::endgroup::")
 
 def install_ansible_galaxy_dependencies():
-    subprocess.run(['/home/user/.local/bin/ansible-galaxy', 'install', '-r', '/home/user/requirements.yml'])
+    subprocess.run([ansible_galaxy_executable(), 'install', '-r', '/home/user/requirements.yml'])
 
 def run_ansible(playbook):
     assert_equals(
@@ -88,6 +88,11 @@ def ansible_playbook_executable():
         return "/home/user/.local/bin/ansible-playbook"
     return in_path
 
+def ansible_galaxy_executable():
+    in_path = shutil.which("ansible-galaxy")
+    if in_path == None:
+        return "/home/user/.local/bin/ansible-galaxy"
+    return in_path
 
 def print_os_version():
     print(distro.name(pretty=True))
