@@ -26,7 +26,7 @@ This project contains two playbooks:
 
 .Preparation for Fedora/*EL-like
 ----
-sudo dnf install -y ansible curl bash unzip
+sudo dnf install -y ansible-core curl bash unzip
 ----
 
 .Preparation for Ubuntu/Debian
@@ -113,7 +113,7 @@ https://github.com/green-leader/ansible-role-codium[ansible-role-codium] (`roles
 https://github.com/gantsign/ansible-role-visual-studio-code-extensions[ansible-role-visual-studio-code-extensions] (`library/codium-extensions`)::
   Copyright © John Freeman GantSign Ltd. Company No. 06109112 (registered in England) under the _MIT License_
 
-https://git.sr.ht/~gotmax23/ansible-collection-epel[Ansible collection - gotmax23.epel] (`roles/gotmax23.epel*`)
+https://git.sr.ht/~gotmax23/ansible-collection-epel[Ansible collection - gotmax23.epel] (`roles/gotmax23.epel*`)::
   Copyright © 2022 Maxwell G (@gotmax23) under the _MIT License_
 
 == References
