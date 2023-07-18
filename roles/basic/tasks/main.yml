@@ -2,7 +2,6 @@
 - name: Install Basic Packages
   become: true
   become_user: root
-  ignore_errors: true
   ansible.builtin.package:
     state: present
     name: "{{ item }}"
