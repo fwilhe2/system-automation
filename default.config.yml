@@ -33,7 +33,7 @@ basic_packages:
     - mc
     - rdiff-backup
     - the_silver_searcher
-    - tealdeer
+    - tldr
     - unzip
     - vim
     - xz
