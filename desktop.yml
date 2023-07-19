@@ -9,6 +9,8 @@
     - role: greenleader.codium
       become: true
 
+    - role: flatpak
+
   tasks:
     - name: Install Desktop Packages
       become: true
