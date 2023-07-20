@@ -32,7 +32,7 @@ jobs:
       - name: Build Test Container Fedora ${{ matrix.version }}
         run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora-${{ matrix.version }} --file test/container/Containerfile.fedora .
       - name: Run Test Fedora ${{ matrix.version }}
-        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-fedora-${{ matrix.version }}
+        run: docker run --privileged --user user --tty --volume $PWD:/mnt system-automation-test-fedora-${{ matrix.version }}
 
   el:
     runs-on: ubuntu-22.04
@@ -45,7 +45,7 @@ jobs:
       - name: Build Test Container EL ${{ matrix.version }}
         run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-el-${{ matrix.version }} --file test/container/Containerfile.el .
       - name: Run Test EL ${{ matrix.version }}
-        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-el-${{ matrix.version }}
+        run: docker run --privileged --user user --tty --volume $PWD:/mnt system-automation-test-el-${{ matrix.version }}
 
   zypper:
     runs-on: ubuntu-22.04
