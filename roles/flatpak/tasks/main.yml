@@ -11,3 +11,5 @@
     method: user
     name:
       - com.google.Chrome
+      - org.mozilla.firefox
+      - org.videolan.VLC
