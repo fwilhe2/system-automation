@@ -1,7 +1,7 @@
 ---
 - import_tasks: dnf.yml
   tags:
-  # Can't run in containers
+    # Can't run in containers
     - notest
     - flatpak
   when: ansible_os_family == 'RedHat'
