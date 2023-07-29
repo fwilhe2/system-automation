@@ -1,0 +1,12 @@
+---
+- hosts: all
+  name: Minimal Playbook
+
+  vars_files:
+    - [default.config.yml, config.yml]
+
+  roles:
+    - basic
+    - dotfiles
+    - directories
+    - docker

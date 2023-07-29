@@ -17,9 +17,11 @@ System Automation powered by Ansible™
 
 == Project Layout
 
-This project contains two playbooks:
+This project contains multiple playbooks:
 
+* `epel.yml`: Helper to add the Extra Packages for Enterprise Linux repos
 * `common.yml`: Software and setup which does not require a graphical environment
+* `minimal.yml`: Subset of the common playbook to get a nice cli environment without too many packages
 * `desktop.yml`: Setup for desktop computers
 
 == Preparation
@@ -44,7 +46,11 @@ sudo pacman --sync --refresh --noconfirm ansible curl bash unzip git
 If you don't mind the `curl | bash` thing, you might try running the playbook directly via:
 
 ----
+# Common playbook
 curl https://raw.githubusercontent.com/fwilhe2/system-automation/main/bootstrap.sh | bash
+
+# Minimal playbook
+curl https://raw.githubusercontent.com/fwilhe2/system-automation/main/bootstrap-minimal.sh | bash
 ----
 
 This requires `ansible`, `curl`, `bash` and `unzip`.
