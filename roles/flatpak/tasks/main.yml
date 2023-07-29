@@ -1,15 +1,7 @@
 ---
-- name: Add the flathub flatpak repository remote to the user installation
-  community.general.flatpak_remote:
-    name: flathub
-    state: present
-    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
-    method: user
-
-- name: Install packages
-  community.general.flatpak:
-    method: user
-    name:
-      - com.google.Chrome
-      - org.mozilla.firefox
-      - org.videolan.VLC
+- import_tasks: dnf.yml
+  tags:
+  # Can't run in containers
+    - notest
+    - flatpak
+  when: ansible_os_family == 'RedHat'
