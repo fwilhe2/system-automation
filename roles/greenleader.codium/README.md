@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: Sion Fandrick
+SPDX-License-Identifier: MIT
+ -->
+
 Role Name
 =========
 

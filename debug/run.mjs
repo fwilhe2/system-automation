@@ -1,5 +1,8 @@
 #!/usr/bin/env zx
 
+// SPDX-FileCopyrightText: Florian Wilhelm
+// SPDX-License-Identifier: MIT
+
 const matrix = {
     'debian': ['latest', 'testing', 'unstable'],
     'ubuntu': ['latest', 'rolling', 'devel'],
