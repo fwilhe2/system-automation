@@ -1,12 +1,15 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
 # Quick and dirty script to make debian vms more usable
 
 # Add the repositories to sources.list if they don't already exist
 if ! grep -q "deb http://deb.debian.org/debian/ testing" /etc/apt/sources.list; then
     echo "
 #------------------------------------------------------------------------------#
-#                   OFFICIAL DEBIAN REPOS                    
+#                   OFFICIAL DEBIAN REPOS
 #------------------------------------------------------------------------------#
 
 ###### Debian Main Repos
@@ -74,15 +77,15 @@ alias gcl='git clone'" >> ~/.bashrc
     source ~/.bashrc
 fi
 
-git config --global alias.st status 
-git config --global alias.co checkout 
-git config --global alias.rb rebase 
-git config --global alias.ci commit 
-git config --global alias.br branch 
+git config --global alias.st status
+git config --global alias.co checkout
+git config --global alias.rb rebase
+git config --global alias.ci commit
+git config --global alias.br branch
 git config --global alias.cp cherry-pick
 git config --global alias.fa 'fetch --all'
-git config --global alias.lg 'log --graph --decorate --pretty=oneline --abbrev-commit' 
-git config --global alias.ls 'log --decorate --pretty=oneline --abbrev-commit' 
+git config --global alias.lg 'log --graph --decorate --pretty=oneline --abbrev-commit'
+git config --global alias.ls 'log --decorate --pretty=oneline --abbrev-commit'
 
 git config --global credential.helper store
 

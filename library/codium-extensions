@@ -1,11 +1,8 @@
 #!/usr/bin/python
 
 # Taken from https://github.com/gantsign/ansible-role-visual-studio-code-extensions
-# License
-# MIT
-# Author Information
-# John Freeman
-# GantSign Ltd. Company No. 06109112 (registered in England)
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: John Freeman GantSign Ltd. Company No. 06109112 (registered in England)
 
 # Make coding more python3-ish
 from __future__ import absolute_import, division, print_function

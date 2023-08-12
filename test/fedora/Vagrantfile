@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
 Vagrant.configure(2) do |config|
   config.vm.box = "fedora/38-cloud-base"
 

@@ -1,2 +1,5 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
 [user]
     email = fwilhelm.wgt+github@gmail.com

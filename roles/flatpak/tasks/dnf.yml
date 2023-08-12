@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
 ---
 - name: Add the flathub flatpak repository remote to the user installation
   community.general.flatpak_remote:

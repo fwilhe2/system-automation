@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Florian Wilhelm
+// SPDX-License-Identifier: MIT
+
 = system-automation
 :experimental: yes
 ifdef::env-github[]

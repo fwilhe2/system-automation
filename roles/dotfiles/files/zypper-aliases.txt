@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
 alias i='sudo zypper install'
 alias I='sudo zypper install --no-confirm'
 alias up='sudo zypper update'
