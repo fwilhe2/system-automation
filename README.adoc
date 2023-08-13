@@ -128,6 +128,9 @@ https://github.com/gantsign/ansible-role-visual-studio-code-extensions[ansible-r
 https://git.sr.ht/~gotmax23/ansible-collection-epel[Ansible collection - gotmax23.epel] (`roles/gotmax23.epel*`)::
   Copyright © 2022 Maxwell G (@gotmax23) under the _MIT License_
 
+https://github.com/lima-vm/lima[lima - linux virtual machines] (`lima_*`)::
+  Copyright Akihiro Suda and https://github.com/lima-vm/lima/graphs/contributors[the lima contributors] under the _Apache-2.0 license_
+
 == References
 
 * https://docs.ansible.com/ansible/2.9/modules/list_of_all_modules.html[Ansible Docs: All Modules]
