@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- import_tasks: fedora.yml
+  tags: rpm_fusion
+  when: ansible_os_family == 'RedHat'

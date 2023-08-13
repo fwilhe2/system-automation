@@ -14,6 +14,9 @@
 
     - role: flatpak
 
+    - role: rpm-fusion
+      become: true
+
   tasks:
     - name: Install Desktop Packages
       become: true

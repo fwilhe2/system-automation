@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- name: Install RPM Fusion Packages
+  become: true
+  become_user: root
+  ansible.builtin.dnf:
+    state: present
+    name: "{{ item }}"
+    disable_gpg_check: true
+  loop:
+    - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm
+    - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm
+  when: ansible_os_family == 'RedHat' and ansible_distribution == 'Fedora'
+
+- name: Install ffmpeg Packages
+  become: true
+  become_user: root
+  ansible.builtin.dnf:
+    state: present
+    name: ffmpeg
+    disable_gpg_check: true
+    allowerasing: true
+  when: ansible_os_family == 'RedHat' and ansible_distribution == 'Fedora'
