@@ -1,5 +1,7 @@
-# SPDX-FileCopyrightText: Akihiro Suda and the lima contributors, see https://github.com/lima-vm/lima
+# SPDX-FileCopyrightText: Florian Wilhelm
 # SPDX-License-Identifier: Apache-2.0
+
+# Based on the examples by Akihiro Suda and the lima contributors, see https://github.com/lima-vm/lima, distributed under Apache-2.0 license
 
 images:
 - location: "https://cloud.debian.org/images/cloud/trixie/daily/latest/debian-13-genericcloud-amd64-daily.qcow2"
