@@ -94,7 +94,30 @@ docker build --build-arg=VERSION=latest -t system-automation-test-fedora-latest 
 docker run --tty --volume $PWD:/mnt system-automation-test-fedora-latest
 ----
 
+=== Lima
+
+https://github.com/lima-vm/lima[Lima] is a tool written in go for running virtual machines.
+
+Files in the root of this repo named like `lima_*.yaml` contain vm definitions for testing this repo.
+
+.Running the playbook in a vm using lima
+----
+# pick the one you need
+export SYSAUTO_LIMA_DISTRO=debian
+export SYSAUTO_LIMA_DISTRO=fedora
+limactl create --name=system-automation-$SYSAUTO_LIMA_DISTRO ./lima_$SYSAUTO_LIMA_DISTRO.yaml
+limactl start system-automation-$SYSAUTO_LIMA_DISTRO
+limactl shell system-automation-$SYSAUTO_LIMA_DISTRO
+
+# Inside the vm, no password needed for become, just press enter
+./run.sh
+
+limactl stop system-automation-$SYSAUTO_LIMA_DISTRO
+----
+
 === Vagrantfile
+
+CAUTION: Vagrant's license changed to one that is not considered open source.
 
 Vagrantfiles with provider `libvirt` are available for testing.
 
@@ -127,6 +150,9 @@ https://github.com/gantsign/ansible-role-visual-studio-code-extensions[ansible-r
 
 https://git.sr.ht/~gotmax23/ansible-collection-epel[Ansible collection - gotmax23.epel] (`roles/gotmax23.epel*`)::
   Copyright © 2022 Maxwell G (@gotmax23) under the _MIT License_
+
+https://github.com/lima-vm/lima[lima - linux virtual machines] (`lima_*`)::
+  Copyright Akihiro Suda and https://github.com/lima-vm/lima/graphs/contributors[the lima contributors] under the _Apache-2.0 license_
 
 == References
 
