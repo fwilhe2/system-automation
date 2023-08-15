@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: Akihiro Suda and the lima contributors, see https://github.com/lima-vm/lima
 # SPDX-License-Identifier: Apache-2.0
 
-# This template requires Lima v0.7.0 or later.
 images:
 - location: "https://download.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/x86_64/images/Fedora-Cloud-Base-38-1.6.x86_64.qcow2"
   arch: "x86_64"
@@ -13,3 +12,10 @@ mounts:
 - location: "~"
 - location: "/tmp/lima"
   writable: true
+
+provision:
+- mode: system
+  script: |
+    #!/bin/bash
+    set -eux -o pipefail
+    dnf install -y ansible curl bash unzip
