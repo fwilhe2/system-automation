@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- name: Install Virtualization Packages
+  become: true
+  become_user: root
+  package:
+    state: present
+    name: "{{ item }}"
+  loop:
+    - qemu-system

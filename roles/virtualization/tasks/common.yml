@@ -1,0 +1,40 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+# Based on 'Manual installation steps' from https://github.com/lima-vm/lima/blob/master/README.md#installation
+
+---
+#   msg: You need to install "jmespath" prior to running json_query filter
+- name: Install jmespath
+  become: true
+  become_user: root
+  ansible.builtin.package:
+    state: present
+    name: python3-jmespath
+
+- name: Get latest Lima release version
+  uri:
+    url: "https://api.github.com/repos/lima-vm/lima/releases/latest"
+    return_content: yes
+  register: latest_release
+  changed_when: false
+
+- name: Extract Lima release version
+  set_fact:
+    lima_version: "{{ latest_release.content | from_json | json_query('tag_name') }}"
+  changed_when: false
+
+- name: Download and extract Lima binary
+  get_url:
+    url: "https://github.com/lima-vm/lima/releases/download/{{ lima_version }}/lima-{{ lima_version[1:] }}-{{ ansible_system | lower }}-{{ ansible_architecture | lower }}.tar.gz"
+    dest: "/tmp/lima-{{ lima_version }}.tar.gz"
+  changed_when: false
+
+- name: Extract Lima binary
+  become: true
+  become_user: root
+  ansible.builtin.unarchive:
+    src: "/tmp/lima-{{ lima_version }}.tar.gz"
+    dest: "/usr/local"
+    remote_src: yes
+  changed_when: false

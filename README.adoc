@@ -82,10 +82,10 @@ They are run automatically via the CI workflow.
 
 For running them locally, use:
 
-.Test on Ubuntu
+.Test on Debian
 ----
-docker build --build-arg=VERSION=latest -t system-automation-test-ubuntu-latest --file test/container/Containerfile.ubuntu .
-docker run --tty --volume $PWD:/mnt system-automation-test-ubuntu-latest
+docker build --build-arg=VERSION=debian:testing -t system-automation-test-debian-latest --file test/container/Containerfile.dpkg .
+docker run --tty --volume $PWD:/mnt system-automation-test-debian-latest
 ----
 
 .Test on Fedora
