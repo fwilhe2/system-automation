@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- name: Install Virtualization Packages
+  become: true
+  become_user: root
+  ansible.builtin.package:
+    state: present
+    name: "{{ item }}"
+  loop:
+    - qemu-base

@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- import_tasks: common.yml
+  tags: virtualization
+
+- import_tasks: fedora.yml
+  tags: virtualization
+  when: ansible_os_family == 'RedHat' and ansible_distribution == 'Fedora'
+
+- import_tasks: el.yml
+  tags: virtualization
+  when: ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora'
+
+- import_tasks: suse.yml
+  tags: virtualization
+  when: ansible_os_family == 'Suse'
+
+- import_tasks: arch.yml
+  tags: virtualization
+  when: ansible_os_family == 'Archlinux'
+
+- import_tasks: deb.yml
+  tags: virtualization
+  when: ansible_os_family == 'Debian'

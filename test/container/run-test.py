@@ -121,6 +121,8 @@ def assert_system_properties():
         "keepassxc-cli": "-version",
         "cargo": "--version",
         "topgrade": "--version",
+        "limactl": "--version",
+        "qemu-system-x86_64": "--version",
     }
 
     for binary in expected_binaries:
