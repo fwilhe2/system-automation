@@ -18,7 +18,7 @@ jobs:
         version:
           ["ubuntu:latest", "ubuntu:rolling", "ubuntu:devel", "debian:testing"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build Test Container deb ${{ matrix.version }}
         run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-deb-${{ matrix.version }} --file test/container/Containerfile.dpkg .
       - name: Run Test deb ${{ matrix.version }}
@@ -31,7 +31,7 @@ jobs:
       matrix:
         version: [latest]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build Test Container Fedora ${{ matrix.version }}
         run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora-${{ matrix.version }} --file test/container/Containerfile.fedora .
       - name: Run Test Fedora ${{ matrix.version }}
@@ -44,7 +44,7 @@ jobs:
       matrix:
         version: ["quay.io/centos/centos:stream9", "almalinux:latest"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build Test Container EL ${{ matrix.version }}
         run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-el-${{ matrix.version }} --file test/container/Containerfile.el .
       - name: Run Test EL ${{ matrix.version }}
@@ -53,7 +53,7 @@ jobs:
   zypper:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build Test Container opensuse
         run: docker build -t system-automation-test-opensuse --file test/container/Containerfile.opensuse .
       - name: Run Test opensuse
@@ -62,7 +62,7 @@ jobs:
   pacman:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build Test Container archlinux
         run: docker build -t system-automation-test-archlinux --file test/container/Containerfile.archlinux .
       - name: Run Test archlinux
@@ -71,7 +71,7 @@ jobs:
   syntax-check:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: "3.x"
@@ -82,7 +82,7 @@ jobs:
   formatting:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: pip install yapf
       - run: ./format-files.sh
       - run: git diff --name-only --exit-code
