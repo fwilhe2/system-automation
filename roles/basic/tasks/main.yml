@@ -10,6 +10,7 @@
     name: "{{ item }}"
   loop: "{{ basic_packages[ansible_os_family] }}"
   tags: basic
+  ignore_errors: true
 
 - name: Set vim as default editor
   become: true
