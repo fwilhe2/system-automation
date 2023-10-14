@@ -3,7 +3,7 @@
 
 ---
 - hosts: all
-  name: Common Playbook
+  name: Development environment (vm guest)
 
   vars_files:
     - [default.config.yml, config.yml]
@@ -15,4 +15,3 @@
     - directories
     - docker
     - development
-    - virtualization

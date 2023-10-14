@@ -29,6 +29,8 @@ This project contains multiple playbooks:
 * `common.yml`: Software and setup which does not require a graphical environment
 * `minimal.yml`: Subset of the common playbook to get a nice cli environment without too many packages
 * `desktop.yml`: Setup for desktop computers
+* `vm-host.yml`: Skips development tools, ment for hosts running https://github.com/fwilhe2/dev[dev]
+* `dev-env.yml`: Skips virtualization tools, ment for guests running https://github.com/fwilhe2/dev[dev]
 
 == Preparation
 
