@@ -9,6 +9,9 @@
     - default.config.yml
 
   roles:
+    - role: iesplin.vscode
+      become: true
+
     - role: greenleader.codium
       become: true
 
