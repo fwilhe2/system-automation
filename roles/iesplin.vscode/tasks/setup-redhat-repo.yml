@@ -1,0 +1,16 @@
+# SPDX-FileCopyrightText: iesplin
+# SPDX-License-Identifier: MIT
+
+---
+- name: Add Microsoft signing key
+  rpm_key:
+    key: https://packages.microsoft.com/keys/microsoft.asc
+    state: present
+
+- name: Add yum repository
+  yum_repository:
+    name: vscode
+    description: Visual Studio Code repository
+    file: vscode
+    baseurl: https://packages.microsoft.com/yumrepos/vscode
+    gpgcheck: true

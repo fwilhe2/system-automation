@@ -15,3 +15,5 @@
     - directories
     - docker
     - virtualization
+    - role: iesplin.vscode
+      become: true

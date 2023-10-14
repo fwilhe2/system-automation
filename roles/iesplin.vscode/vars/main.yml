@@ -1,0 +1,8 @@
+# SPDX-FileCopyrightText: iesplin
+# SPDX-License-Identifier: MIT
+
+---
+# vars for ansible-role-vscode
+
+vscode_debian_dependencies:
+  - apt-transport-https
