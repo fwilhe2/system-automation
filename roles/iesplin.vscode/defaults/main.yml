@@ -1,0 +1,8 @@
+# SPDX-FileCopyrightText: iesplin
+# SPDX-License-Identifier: MIT
+
+---
+# Defaults for ansible-role-vscode
+
+# Method to install: package or snap
+vscode_install_method: package

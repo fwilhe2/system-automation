@@ -1,0 +1,16 @@
+# SPDX-FileCopyrightText: iesplin
+# SPDX-License-Identifier: MIT
+
+---
+# tasks file for ansible-role-vscode
+
+- ansible.builtin.include_tasks: setup-debian-repo.yml
+  when: ansible_os_family == 'Debian'
+
+- ansible.builtin.include_tasks: setup-redhat-repo.yml
+  when: ansible_os_family == 'RedHat'
+
+- name: Install Visual Studio Code
+  package:
+    name: code
+    state: present

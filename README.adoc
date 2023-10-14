@@ -130,6 +130,9 @@ This project ships the following 3rd party software:
 https://github.com/green-leader/ansible-role-codium[ansible-role-codium] (`roles/greenleader.codium`)::
   Copyright © Sion Fandrick under the _MIT License_
 
+https://github.com/iesplin/ansible-role-vscode[ansible-role-vscode] (`roles/iesplin.vscode`)::
+  Copyright © iesplin under the _MIT License_
+
 https://github.com/gantsign/ansible-role-visual-studio-code-extensions[ansible-role-visual-studio-code-extensions] (`library/codium-extensions`)::
   Copyright © John Freeman GantSign Ltd. Company No. 06109112 (registered in England) under the _MIT License_
 

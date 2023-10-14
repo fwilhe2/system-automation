@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MIT
 
 ---
-
 - name: Install Development Packages
   become: true
   become_user: root

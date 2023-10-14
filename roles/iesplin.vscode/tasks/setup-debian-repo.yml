@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: iesplin
+# SPDX-License-Identifier: MIT
+
+---
+- name: Install Debian dependencies
+  apt:
+    name:
+      - apt-transport-https
+      - gpg
+    state: present
+    update_cache: true
+
+- name: Add Microsoft signing key
+  apt_key:
+    url: https://packages.microsoft.com/keys/microsoft.asc
+    state: present
+
+- name: Add Microsoft repository
+  apt_repository:
+    repo: deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main
+    state: present
+    filename: vscode
