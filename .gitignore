@@ -4,3 +4,4 @@
 .vagrant/
 test/ubuntu/*.log
 config.yml
+debug/node_modules
