@@ -3,8 +3,6 @@ Upstream-Name: System Automation
 Upstream-Contact: Florian Wilhelm <fwilhelm.wgt@gmail.com>
 Source: https://github.com/fwilhe2/system-automation
 
-# Sample paragraph, commented out:
-#
-# Files: src/*
-# Copyright: $YEAR $NAME <$CONTACT>
-# License: ...
+Files: debug/package*json
+Copyright: 2023 Florian Wilhelm <fwilhelm.wgt@gmail.com>
+License: MIT
