@@ -14,5 +14,8 @@
     method: user
     name:
       - com.google.Chrome
+      - org.gimp.GIMP
+      - org.libreoffice.LibreOffice
       - org.mozilla.firefox
+      - org.signal.Signal
       - org.videolan.VLC
