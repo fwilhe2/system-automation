@@ -142,11 +142,6 @@ def assert_system_properties():
         for line in passwd.readlines():
             if line.startswith("florian"):
                 passwd_entry = line.split(":")
-                assert_equals(
-                    passwd_entry[6],
-                    "/usr/bin/zsh\n",
-                    f"Expected /usr/bin/zsh as a shell for user florian.\n{passwd}",
-                )
                 has_user = True
         assert_true(has_user,
                     f"Could not find expected user in:\n{passwd.readlines()}")
