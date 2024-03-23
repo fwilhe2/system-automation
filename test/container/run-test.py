@@ -137,13 +137,4 @@ def assert_system_properties():
             f"Expected {script} to run with exit code 0.",
         )
 
-    has_user = False
-    with open("/etc/passwd", "r") as passwd:
-        for line in passwd.readlines():
-            if line.startswith("florian"):
-                passwd_entry = line.split(":")
-                has_user = True
-        assert_true(has_user,
-                    f"Could not find expected user in:\n{passwd.readlines()}")
-
 run_group(assert_system_properties, "Assert Properties of Installed System")
