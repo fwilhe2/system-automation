@@ -22,3 +22,7 @@ provision:
     export DEBIAN_FRONTEND=noninteractive
     apt-get update
     apt-get install -y ansible curl bash unzip
+
+containerd:
+  system: false
+  user: false
