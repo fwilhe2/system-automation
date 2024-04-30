@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
   python3-pip \
   python3-distro \
   unzip \
-  libasound2 \
+  libasound2t64 \
   && mkdir -p /home/user \
   && echo "user:x:1001:1001:user:/home/user:/bin/bash" >> /etc/passwd \
   && echo "user:x:1001:" >> /etc/group \
