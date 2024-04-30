@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
 if command -v nala &> /dev/null; then
   alias i='sudo nala install'
   alias I='sudo nala install --assume-yes'

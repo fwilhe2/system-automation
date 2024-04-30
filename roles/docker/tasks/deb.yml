@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
 ---
 # Install Docker from the official repos
 # References:
@@ -40,6 +43,13 @@
 - name: Get Ubuntu codename
   ansible.builtin.set_fact:
     deb_release_codename: "{{ 'jammy' if ansible_lsb.description is search('development branch', ignorecase=True) else ansible_distribution_release }}"
+  when: ansible_distribution == 'Ubuntu'
+
+# Special handling because Docker provides no packages for Debian Trixie as of now
+- name: Get Debian codename
+  ansible.builtin.set_fact:
+    deb_release_codename: "{{ 'bookworm' if ansible_lsb.description is search('sid', ignorecase=True) else ansible_distribution_release }}"
+  when: ansible_distribution == 'Debian'
 
 - name: dbg
   ansible.builtin.debug:

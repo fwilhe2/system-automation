@@ -1,7 +1,14 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
 ---
 - import_tasks: fedora.yml
   tags: docker
   when: ansible_os_family == 'RedHat' and ansible_distribution == 'Fedora'
+
+- import_tasks: el.yml
+  tags: docker
+  when: ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora'
 
 - import_tasks: deb.yml
   tags: docker

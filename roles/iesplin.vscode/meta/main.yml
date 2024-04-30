@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: iesplin
+# SPDX-License-Identifier: MIT
+
+---
+galaxy_info:
+  role_name: vscode
+  author: iesplin
+  description: Install Visual Studio Code for Linux
+  license: MIT
+  min_ansible_version: 2.10
+  platforms:
+    - name: Debian
+      versions:
+        - bullseye
+    - name: Ubuntu
+      versions:
+        - jammy
+    - name: Fedora
+      versions:
+        - 36
+
+  galaxy_tags:
+    - development
+
+dependencies: []

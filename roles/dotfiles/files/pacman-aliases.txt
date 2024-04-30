@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
 alias i='sudo pacman --sync'
 alias I='sudo pacman --sync --noconfirm'
 alias up='sudo pacman --sync --refresh --sysupgrade'

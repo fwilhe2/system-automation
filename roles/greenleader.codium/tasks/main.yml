@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Sion Fandrick
+# SPDX-License-Identifier: MIT
+
 ---
 # tasks file for ansible-role-codium
 - name: Ensure GPG key for repo is installed (RedHat)

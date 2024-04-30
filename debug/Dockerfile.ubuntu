@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
 ARG VERSION
 
 FROM ubuntu:${VERSION}
@@ -12,7 +15,7 @@ RUN apt-get update && apt-get install -y \
   python3-pip \
   ansible \
   unzip \
-  libasound2 \
+  libasound2t64 \
   && mkdir -p /home/user \
   && echo "user:x:1001:1001:user:/home/user:/bin/bash" >> /etc/passwd \
   && echo "user:x:1001:" >> /etc/group \

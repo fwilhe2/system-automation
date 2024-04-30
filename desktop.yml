@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
 ---
 - hosts: all
   name: Desktop (GNOME) Playbook
@@ -6,7 +9,15 @@
     - default.config.yml
 
   roles:
+    - role: iesplin.vscode
+      become: true
+
     - role: greenleader.codium
+      become: true
+
+    - role: flatpak
+
+    - role: rpm-fusion
       become: true
 
   tasks:

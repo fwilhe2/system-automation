@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- hosts: all
+  name: Development environment (vm guest)
+
+  vars_files:
+    - [default.config.yml, config.yml]
+
+  roles:
+    - basic
+    - dotfiles
+    - bin
+    - directories
+    - docker
+    - development

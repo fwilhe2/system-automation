@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- name: Add the flathub flatpak repository remote to the user installation
+  community.general.flatpak_remote:
+    name: flathub
+    state: present
+    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+    method: user
+
+- name: Add the gnome-nightly flatpak repository remote to the user installation
+  community.general.flatpak_remote:
+    name: gnome-nightly
+    state: present
+    flatpakrepo_url: https://nightly.gnome.org/gnome-nightly.flatpakrepo
+    method: user
+
+- name: Install packages
+  community.general.flatpak:
+    method: user
+    name:
+      - com.google.Chrome
+      - org.mozilla.firefox
+      - org.videolan.VLC
+      - org.gnome.Ptyxis.Devel

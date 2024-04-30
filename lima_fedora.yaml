@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: Apache-2.0
+
+# Based on the examples by Akihiro Suda and the lima contributors, see https://github.com/lima-vm/lima, distributed under Apache-2.0 license
+
+images:
+- location: "https://download.fedoraproject.org/pub/fedora/linux/releases/40/Cloud/x86_64/images/Fedora-Cloud-Base-Generic.x86_64-40-1.14.qcow2"
+  arch: "x86_64"
+  digest: "sha256:ac58f3c35b73272d5986fa6d3bc44fd246b45df4c334e99a07b3bbd00684adee"
+- location: "https://download.fedoraproject.org/pub/fedora/linux/releases/40/Cloud/aarch64/images/Fedora-Cloud-Base-Generic.aarch64-40-1.14.qcow2"
+  arch: "aarch64"
+  digest: "sha256:ebdce26d861a9d15072affe1919ed753ec7015bd97b3a7d0d0df6a10834f7459"
+
+mounts:
+- location: "~"
+- location: "/tmp/lima"
+  writable: true
+
+provision:
+- mode: system
+  script: |
+    #!/bin/bash
+    set -eux -o pipefail
+    dnf install -y ansible curl bash unzip
+
+containerd:
+  system: false
+  user: false

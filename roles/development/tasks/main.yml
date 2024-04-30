@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- name: Install Development Packages
+  become: true
+  become_user: root
+  ansible.builtin.package:
+    state: present
+    name: "{{ item }}"
+  loop: "{{ development_packages[ansible_os_family] }}"
+  tags: development
+
+- name: Install System Development Packages
+  become: true
+  become_user: root
+  ansible.builtin.package:
+    state: present
+    name: "{{ item }}"
+  loop: "{{ system_development_packages[ansible_os_family] }}"
+  tags: development
+  when: ansible_os_family == 'Debian' or ansible_os_family == 'Redhat'
+
+- name: Install System Development Packages (Suse)
+  become: true
+  become_user: root
+  community.general.zypper:
+    state: present
+    name: devel_basis
+    type: pattern
+  tags: development
+  when: ansible_os_family == 'Suse'

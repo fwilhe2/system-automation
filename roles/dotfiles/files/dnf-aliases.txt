@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
 alias i='sudo dnf install'
 alias I='sudo dnf --assumeyes install'
 alias up='sudo dnf update'

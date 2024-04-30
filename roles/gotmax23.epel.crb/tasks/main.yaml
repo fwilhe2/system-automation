@@ -1,0 +1,34 @@
+# SPDX-FileCopyrightText: 2022 Maxwell G (@gotmax23)
+# SPDX-License-Identifier: MIT
+---
+- name: Install dnf-command(config-manager)
+  ansible.builtin.package:
+    name: "dnf-command(config-manager)"
+
+# /usr/bin/crb is part of epel-release.
+# This role should work whether or not epel-release is installed.
+- name: Check if /usr/bin/crb is installed | stat
+  register: _crb_stat
+  ansible.builtin.stat:
+    dest: /usr/bin/crb
+
+- name: Install /usr/bin/crb if missing
+  when: not _crb_stat.stat.exists | bool
+  ansible.builtin.get_url:
+    url: https://src.fedoraproject.org/rpms/epel-release/raw/epel9/f/crb
+    dest: /usr/bin/crb
+    owner: root
+    group: root
+    mode: "0744"
+
+- name: Check if CRB is enabled
+  check_mode: false
+  changed_when: false
+  register: _crb_status
+  ansible.builtin.command:
+    cmd: crb status
+
+- name: Enable crb
+  when: "'CRB repo is disabled' in _crb_status['stdout_lines']"
+  ansible.builtin.command:
+    cmd: crb enable

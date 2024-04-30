@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- hosts: all
+  name: VM Host
+
+  vars_files:
+    - [default.config.yml, config.yml]
+
+  roles:
+    - basic
+    - dotfiles
+    - bin
+    - directories
+    - docker
+    - virtualization
+    - role: iesplin.vscode
+      become: true
