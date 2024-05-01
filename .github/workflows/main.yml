@@ -42,7 +42,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["quay.io/centos/centos:stream9", "almalinux:latest"]
+        # Remove "quay.io/centos/centos:stream9" for now as
+        # CS9 has no jdk-21 package despite it's available in EL9
+        # https://forums.centos.org/viewtopic.php?t=80650
+        version: ["almalinux:latest"]
     steps:
       - uses: actions/checkout@v4
       - name: Build Test Container EL ${{ matrix.version }}
