@@ -104,7 +104,7 @@ development_packages:
   RedHat:
     - cargo
     - golang
-    - java-17-openjdk-devel
+    - java-21-openjdk-devel
     - maven
     - nodejs
     - npm
@@ -112,7 +112,7 @@ development_packages:
   Suse:
     - cargo
     - go
-    - java-17-openjdk-devel
+    - java-21-openjdk-devel
     - maven
     - nodejs-default
     - npm-default
