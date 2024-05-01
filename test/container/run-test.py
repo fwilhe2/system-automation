@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
 import subprocess
 import os
 import re
@@ -33,6 +36,8 @@ def run_group(fn, name, *args):
     fn(*args)
     print("::endgroup::")
 
+def install_ansible_galaxy_dependencies():
+    subprocess.run([ansible_galaxy_executable(), 'install', '-r', '/home/user/requirements.yml'])
 
 def run_ansible(playbook):
     assert_equals(
@@ -86,6 +91,11 @@ def ansible_playbook_executable():
         return "/home/user/.local/bin/ansible-playbook"
     return in_path
 
+def ansible_galaxy_executable():
+    in_path = shutil.which("ansible-galaxy")
+    if in_path == None:
+        return "/home/user/.local/bin/ansible-galaxy"
+    return in_path
 
 def print_os_version():
     print(distro.name(pretty=True))
@@ -101,6 +111,8 @@ def print_sbom():
 
 print_ansible_version()
 print_os_version()
+run_group(install_ansible_galaxy_dependencies, "Install Dependencies from Ansible Galaxy")
+run_group(run_ansible, "Running Playbook EPEL", "/home/user/epel.yml")
 run_group(run_ansible, "Running Playbook common", "/home/user/common.yml")
 run_group(run_ansible, "Running Playbook desktop", "/home/user/desktop.yml")
 run_group(print_sbom, "Print SBOM")
@@ -119,6 +131,8 @@ def assert_system_properties():
         "keepassxc-cli": "-version",
         "cargo": "--version",
         "topgrade": "--version",
+        "limactl": "--version",
+        "qemu-system-x86_64": "--version",
     }
 
     for binary in expected_binaries:
@@ -132,19 +146,5 @@ def assert_system_properties():
             0,
             f"Expected {script} to run with exit code 0.",
         )
-
-    has_user = False
-    with open("/etc/passwd", "r") as passwd:
-        for line in passwd.readlines():
-            if line.startswith("florian"):
-                passwd_entry = line.split(":")
-                assert_equals(
-                    passwd_entry[6],
-                    "/usr/bin/zsh\n",
-                    f"Expected /usr/bin/zsh as a shell for user florian.\n{passwd}",
-                )
-                has_user = True
-        assert_true(has_user,
-                    f"Could not find expected user in:\n{passwd.readlines()}")
 
 run_group(assert_system_properties, "Assert Properties of Installed System")

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
 username: florian
 
 basic_packages:
@@ -33,7 +36,7 @@ basic_packages:
     - mc
     - rdiff-backup
     - the_silver_searcher
-    - tealdeer
+    - tldr
     - unzip
     - vim
     - xz
@@ -96,11 +99,12 @@ development_packages:
     - maven
     - nodejs
     - npm
+    - yarnpkg
     - openjdk-17-jdk-headless
   RedHat:
     - cargo
     - golang
-    - java-17-openjdk-devel
+    - java-21-openjdk-devel
     - maven
     - nodejs
     - npm
@@ -108,7 +112,7 @@ development_packages:
   Suse:
     - cargo
     - go
-    - java-17-openjdk-devel
+    - java-21-openjdk-devel
     - maven
     - nodejs-default
     - npm-default

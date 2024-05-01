@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Florian Wilhelm
+// SPDX-License-Identifier: MIT
+
 = system-automation
 :experimental: yes
 ifdef::env-github[]
@@ -12,21 +15,28 @@ ifdef::env-github[]
 endif::[]
 
 image::https://github.com/fwilhe2/system-automation/workflows/CI/badge.svg[CI Job]
+image::https://api.reuse.software/badge/github.com/fwilhe2/system-automation[REUSE status]
+
+https://api.reuse.software/info/github.com/fwilhe2/system-automation[REUSE status]
 
 System Automation powered by Ansible™
 
 == Project Layout
 
-This project contains two playbooks:
+This project contains multiple playbooks:
 
+* `epel.yml`: Helper to add the Extra Packages for Enterprise Linux repos
 * `common.yml`: Software and setup which does not require a graphical environment
+* `minimal.yml`: Subset of the common playbook to get a nice cli environment without too many packages
 * `desktop.yml`: Setup for desktop computers
+* `vm-host.yml`: Skips development tools, ment for hosts running https://github.com/fwilhe2/dev[dev]
+* `dev-env.yml`: Skips virtualization tools, ment for guests running https://github.com/fwilhe2/dev[dev]
 
 == Preparation
 
 .Preparation for Fedora/*EL-like
 ----
-sudo dnf install -y ansible curl bash unzip
+sudo dnf install -y ansible-core curl bash unzip
 ----
 
 .Preparation for Ubuntu/Debian
@@ -44,7 +54,11 @@ sudo pacman --sync --refresh --noconfirm ansible curl bash unzip git
 If you don't mind the `curl | bash` thing, you might try running the playbook directly via:
 
 ----
+# Common playbook
 curl https://raw.githubusercontent.com/fwilhe2/system-automation/main/bootstrap.sh | bash
+
+# Minimal playbook
+curl https://raw.githubusercontent.com/fwilhe2/system-automation/main/bootstrap-minimal.sh | bash
 ----
 
 This requires `ansible`, `curl`, `bash` and `unzip`.
@@ -70,10 +84,10 @@ They are run automatically via the CI workflow.
 
 For running them locally, use:
 
-.Test on Ubuntu
+.Test on Debian
 ----
-docker build --build-arg=VERSION=latest -t system-automation-test-ubuntu-latest --file test/container/Containerfile.ubuntu .
-docker run --tty --volume $PWD:/mnt system-automation-test-ubuntu-latest
+docker build --build-arg=VERSION=debian:testing -t system-automation-test-debian-latest --file test/container/Containerfile.dpkg .
+docker run --tty --volume $PWD:/mnt system-automation-test-debian-latest
 ----
 
 .Test on Fedora
@@ -82,19 +96,25 @@ docker build --build-arg=VERSION=latest -t system-automation-test-fedora-latest 
 docker run --tty --volume $PWD:/mnt system-automation-test-fedora-latest
 ----
 
-=== Vagrantfile
+=== Lima
 
-Vagrantfiles with provider `libvirt` are available for testing.
+https://github.com/lima-vm/lima[Lima] is a tool written in go for running virtual machines.
 
-.Setup on Fedora (on the host)
-----
-sudo dnf install libvirt vagrant vagrant-libvirt
-----
+Files in the root of this repo named like `lima_*.yaml` contain vm definitions for testing this repo.
 
-.Change into any of the `Vagrantfile` directories and run
+.Running the playbook in a vm using lima
 ----
-export VAGRANT_DEFAULT_PROVIDER=libvirt
-vagrant up
+# pick the one you need
+export SYSAUTO_LIMA_DISTRO=debian
+export SYSAUTO_LIMA_DISTRO=fedora
+limactl create --name=system-automation-$SYSAUTO_LIMA_DISTRO ./lima_$SYSAUTO_LIMA_DISTRO.yaml
+limactl start system-automation-$SYSAUTO_LIMA_DISTRO
+limactl shell system-automation-$SYSAUTO_LIMA_DISTRO
+
+# Inside the vm, no password needed for become, just press enter
+./run.sh
+
+limactl stop system-automation-$SYSAUTO_LIMA_DISTRO
 ----
 
 == License
@@ -110,8 +130,17 @@ This project ships the following 3rd party software:
 https://github.com/green-leader/ansible-role-codium[ansible-role-codium] (`roles/greenleader.codium`)::
   Copyright © Sion Fandrick under the _MIT License_
 
+https://github.com/iesplin/ansible-role-vscode[ansible-role-vscode] (`roles/iesplin.vscode`)::
+  Copyright © iesplin under the _MIT License_
+
 https://github.com/gantsign/ansible-role-visual-studio-code-extensions[ansible-role-visual-studio-code-extensions] (`library/codium-extensions`)::
   Copyright © John Freeman GantSign Ltd. Company No. 06109112 (registered in England) under the _MIT License_
+
+https://git.sr.ht/~gotmax23/ansible-collection-epel[Ansible collection - gotmax23.epel] (`roles/gotmax23.epel*`)::
+  Copyright © 2022 Maxwell G (@gotmax23) under the _MIT License_
+
+https://github.com/lima-vm/lima[lima - linux virtual machines] (`lima_*yaml`)::
+  Based on examples by Akihiro Suda and https://github.com/lima-vm/lima/graphs/contributors[the lima contributors] under the _Apache-2.0 license_
 
 == References
 

@@ -1,0 +1,4 @@
+# SPDX-FileCopyrightText: 2022 Maxwell G (@gotmax23)
+# SPDX-License-Identifier: MIT
+---
+epel_verify_key_fingerprint: true

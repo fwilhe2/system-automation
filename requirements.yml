@@ -1,0 +1,8 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+collections:
+  - name: community.general
+    version: ">=7.1.0"
+    source: https://galaxy.ansible.com
