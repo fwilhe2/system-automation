@@ -34,7 +34,12 @@ This project contains multiple playbooks:
 
 == Preparation
 
-.Preparation for Fedora/*EL-like
+.Preparation for Fedora
+----
+sudo dnf install -y ansible curl bash unzip
+----
+
+.Preparation for *EL-like
 ----
 sudo dnf install -y ansible-core curl bash unzip
 ----
