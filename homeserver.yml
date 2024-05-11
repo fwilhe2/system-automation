@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- hosts: all
+  name: VM Host
+
+  vars_files:
+    - [default.config.yml, config.yml]
+
+  roles:
+    - dotfiles
+    - docker

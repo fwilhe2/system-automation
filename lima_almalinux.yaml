@@ -1,0 +1,34 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: Apache-2.0
+
+# Based on the examples by Akihiro Suda and the lima contributors, see https://github.com/lima-vm/lima, distributed under Apache-2.0 license
+
+images:
+- location: "https://repo.almalinux.org/almalinux/9.3/cloud/x86_64/images/AlmaLinux-9-GenericCloud-9.3-20231113.x86_64.qcow2"
+  arch: "x86_64"
+  digest: "sha256:6bbd060c971fd827a544c7e5e991a7d9e44460a449d2d058a0bb1290dec5a114"
+- location: "https://repo.almalinux.org/almalinux/9.3/cloud/aarch64/images/AlmaLinux-9-GenericCloud-9.3-20231113.aarch64.qcow2"
+  arch: "aarch64"
+  digest: "sha256:a064715bc755346d5a8e1a4c6b1b7abffe4de03f1b0584942d5483ed32aafd67"
+# Fallback to the latest release image.
+# Hint: run `limactl prune` to invalidate the cache
+- location: "https://repo.almalinux.org/almalinux/9/cloud/x86_64/images/AlmaLinux-9-GenericCloud-latest.x86_64.qcow2"
+  arch: "x86_64"
+- location: "https://repo.almalinux.org/almalinux/9/cloud/aarch64/images/AlmaLinux-9-GenericCloud-latest.aarch64.qcow2"
+  arch: "aarch64"
+
+mounts:
+- location: "~"
+- location: "/tmp/lima"
+  writable: true
+
+provision:
+- mode: system
+  script: |
+    #!/bin/bash
+    set -eux -o pipefail
+    dnf install -y ansible-core curl bash unzip
+
+containerd:
+  system: false
+  user: false

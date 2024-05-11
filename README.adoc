@@ -31,6 +31,7 @@ This project contains multiple playbooks:
 * `desktop.yml`: Setup for desktop computers
 * `vm-host.yml`: Skips development tools, ment for hosts running https://github.com/fwilhe2/dev[dev]
 * `dev-env.yml`: Skips virtualization tools, ment for guests running https://github.com/fwilhe2/dev[dev]
+* `homeserver.yml`: todo
 
 == Preparation
 
@@ -112,6 +113,7 @@ Files in the root of this repo named like `lima_*.yaml` contain vm definitions f
 # pick the one you need
 export SYSAUTO_LIMA_DISTRO=debian
 export SYSAUTO_LIMA_DISTRO=fedora
+export SYSAUTO_LIMA_DISTRO=almalinux
 limactl create --name=system-automation-$SYSAUTO_LIMA_DISTRO ./lima_$SYSAUTO_LIMA_DISTRO.yaml
 limactl start system-automation-$SYSAUTO_LIMA_DISTRO
 limactl shell system-automation-$SYSAUTO_LIMA_DISTRO
