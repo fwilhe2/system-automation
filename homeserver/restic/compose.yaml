@@ -1,0 +1,8 @@
+services:
+  rest-server:
+    image: restic/rest-server:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - /home/florian/mydata:/data
+    container_name: rest_server
