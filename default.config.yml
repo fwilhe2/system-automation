@@ -43,6 +43,7 @@ basic_packages:
     - zsh
     - net-tools
     - bridge-utils
+    - bzip2
   Suse:
     - apg
     - bzip2
