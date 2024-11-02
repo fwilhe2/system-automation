@@ -2,6 +2,16 @@
 # SPDX-License-Identifier: MIT
 
 ---
+- name: Ensure /opt/firefox directory exists
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    path: "/opt/firefox"
+    state: directory
+    mode: "750"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
 - name: Ensure Application Desktop files directory exists
   ansible.builtin.file:
     path: "~/.local/share/applications/"
@@ -15,15 +25,19 @@
   changed_when: false
 
 - name: Ensure Firefox Developer directory exists
+  become: true
+  become_user: root
   ansible.builtin.file:
-    path: "~/software/firefox-devedition/"
+    path: "/opt/firefox/firefox-devedition/"
     state: directory
     mode: "750"
+    owner: "{{ username }}"
+    group: "{{ username }}"
 
 - name: Extract Firefox Developer
   ansible.builtin.unarchive:
     src: "/tmp/firefox-devedition-latest.tar.xz"
-    dest: "~/software/firefox-devedition/"
+    dest: "/opt/firefox/firefox-devedition/"
     remote_src: yes
   changed_when: false
 
@@ -39,15 +53,19 @@
   changed_when: false
 
 - name: Ensure Firefox Nightly directory exists
+  become: true
+  become_user: root
   ansible.builtin.file:
-    path: "~/software/firefox-nightly/"
+    path: "/opt/firefox/firefox-nightly/"
     state: directory
     mode: "750"
+    owner: "{{ username }}"
+    group: "{{ username }}"
 
 - name: Extract Firefox Firefox Nightly
   ansible.builtin.unarchive:
     src: "/tmp/firefox-nightly-latest.tar.xz"
-    dest: "~/software/firefox-nightly/"
+    dest: "/opt/firefox/firefox-nightly/"
     remote_src: yes
   changed_when: false
 

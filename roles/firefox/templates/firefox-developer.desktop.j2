@@ -6,8 +6,8 @@ Version=1.0
 Name=Firefox Developer
 GenericName=Web Browser
 Comment=Browse the Web
-Exec={{ ansible_facts['user_dir'] }}/software/firefox-devedition/firefox/firefox --name firefox-developer --private-window -P Developer %u
-Icon={{ ansible_facts['user_dir'] }}/software/firefox-devedition/firefox/browser/chrome/icons/default/default128.png
+Exec=/opt/firefox/firefox-devedition/firefox/firefox --name firefox-developer --private-window -P Developer %u
+Icon=/opt/firefox/firefox-devedition/firefox/browser/chrome/icons/default/default128.png
 Terminal=false
 Type=Application
 MimeType=text/html;text/xml;application/xhtml+xml;application/vnd.mozilla.xul+xml;text/mml;x-scheme-handler/http;x-scheme-handler/https;
@@ -19,5 +19,5 @@ Actions=new-private-window;
 
 [Desktop Action new-private-window]
 Name=New Private Window
-Exec={{ ansible_facts['user_dir'] }}/software/firefox-devedition/firefox/firefox --name firefox-developer --private-window -P Developer %u
+Exec=/opt/firefox/firefox-devedition/firefox/firefox --name firefox-developer --private-window -P Developer %u
 
