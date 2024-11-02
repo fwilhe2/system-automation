@@ -35,6 +35,8 @@
     group: "{{ username }}"
 
 - name: Extract Firefox Developer
+  become: true
+  become_user: root
   ansible.builtin.unarchive:
     src: "/tmp/firefox-devedition-latest.tar.xz"
     dest: "/opt/firefox/firefox-devedition/"
@@ -63,6 +65,8 @@
     group: "{{ username }}"
 
 - name: Extract Firefox Firefox Nightly
+  become: true
+  become_user: root
   ansible.builtin.unarchive:
     src: "/tmp/firefox-nightly-latest.tar.xz"
     dest: "/opt/firefox/firefox-nightly/"
