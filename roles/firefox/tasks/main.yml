@@ -11,7 +11,7 @@
 - name: Download and Firefox Developer
   get_url:
     url: "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US"
-    dest: "/tmp/firefox-devedition-latest.tar.gz"
+    dest: "/tmp/firefox-devedition-latest.tar.xz"
   changed_when: false
 
 - name: Ensure Firefox Developer directory exists
@@ -22,7 +22,7 @@
 
 - name: Extract Firefox Developer
   ansible.builtin.unarchive:
-    src: "/tmp/firefox-devedition-latest.tar.gz"
+    src: "/tmp/firefox-devedition-latest.tar.xz"
     dest: "~/software/firefox-devedition/"
     remote_src: yes
   changed_when: false
@@ -35,7 +35,7 @@
 - name: Download and Firefox Nightly
   get_url:
     url: "https://download.mozilla.org/?product=firefox-nightly-latest-ssl&os=linux64&lang=en-US"
-    dest: "/tmp/firefox-nightly-latest.tar.gz"
+    dest: "/tmp/firefox-nightly-latest.tar.xz"
   changed_when: false
 
 - name: Ensure Firefox Nightly directory exists
@@ -46,7 +46,7 @@
 
 - name: Extract Firefox Firefox Nightly
   ansible.builtin.unarchive:
-    src: "/tmp/firefox-nightly-latest.tar.gz"
+    src: "/tmp/firefox-nightly-latest.tar.xz"
     dest: "~/software/firefox-nightly/"
     remote_src: yes
   changed_when: false
