@@ -1,0 +1,79 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- name: Ensure /opt/firefox directory exists
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    path: "/opt/firefox"
+    state: directory
+    mode: "750"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: Ensure Application Desktop files directory exists
+  ansible.builtin.file:
+    path: "~/.local/share/applications/"
+    state: directory
+    mode: "750"
+
+- name: Download and Firefox Developer
+  get_url:
+    url: "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US"
+    dest: "/tmp/firefox-devedition-latest.tar.xz"
+  changed_when: false
+
+- name: Ensure Firefox Developer directory exists
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    path: "/opt/firefox/firefox-devedition/"
+    state: directory
+    mode: "750"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: Extract Firefox Developer
+  become: true
+  become_user: root
+  ansible.builtin.unarchive:
+    src: "/tmp/firefox-devedition-latest.tar.xz"
+    dest: "/opt/firefox/firefox-devedition/"
+    remote_src: yes
+  changed_when: false
+
+- name: Create Firefox Developer Desktop Entry
+  ansible.builtin.template:
+    src: templates/firefox-developer.desktop.j2
+    dest: ~/.local/share/applications/firefox-developer.desktop
+
+- name: Download and Firefox Nightly
+  get_url:
+    url: "https://download.mozilla.org/?product=firefox-nightly-latest-ssl&os=linux64&lang=en-US"
+    dest: "/tmp/firefox-nightly-latest.tar.xz"
+  changed_when: false
+
+- name: Ensure Firefox Nightly directory exists
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    path: "/opt/firefox/firefox-nightly/"
+    state: directory
+    mode: "750"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: Extract Firefox Firefox Nightly
+  become: true
+  become_user: root
+  ansible.builtin.unarchive:
+    src: "/tmp/firefox-nightly-latest.tar.xz"
+    dest: "/opt/firefox/firefox-nightly/"
+    remote_src: yes
+  changed_when: false
+
+- name: Create Firefox Nightly Desktop Entry
+  ansible.builtin.template:
+    src: templates/firefox-nightly.desktop.j2
+    dest: ~/.local/share/applications/firefox-nightly.desktop
