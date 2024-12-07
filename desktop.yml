@@ -16,6 +16,7 @@
       become: true
 
     - role: firefox
+      tags: firefox
 
     - role: flatpak
 
