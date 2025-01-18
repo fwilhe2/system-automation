@@ -30,15 +30,6 @@
     - lsb-release
   become: true
 
-- name: Add Docker apt key
-  ansible.builtin.shell: |
-    set -o pipefail
-    curl -sSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-  args:
-    executable: /bin/bash
-  changed_when: false
-  become: true
-
 # Special handling because Docker provides no packages for Ubuntu's development branch
 - name: Get Ubuntu codename
   ansible.builtin.set_fact:
@@ -59,11 +50,14 @@
       Ansible Distribution: {{ansible_distribution|lower}}
 
 - name: Add Docker APT repository
-  ansible.builtin.apt_repository:
-    repo: "deb https://download.docker.com/linux/{{ansible_distribution|lower}}   {{ deb_release_codename }} stable"
+  ansible.builtin.deb822_repository:
+    name: docker
+    types: [deb]
+    uris: "https://download.docker.com/linux/{{ansible_distribution|lower}}"
+    components: [{{ deb_release_codename }}, stable]
+    signed_by: https://download.docker.com/linux/ubuntu/gpg
     state: present
-    update_cache: true
-  become: true
+    enabled: true
 
 - name: Install Docker Engine
   ansible.builtin.apt:
