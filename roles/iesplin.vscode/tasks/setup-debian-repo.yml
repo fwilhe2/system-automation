@@ -10,13 +10,12 @@
     state: present
     update_cache: true
 
-- name: Add Microsoft signing key
-  apt_key:
-    url: https://packages.microsoft.com/keys/microsoft.asc
-    state: present
-
 - name: Add Microsoft repository
-  apt_repository:
-    repo: deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main
+  ansible.builtin.deb822_repository:
+    name: vscode
+    types: [deb]
+    uris: "https://packages.microsoft.com/repos/vscode"
+    components: [stable, main]
+    signed_by: https://packages.microsoft.com/keys/microsoft.asc
     state: present
-    filename: vscode
+    enabled: true
