@@ -37,21 +37,23 @@ jobs:
       - name: Run Test Fedora ${{ matrix.version }}
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-fedora-${{ matrix.version }}
 
-  el:
-    runs-on: ubuntu-22.04
-    strategy:
-      fail-fast: false
-      matrix:
-        # Remove "quay.io/centos/centos:stream9" for now as
-        # CS9 has no jdk-21 package despite it's available in EL9
-        # https://forums.centos.org/viewtopic.php?t=80650
-        version: ["almalinux:latest"]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build Test Container EL ${{ matrix.version }}
-        run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-el-${{ matrix.version }} --file test/container/Containerfile.el .
-      - name: Run Test EL ${{ matrix.version }}
-        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-el-${{ matrix.version }}
+# deb822_repository is new in ansible-core 2.15
+# which is not (yet?) available for EL9
+  # el:
+  #   runs-on: ubuntu-22.04
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       # Remove "quay.io/centos/centos:stream9" for now as
+  #       # CS9 has no jdk-21 package despite it's available in EL9
+  #       # https://forums.centos.org/viewtopic.php?t=80650
+  #       version: ["almalinux:latest"]
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Build Test Container EL ${{ matrix.version }}
+  #       run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-el-${{ matrix.version }} --file test/container/Containerfile.el .
+  #     - name: Run Test EL ${{ matrix.version }}
+  #       run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-el-${{ matrix.version }}
 
   zypper:
     runs-on: ubuntu-22.04

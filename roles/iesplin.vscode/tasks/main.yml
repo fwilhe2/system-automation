@@ -14,3 +14,4 @@
   package:
     name: code
     state: present
+    update_cache: yes
