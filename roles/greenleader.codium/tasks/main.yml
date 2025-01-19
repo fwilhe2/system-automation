@@ -34,6 +34,8 @@
     signed_by: https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg
     state: present
     enabled: true
+  when:
+    - ansible_os_family == 'Debian'
 
 - name: Ensure codium is installed
   ansible.builtin.package:
