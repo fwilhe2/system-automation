@@ -15,7 +15,8 @@
     name: vscode
     types: [deb]
     uris: "https://packages.microsoft.com/repos/vscode"
-    components: [stable, main]
+    suites: stable
+    components: [main]
     signed_by: https://packages.microsoft.com/keys/microsoft.asc
     state: present
     enabled: true
