@@ -24,20 +24,16 @@
   when:
     - ansible_os_family == 'RedHat'
 
-- name: Ensure GPG key for repo is installed (Debian)
-  ansible.builtin.apt_key:
-    url: https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg
-    id: "{{ gpg_fingerprint }}"
-    state: present
-  when:
-    - ansible_os_family == 'Debian'
-
 - name: Ensure repo is installed (Debian)
-  ansible.builtin.apt_repository:
-    repo: "deb https://paulcarroty.gitlab.io/vscodium-deb-rpm-repo/debs/ vscodium main"
-    filename: codium
+  ansible.builtin.deb822_repository:
+    name: codium
+    types: [deb]
+    uris: "https://paulcarroty.gitlab.io/vscodium-deb-rpm-repo/debs/"
+    suites: vscodium
+    components: [main]
+    signed_by: https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg
     state: present
-    update_cache: true
+    enabled: true
   when:
     - ansible_os_family == 'Debian'
 
@@ -45,3 +41,4 @@
   ansible.builtin.package:
     name: codium
     state: present
+    update_cache: yes
