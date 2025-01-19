@@ -16,7 +16,11 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          ["ubuntu:latest", "ubuntu:rolling", "ubuntu:devel", "debian:testing"]
+          [
+            "ubuntu:latest",
+            "ubuntu:rolling",
+            "debian:stable",
+          ]
     steps:
       - uses: actions/checkout@v4
       - name: Build Test Container deb ${{ matrix.version }}
