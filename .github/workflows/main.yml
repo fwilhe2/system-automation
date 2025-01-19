@@ -15,12 +15,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version:
-          [
+        version: [
             "ubuntu:latest",
             "ubuntu:rolling",
             "ubuntu:devel",
-            "debian:stable",
+            # deb822_repository is new in ansible-core 2.15
+            # which is not (yet?) available for bookworm
+            # "debian:stable",
             "debian:testing",
             "debian:unstable",
           ]
