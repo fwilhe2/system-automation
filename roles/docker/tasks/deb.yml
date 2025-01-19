@@ -54,10 +54,12 @@
     name: docker
     types: [deb]
     uris: "https://download.docker.com/linux/{{ansible_distribution|lower}}"
-    components: [{{ deb_release_codename }}, stable]
+    suites: "{{ deb_release_codename }}"
+    components: [stable]
     signed_by: https://download.docker.com/linux/ubuntu/gpg
     state: present
     enabled: true
+  become: true
 
 - name: Install Docker Engine
   ansible.builtin.apt:
