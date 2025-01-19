@@ -16,7 +16,14 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          ["ubuntu:latest", "ubuntu:rolling", "ubuntu:devel", "debian:testing"]
+          [
+            "ubuntu:latest",
+            "ubuntu:rolling",
+            "ubuntu:devel",
+            "debian:stable",
+            "debian:testing",
+            "debian:unstable",
+          ]
     steps:
       - uses: actions/checkout@v4
       - name: Build Test Container deb ${{ matrix.version }}
@@ -37,8 +44,8 @@ jobs:
       - name: Run Test Fedora ${{ matrix.version }}
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-fedora-${{ matrix.version }}
 
-# deb822_repository is new in ansible-core 2.15
-# which is not (yet?) available for EL9
+  # deb822_repository is new in ansible-core 2.15
+  # which is not (yet?) available for EL9
   # el:
   #   runs-on: ubuntu-22.04
   #   strategy:
