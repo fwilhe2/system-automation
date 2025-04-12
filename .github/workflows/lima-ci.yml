@@ -1,0 +1,29 @@
+name: CI with Lima VM
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fedora:
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: "Set up Lima"
+      uses: lima-vm/lima-actions/setup@v1
+      id: lima-actions-setup
+
+    - name: "Cache ~/.cache/lima"
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/lima
+        key: lima-${{ steps.lima-actions-setup.outputs.version }}
+
+    - name: "Start an instance"
+      run: |
+        set -eux
+
+        cat lima_fedora.yaml | limactl create --name=default -
+        limactl start 
+        limactl shell ansible-playbook --inventory inventory common.yml
