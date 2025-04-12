@@ -4,8 +4,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  fedora:
+  lima:
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        distro: [fedora, debian]
     steps:
     - name: Check out code
       uses: actions/checkout@v4
@@ -20,10 +24,10 @@ jobs:
         path: ~/.cache/lima
         key: lima-${{ steps.lima-actions-setup.outputs.version }}
 
-    - name: "Start an instance"
+    - name: "Start an instance of ${{ matrix.distro }}"
       run: |
         set -eux
 
-        cat lima_fedora.yaml | limactl create --name=default -
+        cat lima_${{ matrix.distro }}.yaml | limactl create --name=default -
         limactl start 
         lima ansible-playbook --inventory inventory common.yml
