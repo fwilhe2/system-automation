@@ -9,10 +9,12 @@
     - [default.config.yml, config.yml]
 
   roles:
-    - basic
-    - dotfiles
-    - bin
-    - directories
-    - docker
-    - development
-    - virtualization
+    # - basic
+    # - dotfiles
+    # - bin
+    # - directories
+    # - docker
+    # - development
+    # - virtualization
+    - role: andrewrothstein.ansible-rust
+      become: true

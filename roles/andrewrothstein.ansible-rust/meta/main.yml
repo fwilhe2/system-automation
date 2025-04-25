@@ -1,0 +1,31 @@
+---
+galaxy_info:
+  author: Andrew Rothstein
+  company: BlackRock
+  description: installs rustup
+  galaxy_tags:
+    - development
+  license: MIT
+  min_ansible_version: '1.2'
+  namespace: andrewrothstein
+  platforms:
+    - name: ArchLinux
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - bookworm
+        - bullseye
+    - name: EL
+      versions:
+        - '8'
+        - '9'
+    - name: Fedora
+      versions:
+        - '39'
+        - '40'
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+  role_name: rust

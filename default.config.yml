@@ -95,7 +95,6 @@ desktop_packages:
 
 development_packages:
   Debian:
-    - cargo
     - golang
     - maven
     - nodejs
@@ -103,7 +102,6 @@ development_packages:
     - yarnpkg
     - openjdk-17-jdk-headless
   RedHat:
-    - cargo
     - golang
     - java-21-openjdk-devel
     - maven
@@ -111,7 +109,6 @@ development_packages:
     - npm
     - rust
   Suse:
-    - cargo
     - go
     - java-21-openjdk-devel
     - maven
