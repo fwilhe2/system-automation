@@ -10,7 +10,7 @@ This script regenerates 'fedora.yaml' with updated urls and sha sums
 from urllib.request import urlopen
 import json
 
-fedora_version = '41'
+fedora_version = '42'
 url = 'https://gitlab.com/fedora/websites-apps/fedora-websites/fedora-websites-3.0/-/raw/develop/public/releases.json'
 
 template = """# SPDX-FileCopyrightText: Florian Wilhelm
