@@ -22,13 +22,12 @@
     mode: "0744"
 
 - name: Check if CRB is enabled
-  check_mode: false
   changed_when: false
   register: _crb_status
   ansible.builtin.command:
     cmd: crb status
 
 - name: Enable crb
-  when: "'CRB repo is disabled' in _crb_status['stdout_lines']"
+  when: "'CRB repo is disabled' in _crb_status['stdout_lines'] or not _crb_stat.stat.exists | bool"
   ansible.builtin.command:
     cmd: crb enable
