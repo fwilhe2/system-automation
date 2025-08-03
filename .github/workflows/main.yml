@@ -99,3 +99,4 @@ jobs:
       - run: pip install yapf
       - run: ./format-files.sh
       - run: git diff --name-only --exit-code
+      - run: git diff
