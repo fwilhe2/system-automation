@@ -11,11 +11,11 @@ on:
 
 jobs:
   deb:
-    runs-on: ${{ matrix.runner }}
+    runs-on: ubuntu-24.04${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
-        runner: ["ubuntu-24.04", "ubuntu-24.04-arm"]
+        runner: ["", "-arm"] #amd64 and arm
         version: [
             "ubuntu:latest",
             "ubuntu:rolling",
@@ -35,10 +35,11 @@ jobs:
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-deb-${{ matrix.version }}
 
   yum:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
+        runner: ["", "-arm"] #amd64 and arm
         version: [latest, rawhide]
     steps:
       - uses: actions/checkout@v4
@@ -66,7 +67,11 @@ jobs:
   #       run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-el-${{ matrix.version }}
 
   zypper:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: ["", "-arm"] #amd64 and arm
     steps:
       - uses: actions/checkout@v4
       - name: Build Test Container opensuse
@@ -75,7 +80,11 @@ jobs:
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-opensuse
 
   pacman:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: ["", "-arm"] #amd64 and arm
     steps:
       - uses: actions/checkout@v4
       - name: Build Test Container archlinux
