@@ -11,6 +11,7 @@
     update_cache: true
 
 - name: Add Microsoft repository
+  changed_when: false
   ansible.builtin.deb822_repository:
     name: vscode
     types: [deb]
@@ -20,4 +21,3 @@
     signed_by: https://packages.microsoft.com/keys/microsoft.asc
     state: present
     enabled: true
-    changed_when: false
