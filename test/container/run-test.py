@@ -106,7 +106,7 @@ def print_sbom():
     print(subprocess.run(['dpkg-query', '--list', '--no-pager']).stdout)
 
   if distro.id() == 'centos' or distro.id() == 'fedora' or distro.id() == 'almalinux' or distro.id() == 'rocky':
-    print(subprocess.run(['dnf', 'list', 'installed']).stdout)
+    print(subprocess.run(['dnf', '--assumeyes', 'list', 'installed']).stdout)
 
 
 print_ansible_version()
