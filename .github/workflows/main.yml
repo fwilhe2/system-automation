@@ -11,7 +11,7 @@ on:
 
 jobs:
   deb:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -33,7 +33,7 @@ jobs:
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-deb-${{ matrix.version }}
 
   yum:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -48,7 +48,7 @@ jobs:
   # deb822_repository is new in ansible-core 2.15
   # which is not (yet?) available for EL9
   # el:
-  #   runs-on: ubuntu-22.04
+  #   runs-on: ubuntu-24.04
   #   strategy:
   #     fail-fast: false
   #     matrix:
@@ -64,7 +64,7 @@ jobs:
   #       run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-el-${{ matrix.version }}
 
   zypper:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Build Test Container opensuse
@@ -73,7 +73,7 @@ jobs:
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-opensuse
 
   pacman:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Build Test Container archlinux
@@ -82,7 +82,7 @@ jobs:
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-archlinux
 
   syntax-check:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -93,7 +93,7 @@ jobs:
       - run: ansible-playbook -vvvv --inventory inventory --syntax-check desktop.yml
 
   formatting:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - run: pip install yapf
