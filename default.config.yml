@@ -101,7 +101,7 @@ development_packages:
     - nodejs
     - npm
     - yarnpkg
-    - openjdk-17-jdk-headless
+    - default-jdk-headless
   RedHat:
     - cargo
     - golang
