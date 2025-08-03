@@ -11,10 +11,11 @@ on:
 
 jobs:
   deb:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
+        runner: ["ubuntu-24.04", "ubuntu-24.04-arm"]
         version: [
             "ubuntu:latest",
             "ubuntu:rolling",
@@ -27,28 +28,7 @@ jobs:
           ]
     steps:
       - uses: actions/checkout@v4
-      - name: Build Test Container deb ${{ matrix.version }}
-        run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-deb-${{ matrix.version }} --file test/container/Containerfile.dpkg .
-      - name: Run Test deb ${{ matrix.version }}
-        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-deb-${{ matrix.version }}
-
-  deb-arm:
-    runs-on: ubuntu-24.04-arm
-    strategy:
-      fail-fast: false
-      matrix:
-        version: [
-            "ubuntu:latest",
-            "ubuntu:rolling",
-            "ubuntu:devel",
-            # deb822_repository is new in ansible-core 2.15
-            # which is not (yet?) available for bookworm
-            # "debian:stable",
-            "debian:testing",
-            "debian:unstable",
-          ]
-    steps:
-      - uses: actions/checkout@v4
+      - run: dpkg --print-architecture
       - name: Build Test Container deb ${{ matrix.version }}
         run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-deb-${{ matrix.version }} --file test/container/Containerfile.dpkg .
       - name: Run Test deb ${{ matrix.version }}
