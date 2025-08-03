@@ -49,14 +49,12 @@ jobs:
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-fedora-${{ matrix.version }}
 
   el:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
-        # Remove "quay.io/centos/centos:stream9" for now as
-        # CS9 has no jdk-21 package despite it's available in EL9
-        # https://forums.centos.org/viewtopic.php?t=80650
-        version: ["almalinux:10"]
+        runner: ["", "-arm"] #amd64 and arm
+        version: ["almalinux:10", "quay.io/centos/centos:stream10"]
     steps:
       - uses: actions/checkout@v4
       - name: Build Test Container EL ${{ matrix.version }}
