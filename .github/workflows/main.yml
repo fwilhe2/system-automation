@@ -54,7 +54,7 @@ jobs:
       fail-fast: false
       matrix:
         runner: ["", "-arm"] #amd64 and arm
-        version: ["almalinux:10", "quay.io/centos/centos:stream10"]
+        version: ["almalinux:10"]
     steps:
       - uses: actions/checkout@v4
       - name: Build Test Container EL ${{ matrix.version }}
