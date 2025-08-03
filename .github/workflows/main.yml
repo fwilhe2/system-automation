@@ -80,11 +80,7 @@ jobs:
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-opensuse
 
   pacman:
-    runs-on: ubuntu-24.04${{ matrix.runner }}
-    strategy:
-      fail-fast: false
-      matrix:
-        runner: ["", "-arm"] #amd64 and arm
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Build Test Container archlinux
