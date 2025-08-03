@@ -20,3 +20,4 @@
     signed_by: https://packages.microsoft.com/keys/microsoft.asc
     state: present
     enabled: true
+    changed_when: false
