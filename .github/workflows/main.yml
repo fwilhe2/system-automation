@@ -32,6 +32,28 @@ jobs:
       - name: Run Test deb ${{ matrix.version }}
         run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-deb-${{ matrix.version }}
 
+  deb-arm:
+    runs-on: ubuntu-22.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        version: [
+            "ubuntu:latest",
+            "ubuntu:rolling",
+            "ubuntu:devel",
+            # deb822_repository is new in ansible-core 2.15
+            # which is not (yet?) available for bookworm
+            # "debian:stable",
+            "debian:testing",
+            "debian:unstable",
+          ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Test Container deb ${{ matrix.version }}
+        run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-deb-${{ matrix.version }} --file test/container/Containerfile.dpkg .
+      - name: Run Test deb ${{ matrix.version }}
+        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-deb-${{ matrix.version }}
+
   yum:
     runs-on: ubuntu-24.04
     strategy:
