@@ -20,9 +20,7 @@ jobs:
             "ubuntu:latest",
             "ubuntu:rolling",
             "ubuntu:devel",
-            # deb822_repository is new in ansible-core 2.15
-            # which is not (yet?) available for bookworm
-            # "debian:stable",
+            "debian:stable",
             "debian:testing",
             "debian:unstable",
           ]
