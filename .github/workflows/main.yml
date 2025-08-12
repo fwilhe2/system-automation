@@ -25,7 +25,7 @@ jobs:
             "debian:unstable",
           ]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: dpkg --print-architecture
       - name: Build Test Container deb ${{ matrix.version }}
         run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-deb-${{ matrix.version }} --file test/container/Containerfile.dpkg .
@@ -40,7 +40,7 @@ jobs:
         runner: ["", "-arm"] #amd64 and arm
         version: [latest, rawhide]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Build Test Container Fedora ${{ matrix.version }}
         run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora-${{ matrix.version }} --file test/container/Containerfile.fedora .
       - name: Run Test Fedora ${{ matrix.version }}
@@ -54,7 +54,7 @@ jobs:
         runner: ["", "-arm"] #amd64 and arm
         version: ["almalinux:10"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Build Test Container EL ${{ matrix.version }}
         run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-el-${{ matrix.version }} --file test/container/Containerfile.el .
       - name: Run Test EL ${{ matrix.version }}
@@ -67,7 +67,7 @@ jobs:
       matrix:
         runner: ["", "-arm"] #amd64 and arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Build Test Container opensuse
         run: docker build -t system-automation-test-opensuse --file test/container/Containerfile.opensuse .
       - name: Run Test opensuse
@@ -76,7 +76,7 @@ jobs:
   pacman:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Build Test Container archlinux
         run: docker build -t system-automation-test-archlinux --file test/container/Containerfile.archlinux .
       - name: Run Test archlinux
@@ -85,7 +85,7 @@ jobs:
   syntax-check:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
@@ -97,7 +97,7 @@ jobs:
   # formatting:
   #   runs-on: ubuntu-24.04
   #   steps:
-  #     - uses: actions/checkout@v4
+  #     - uses: actions/checkout@v5
   #     - run: pip install yapf
   #     - run: ./format-files.sh
   #     - run: git diff --name-only --exit-code
