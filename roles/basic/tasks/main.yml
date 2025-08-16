@@ -2,26 +2,12 @@
 # SPDX-License-Identifier: MIT
 
 ---
-- name: Install Basic Packages
+- name: Install Homeserver Packages
   become: true
   become_user: root
   ansible.builtin.package:
     state: present
     name: "{{ item }}"
-  loop: "{{ basic_packages[ansible_os_family] }}"
-  tags: basic
+  loop: "{{ homeserver_packages[ansible_os_family] }}"
+  tags: homeserver
   ignore_errors: true
-
-- name: Set vim as default editor
-  become: true
-  community.general.alternatives:
-    name: editor
-    path: /usr/bin/vim
-  when: ansible_os_family == 'Debian'
-  tags: basic
-
-- name: Configure user
-  become: true
-  ansible.builtin.user:
-    name: "{{ username }}"
-  tags: basic

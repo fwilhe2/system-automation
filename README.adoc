@@ -31,6 +31,7 @@ This project contains multiple playbooks:
 * `desktop.yml`: Setup for desktop computers
 * `vm-host.yml`: Skips development tools, meant for hosts running https://github.com/fwilhe2/dev[dev]
 * `dev-env.yml`: Skips virtualization tools, meant for guests running https://github.com/fwilhe2/dev[dev]
+* `homeserver.yml`: Homeserver
 
 == Preparation
 

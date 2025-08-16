@@ -41,6 +41,8 @@ provision:
 containerd:
   system: false
   user: false
+
+mountTypesUnsupported: [9p]
 """
 
 
