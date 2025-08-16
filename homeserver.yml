@@ -3,7 +3,7 @@
 
 ---
 - hosts: all
-  name: Minimal Playbook
+  name: Homeserver Playbook
 
   vars_files:
     - [default.config.yml, config.yml]
@@ -12,3 +12,4 @@
     - basic
     - dotfiles
     - docker
+    - homeserver
