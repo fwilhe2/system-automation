@@ -14,5 +14,6 @@
     - bin
     - directories
     - docker
+    - podman
     - development
     - virtualization

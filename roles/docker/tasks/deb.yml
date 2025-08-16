@@ -33,13 +33,13 @@
 # Special handling because Docker provides no packages for Ubuntu's development branch
 - name: Get Ubuntu codename
   ansible.builtin.set_fact:
-    deb_release_codename: "{{ 'jammy' if ansible_lsb.description is search('development branch', ignorecase=True) else ansible_distribution_release }}"
+    deb_release_codename: "{{ 'noble' if ansible_lsb.description is search('development branch', ignorecase=True) else ansible_distribution_release }}"
   when: ansible_distribution == 'Ubuntu'
 
-# Special handling because Docker provides no packages for Debian Trixie as of now
+# Special handling because Docker provides no packages for Debian Forky as of now
 - name: Get Debian codename
   ansible.builtin.set_fact:
-    deb_release_codename: "{{ 'bookworm' if ansible_lsb.description is search('sid', ignorecase=True) else ansible_distribution_release }}"
+    deb_release_codename: "{{ 'trixie' if ansible_lsb.description is search('sid', ignorecase=True) else ansible_distribution_release }}"
   when: ansible_distribution == 'Debian'
 
 - name: dbg
@@ -100,5 +100,3 @@
   loop:
     - podman
   become: true
-  # TODO: Update once focal is not required anymore
-  when: ansible_distribution_release != "focal"

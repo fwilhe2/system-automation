@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+
+- name: Install the docker packages
+  ansible.builtin.dnf:
+    state: present
+    name: "{{ item }}"
+  loop:
+    - podman
+  become: true

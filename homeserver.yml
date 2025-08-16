@@ -11,5 +11,5 @@
   roles:
     - basic
     - dotfiles
-    - docker
+    - podman
     - homeserver
