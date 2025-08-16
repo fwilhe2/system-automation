@@ -16,7 +16,8 @@ jobs:
       fail-fast: false
       matrix:
         runner: ["", "-arm"] #amd64 and arm
-        version: [
+        version:
+          [
             "ubuntu:latest",
             "ubuntu:rolling",
             "ubuntu:devel",
