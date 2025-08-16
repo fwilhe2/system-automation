@@ -25,6 +25,7 @@ basic_packages:
     - zsh
     - net-tools
     - bridge-utils
+    - zip
   RedHat:
     - apg
     - curl
