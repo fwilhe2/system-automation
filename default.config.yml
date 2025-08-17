@@ -143,6 +143,11 @@ homeserver_packages:
     - cockpit-storaged
     - cockpit-system
     - cockpit-ws
+  RedHat:
+    - cockpit
+    - cockpit-machines
+    - cockpit-podman
+    - cockpit-files
 
 directories:
   - "~/temp"
