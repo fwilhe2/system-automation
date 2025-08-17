@@ -5,6 +5,9 @@
 name: CI with Lima VM
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -36,3 +39,5 @@ jobs:
           cat lima_${{ matrix.distro }}.yaml | limactl create --name=default -
           limactl start
           lima ansible-playbook --inventory inventory ${{ matrix.playbook }}.yml
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          uv run --with distro test.py
