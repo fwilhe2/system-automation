@@ -40,4 +40,4 @@ jobs:
           limactl start
           lima ansible-playbook --inventory inventory ${{ matrix.playbook }}.yml
           lima curl -LsSf https://astral.sh/uv/install.sh | sh
-          lima uv run --with distro test.py
+          lima ~/.local/bin/uv run --with distro test.py
