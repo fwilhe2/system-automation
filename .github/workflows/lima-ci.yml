@@ -39,5 +39,5 @@ jobs:
           cat lima_${{ matrix.distro }}.yaml | limactl create --name=default -
           limactl start
           lima ansible-playbook --inventory inventory ${{ matrix.playbook }}.yml
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-          uv run --with distro test.py
+          lima curl -LsSf https://astral.sh/uv/install.sh | sh
+          lima uv run --with distro test.py
