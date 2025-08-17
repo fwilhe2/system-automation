@@ -14,6 +14,7 @@
     - bin
     - directories
     - docker
+    - podman
     - virtualization
     - role: iesplin.vscode
       become: true
