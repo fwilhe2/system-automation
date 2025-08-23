@@ -26,6 +26,7 @@ basic_packages:
     - net-tools
     - bridge-utils
     - zip
+    - python3-lxml
   RedHat:
     - apg
     - curl
@@ -45,6 +46,7 @@ basic_packages:
     - net-tools
     - bridge-utils
     - bzip2
+    - python3-lxml
   Suse:
     - apg
     - bzip2
