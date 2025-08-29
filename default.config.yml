@@ -155,3 +155,4 @@ codium_extensions:
   - redhat.vscode-yaml
   - rust-lang.rust
   - streetsidesoftware.code-spell-checker
+  - streetsidesoftware.code-spell-checker-german
