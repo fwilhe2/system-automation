@@ -27,6 +27,8 @@ basic_packages:
     - bridge-utils
     - zip
     - python3-lxml
+    - rsync
+    - restic
   RedHat:
     - apg
     - curl
@@ -47,6 +49,8 @@ basic_packages:
     - bridge-utils
     - bzip2
     - python3-lxml
+    - rsync
+    - restic
   Suse:
     - apg
     - bzip2
