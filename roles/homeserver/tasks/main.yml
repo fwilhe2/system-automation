@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- name: Install Homeserver Packages
+  become: true
+  become_user: root
+  ansible.builtin.package:
+    state: present
+    name: "{{ item }}"
+  loop: "{{ homeserver_packages[ansible_os_family] }}"
+  tags: homeserver
+  ignore_errors: true
