@@ -143,11 +143,13 @@ homeserver_packages:
     - cockpit-storaged
     - cockpit-system
     - cockpit-ws
+    - openssh-server
   RedHat:
     - cockpit
     - cockpit-machines
     - cockpit-podman
     - cockpit-files
+    - openssh-server
 
 directories:
   - "~/temp"
