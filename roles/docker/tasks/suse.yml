@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+
+- name: Install podman
+  become: true
+  become_user: root
+  community.general.zypper:
+    state: present
+    name: podman
+  when: ansible_os_family == 'Suse'
