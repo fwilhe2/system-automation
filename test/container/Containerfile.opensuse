@@ -24,4 +24,4 @@ USER user
 
 WORKDIR /home/user
 
-ENTRYPOINT ["ansible-playbook", "common.yml"]
+ENTRYPOINT ["python3", "/home/user/test/container/run-test.py"]
