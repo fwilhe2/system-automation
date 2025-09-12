@@ -1,7 +1,9 @@
 # SPDX-FileCopyrightText: Florian Wilhelm
 # SPDX-License-Identifier: MIT
 
-FROM opensuse/tumbleweed
+ARG VERSION
+
+FROM registry.opensuse.org/opensuse/$VERSION
 
 ENV TERM=xterm
 
