@@ -3,13 +3,13 @@
 
 ---
 # tasks file for ansible-role-codium
-- name: Ensure GPG key for repo is installed (RedHat)
+- name: Ensure GPG key for repo is installed (RedHat/Suse)
   ansible.builtin.rpm_key:
     state: present
     key: https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg
     fingerprint: "{{ gpg_fingerprint }}"
   when:
-    - ansible_os_family == 'RedHat'
+    - ansible_os_family == 'RedHat' or ansible_os_family == 'Suse'
 
 - name: Ensure repo is installed (RedHat)
   ansible.builtin.yum_repository:
@@ -36,6 +36,24 @@
     enabled: true
   when:
     - ansible_os_family == 'Debian'
+
+- name: Add VSCodium repo file
+  ansible.builtin.copy:
+    dest: /etc/zypp/repos.d/vscodium.repo
+    content: |
+      [gitlab.com_paulcarroty_vscodium_repo]
+      name=gitlab.com_paulcarroty_vscodium_repo
+      baseurl=https://download.vscodium.com/rpms/
+      enabled=1
+      gpgcheck=1
+      repo_gpgcheck=1
+      gpgkey=https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/-/raw/master/pub.gpg
+      metadata_expire=1h
+    owner: root
+    group: root
+    mode: '0644'
+  when:
+    - ansible_os_family == 'Suse'
 
 - name: Ensure codium is installed
   ansible.builtin.package:
