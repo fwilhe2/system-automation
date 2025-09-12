@@ -108,7 +108,7 @@ def print_sbom():
   if distro.id() == 'centos' or distro.id() == 'fedora' or distro.id() == 'almalinux' or distro.id() == 'rocky':
     subprocess.run(['dnf', '--assumeyes', 'list', 'installed'])
 
-  if distro.id() == 'opensuse':
+  if 'opensuse' in distro.id():
     subprocess.run(['zypper', 'search', '--installed-only', '--details'])
 
 print_ansible_version()

@@ -66,7 +66,7 @@ jobs:
       fail-fast: false
       matrix:
         runner: ["", "-arm"] #amd64 and arm
-        version: ["leap", "tumbleweed"]
+        version: ["leap:16.0", "tumbleweed"]
     steps:
       - uses: actions/checkout@v5
       - name: Build Test Container opensuse ${{ matrix.version }}
