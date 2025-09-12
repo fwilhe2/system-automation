@@ -1,7 +1,9 @@
 # SPDX-FileCopyrightText: Florian Wilhelm
 # SPDX-License-Identifier: MIT
 
-FROM opensuse/tumbleweed
+ARG VERSION
+
+FROM registry.opensuse.org/opensuse/$VERSION
 
 ENV TERM=xterm
 
@@ -24,4 +26,4 @@ USER user
 
 WORKDIR /home/user
 
-ENTRYPOINT ["ansible-playbook", "common.yml"]
+ENTRYPOINT ["python3", "/home/user/test/container/run-test.py"]

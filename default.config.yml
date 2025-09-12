@@ -98,6 +98,12 @@ desktop_packages:
     - "libreoffice"
     - "libreoffice-langpack-de"
     - "xclip"
+  Suse:
+    - "firefox"
+    - "keepassxc"
+    - "libreoffice"
+    - "libreoffice-l10n-de"
+    - "xclip"
 
 development_packages:
   Debian:

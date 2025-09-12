@@ -66,12 +66,13 @@ jobs:
       fail-fast: false
       matrix:
         runner: ["", "-arm"] #amd64 and arm
+        version: ["leap:16.0", "tumbleweed"]
     steps:
       - uses: actions/checkout@v5
-      - name: Build Test Container opensuse
-        run: docker build -t system-automation-test-opensuse --file test/container/Containerfile.opensuse .
-      - name: Run Test opensuse
-        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-opensuse
+      - name: Build Test Container opensuse ${{ matrix.version }}
+        run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-opensuse-${{ matrix.version }} --file test/container/Containerfile.opensuse .
+      - name: Run Test opensuse ${{ matrix.version }}
+        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-opensuse-${{ matrix.version }}
 
   pacman:
     runs-on: ubuntu-24.04
