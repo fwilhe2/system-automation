@@ -103,11 +103,13 @@ def print_os_version():
 
 def print_sbom():
   if distro.id() == 'debian' or distro.id() == 'ubuntu':
-    print(subprocess.run(['dpkg-query', '--list', '--no-pager']).stdout)
+    subprocess.run(['dpkg-query', '--list', '--no-pager'])
 
   if distro.id() == 'centos' or distro.id() == 'fedora' or distro.id() == 'almalinux' or distro.id() == 'rocky':
-    print(subprocess.run(['dnf', '--assumeyes', 'list', 'installed']).stdout)
+    subprocess.run(['dnf', '--assumeyes', 'list', 'installed'])
 
+  if distro.id() == 'opensuse':
+    subprocess.run(['zypper', 'search', '--installed-only', '--details'])
 
 print_ansible_version()
 print_os_version()
