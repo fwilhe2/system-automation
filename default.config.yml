@@ -102,7 +102,7 @@ desktop_packages:
     - "firefox"
     - "keepassxc"
     - "libreoffice"
-    - "libreoffice-langpack-de"
+    - "libreoffice-l10n-de"
     - "xclip"
 
 development_packages:
