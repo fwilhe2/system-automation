@@ -49,6 +49,11 @@ sudo dnf install -y ansible-core curl bash unzip
 sudo apt -y install ansible curl bash unzip
 ----
 
+.Preparation for opensuse
+----
+sudo zypper --non-interactive install git ansible curl unzip bash
+----
+
 .Preparation for Archlinux
 ----
 sudo pacman --sync --refresh --noconfirm ansible curl bash unzip git
