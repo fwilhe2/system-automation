@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Florian Wilhelm
 // SPDX-License-Identifier: MIT
 
-= system-automation
+= System Automation powered by Ansible™
 :experimental: yes
 ifdef::env-github[]
 :status:
@@ -17,9 +17,7 @@ endif::[]
 image::https://github.com/fwilhe2/system-automation/workflows/CI/badge.svg[CI Job]
 image::https://api.reuse.software/badge/github.com/fwilhe2/system-automation[REUSE status]
 
-https://api.reuse.software/info/github.com/fwilhe2/system-automation[REUSE status]
-
-System Automation powered by Ansible™
+A set of Ansible playbooks to setup Linux machines.
 
 == Project Layout
 
@@ -129,7 +127,7 @@ limactl stop system-automation-$SYSAUTO_LIMA_DISTRO
 
 == License
 
-Copyright © 2016-2023 Florian Wilhelm
+Copyright © 2016-2025 Florian Wilhelm
 
 Free use of this software is granted under the terms of the MIT License.
 
@@ -154,7 +152,6 @@ https://github.com/lima-vm/lima[lima - linux virtual machines] (`lima_*yaml`)::
 
 == References
 
-* https://docs.ansible.com/ansible/2.9/modules/list_of_all_modules.html[Ansible Docs: All Modules]
 * http://www.whitewashing.de/2013/11/19/setting_up_development_machines_ansible_edition.html[Setting up development machines: Ansible edition]
 * https://github.com/geerlingguy/mac-dev-playbook
 * https://github.com/geerlingguy/ansible-role-docker
