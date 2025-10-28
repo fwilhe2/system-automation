@@ -146,6 +146,24 @@ system_development_packages:
     - "@C Development Tools and Libraries"
     - cmake
 
+homeserver_packages:
+  Debian:
+    - cockpit
+    - cockpit-machines
+    - cockpit-networkmanager
+    - cockpit-packagekit
+    - cockpit-podman
+    - cockpit-storaged
+    - cockpit-system
+    - cockpit-ws
+    - openssh-server
+  RedHat:
+    - cockpit
+    - cockpit-machines
+    - cockpit-podman
+    - cockpit-files
+    - openssh-server
+
 directories:
   - "~/temp"
   - "~/code"
