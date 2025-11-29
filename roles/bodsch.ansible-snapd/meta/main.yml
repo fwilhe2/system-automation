@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: Bodo Schulz
+# SPDX-License-Identifier: BSD-2-Clause
+
+---
+
+galaxy_info:
+  role_name: snapd
+  namespace: bodsch
+
+  author: Bodo Schulz
+  description: ansible role to disable and removes (purges) snapd and related services/packages.
+
+  license: "BSD"
+  min_ansible_version: "2.9"
+
+  platforms:
+    - name: Debian
+      versions:
+        # 10
+        - buster
+        - bullseye
+    - name: Ubuntu
+      versions:
+        # 20.04
+        - focal
+        # 22.04
+        - jammy
+
+  galaxy_tags:
+    - system
+    - snapd
+
+dependencies: []
+
+...

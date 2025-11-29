@@ -150,6 +150,9 @@ https://git.sr.ht/~gotmax23/ansible-collection-epel[Ansible collection - gotmax2
 https://github.com/lima-vm/lima[lima - linux virtual machines] (`lima_*yaml`)::
   Based on examples by Akihiro Suda and https://github.com/lima-vm/lima/graphs/contributors[the lima contributors] under the _Apache-2.0 license_
 
+https://github.com/bodsch/ansible-snapd[Ansible Role: snapd] (`roles/bodsch.ansible-snapd`)::
+  Copyright © Bodo Schulz under the _BSD-2-Clause License_
+
 == References
 
 * http://www.whitewashing.de/2013/11/19/setting_up_development_machines_ansible_edition.html[Setting up development machines: Ansible edition]
