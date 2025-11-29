@@ -24,6 +24,7 @@ A set of Ansible playbooks to setup Linux machines.
 This project contains multiple playbooks:
 
 * `epel.yml`: Helper to add the Extra Packages for Enterprise Linux repos
+* `snap.yml`: Remove/disable snap
 * `common.yml`: Software and setup which does not require a graphical environment
 * `minimal.yml`: Subset of the common playbook to get a nice cli environment without too many packages
 * `desktop.yml`: Setup for desktop computers
