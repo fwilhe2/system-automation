@@ -24,6 +24,7 @@ A set of Ansible playbooks to setup Linux machines.
 This project contains multiple playbooks:
 
 * `epel.yml`: Helper to add the Extra Packages for Enterprise Linux repos
+* `snap.yml`: Remove/disable snap
 * `common.yml`: Software and setup which does not require a graphical environment
 * `minimal.yml`: Subset of the common playbook to get a nice cli environment without too many packages
 * `desktop.yml`: Setup for desktop computers
@@ -149,6 +150,9 @@ https://git.sr.ht/~gotmax23/ansible-collection-epel[Ansible collection - gotmax2
 
 https://github.com/lima-vm/lima[lima - linux virtual machines] (`lima_*yaml`)::
   Based on examples by Akihiro Suda and https://github.com/lima-vm/lima/graphs/contributors[the lima contributors] under the _Apache-2.0 license_
+
+https://github.com/bodsch/ansible-snapd[Ansible Role: snapd] (`roles/bodsch.ansible-snapd`)::
+  Copyright © Bodo Schulz under the _BSD-2-Clause License_
 
 == References
 
