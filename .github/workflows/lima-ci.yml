@@ -16,7 +16,7 @@ jobs:
         distro: [fedora, debian]
     steps:
       - name: Check out code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: "Set up Lima"
         uses: lima-vm/lima-actions/setup@v1
