@@ -117,7 +117,7 @@ development_packages:
   RedHat:
     - cargo
     - golang
-    - java-21-openjdk-devel
+    - java-25-openjdk-devel
     - maven
     - nodejs
     - npm
