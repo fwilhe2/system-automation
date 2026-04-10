@@ -111,19 +111,21 @@ https://github.com/lima-vm/lima[Lima] is a tool written in go for running virtua
 
 Files in the root of this repo named like `lima_*.yaml` contain vm definitions for testing this repo.
 
-.Running the playbook in a vm using lima
+.Running the playbook in vms using lima
 ----
-# pick the one you need
-export SYSAUTO_LIMA_DISTRO=debian
-export SYSAUTO_LIMA_DISTRO=fedora
-limactl create --name=system-automation-$SYSAUTO_LIMA_DISTRO ./lima_$SYSAUTO_LIMA_DISTRO.yaml
-limactl start system-automation-$SYSAUTO_LIMA_DISTRO
-limactl shell system-automation-$SYSAUTO_LIMA_DISTRO
+# boot both fedora and debian
+limactl start --yes lima_fedora.yaml
+limactl start --yes lima_debian.yaml
 
-# Inside the vm, no password needed for become, just press enter
-./run.sh
+# run the common playbook on both vms
+ansible-playbook --inventory lima-inventory.yaml common.yml
 
-limactl stop system-automation-$SYSAUTO_LIMA_DISTRO
+# inspect the vms if needed
+limactl shell lima_fedora
+limactl shell lima_debian
+
+# remove the vms when you're done
+limactl delete lima_fedora lima_debian
 ----
 
 == License

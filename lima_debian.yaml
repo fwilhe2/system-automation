@@ -9,6 +9,9 @@ images:
 - location: "https://cloud.debian.org/images/cloud/forky/daily/latest/debian-14-genericcloud-arm64-daily.qcow2"
   arch: "aarch64"
 
+ssh:
+  localPort: 60044
+
 mounts:
 - location: "~"
 - location: "/tmp/lima"
