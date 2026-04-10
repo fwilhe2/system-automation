@@ -130,7 +130,7 @@ limactl delete -f lima_fedora lima_debian
 
 == License
 
-Copyright © 2016-2025 Florian Wilhelm
+Copyright © 2016-2026 Florian Wilhelm
 
 Free use of this software is granted under the terms of the MIT License.
 
