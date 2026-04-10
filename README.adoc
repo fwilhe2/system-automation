@@ -125,7 +125,7 @@ limactl shell lima_fedora
 limactl shell lima_debian
 
 # remove the vms when you're done
-limactl delete lima_fedora lima_debian
+limactl delete -f lima_fedora lima_debian
 ----
 
 == License
