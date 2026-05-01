@@ -24,6 +24,9 @@ images:
   arch: "aarch64"
   digest: "sha256:{sha_aarch64}"
 
+ssh:
+  localPort: 60033
+
 mounts:
 - location: "~"
 - location: "/tmp/lima"
