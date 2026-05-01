@@ -1,30 +1,28 @@
 #!/usr/bin/env python3
 
-# SPDX-FileCopyrightText: Florian Wilhelm
-# SPDX-License-Identifier: Apache-2.0
-
-"""
-This script regenerates 'fedora.yaml' with updated urls and sha sums
-"""
-
-from urllib.request import urlopen
 import json
+from urllib.request import urlopen
 
-fedora_version = '43'
-url = 'https://gitlab.com/fedora/websites-apps/fedora-websites/fedora-websites-3.0/-/raw/develop/public/releases.json'
+# Update once a new Fedora release is out
+FEDORA_VERSION = '44'
 
-template = """# SPDX-FileCopyrightText: Florian Wilhelm
+
+RELEASES_URL = 'https://gitlab.com/fedora/websites-apps/fedora-websites/fedora-websites-3.0/-/raw/develop/public/releases.json'
+OUTPUT_FILE = 'lima_fedora.yaml'
+
+TEMPLATE = """# SPDX-FileCopyrightText: Florian Wilhelm
 # SPDX-License-Identifier: Apache-2.0
 
 # Based on the examples by Akihiro Suda and the lima contributors, see https://github.com/lima-vm/lima, distributed under Apache-2.0 license
 
+
 images:
-- location: "URL_x86_64"
+- location: "{url_x86_64}"
   arch: "x86_64"
-  digest: "sha256:SHA_x86_64"
-- location: "URL_aarch64"
+  digest: "sha256:{sha_x86_64}"
+- location: "{url_aarch64}"
   arch: "aarch64"
-  digest: "sha256:SHA_aarch64"
+  digest: "sha256:{sha_aarch64}"
 
 mounts:
 - location: "~"
@@ -45,33 +43,46 @@ containerd:
 mountTypesUnsupported: [9p]
 """
 
-
-def download_latest_fedora_versions():
+def fetch_releases(url):
+    """Fetches and parses the JSON release data."""
     with urlopen(url) as response:
-        versions = json.loads(response.read().decode())
-        return versions
+        return json.load(response)
 
-def filter_versions(versions, current_fedora_version, arch):
-    return [x for x in versions if x['version'] == current_fedora_version and x['arch'] == arch and x['variant'] == 'Cloud' and x['subvariant'] == 'Cloud_Base' and x['link'].endswith('qcow2') ]
+def find_release_info(versions, arch, version=FEDORA_VERSION):
+    """Filters the list for a specific architecture and returns the record."""
+    matches = [
+        v for v in versions
+        if v['version'] == version
+        and v['arch'] == arch
+        and v['variant'] == 'Cloud'
+        and v['subvariant'] == 'Cloud_Base'
+        and v['link'].endswith('qcow2')
+    ]
 
-def geturl(versions, current_fedora_version, arch):
-    recent_versions = filter_versions(versions, current_fedora_version, arch)
-    assert len(recent_versions) == 1
-    return recent_versions[0]['link']
+    if len(matches) != 1:
+        raise RuntimeError(f"Expected 1 match for {arch} v{version}, found {len(matches)}")
 
-def getsha(versions, current_fedora_version, arch):
-    recent_versions = filter_versions(versions, current_fedora_version, arch)
-    assert len(recent_versions) == 1
-    return recent_versions[0]['sha256']
+    return matches[0]
+
+def main():
+    releases = fetch_releases(RELEASES_URL)
+
+    # Get data for both architectures efficiently
+    x86_data = find_release_info(releases, 'x86_64')
+    arm_data = find_release_info(releases, 'aarch64')
+
+    # Map data into the template
+    manifest = TEMPLATE.format(
+        url_x86_64=x86_data['link'],
+        sha_x86_64=x86_data['sha256'],
+        url_aarch64=arm_data['link'],
+        sha_aarch64=arm_data['sha256']
+    )
+
+    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+        f.write(manifest)
+
+    print(f"Successfully generated {OUTPUT_FILE}")
 
 if __name__ == "__main__":
-    latest_fedora_versions = download_latest_fedora_versions()
-
-    manifest = template\
-        .replace("URL_x86_64", geturl(latest_fedora_versions, fedora_version, 'x86_64')) \
-        .replace("SHA_x86_64", getsha(latest_fedora_versions, fedora_version, 'x86_64')) \
-        .replace("URL_aarch64", geturl(latest_fedora_versions, fedora_version, 'aarch64')) \
-        .replace("SHA_aarch64", getsha(latest_fedora_versions, fedora_version, 'aarch64'))
-
-    with open('lima_fedora.yaml', 'w+') as file:
-        file.write(manifest)
+    main()
