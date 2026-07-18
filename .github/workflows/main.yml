@@ -91,8 +91,10 @@ jobs:
         with:
           python-version: "3.x"
       - run: pip3 install ansible
-      - run: ansible-playbook -vvvv --inventory inventory --syntax-check desktop.yml
-      - run: ansible-playbook -vvvv --inventory inventory --syntax-check desktop.yml
+      - run: |
+          for playbook in common.yml desktop.yml minimal.yml dev-env.yml vm-host.yml epel.yml snap.yml clone-git-repos.yml; do
+            ansible-playbook --inventory inventory --syntax-check "$playbook"
+          done
 
   # Check fails for unknown reasons, files are formatted locally
   # formatting:
