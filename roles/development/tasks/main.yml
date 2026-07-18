@@ -19,7 +19,7 @@
     name: "{{ item }}"
   loop: "{{ system_development_packages[ansible_os_family] }}"
   tags: development
-  when: ansible_os_family == 'Debian' or ansible_os_family == 'Redhat'
+  when: ansible_os_family == 'Debian' or ansible_os_family == 'RedHat'
 
 - name: Install System Development Packages (Suse)
   become: true
