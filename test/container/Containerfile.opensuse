@@ -7,7 +7,9 @@ FROM registry.opensuse.org/opensuse/$VERSION
 
 ENV TERM=xterm
 
-RUN zypper --non-interactive install git ansible curl unzip bash python3-distro shadow sudo \
+# gawk is listed explicitly so zypper does not pick busybox-gawk as dependency
+# provider, which conflicts with the devel_basis pattern installed later
+RUN zypper --non-interactive install git ansible curl unzip bash python3-distro shadow sudo gawk \
   && mkdir -p /home/user && echo "user:x:1001:1001:user:/home/user:/bin/bash" >> /etc/passwd \
   && chown -R user /home/user \
   && echo 'user ALL=(ALL:ALL) NOPASSWD:ALL' >> /etc/sudoers
