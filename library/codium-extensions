@@ -14,8 +14,18 @@ from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
 
 
+def significant_stderr(err):
+    # Node.js prints deprecation warnings (e.g. [DEP0005] Buffer(),
+    # [DEP0169] url.parse()) to stderr even when the command succeeds;
+    # they must not be treated as errors.
+    return '\n'.join(line for line in err.splitlines()
+                     if 'DeprecationWarning' not in line
+                     and '--trace-deprecation' not in line)
+
+
 def is_extension_installed(module, executable, name):
     rc, out, err = module.run_command([executable, '--list-extensions', name])
+    err = significant_stderr(err)
     if rc != 0 or err:
         module.fail_json(msg='Error querying installed extensions [%s]: %s' %
                          (name, out + err))
@@ -39,9 +49,8 @@ def list_extension_dirs(module, executable):
 def install_extension(module, executable, name):
     rc, out, err = module.run_command(
         [executable, '--install-extension', name])
-    # Whitelist: [DEP0005] DeprecationWarning: Buffer() is deprecated due
-    # to security and usability issues.
-    if rc != 0 or (err and '[DEP0005]' not in err):
+    err = significant_stderr(err)
+    if rc != 0 or err:
         module.fail_json(msg='Error while installing extension [%s]: (%d) %s' %
                          (name, rc, out + err))
     changed = 'already installed' not in out
@@ -52,6 +61,7 @@ def uninstall_extension(module, executable, name):
     if is_extension_installed(module, executable, name):
         rc, out, err = module.run_command(
             [executable, '--uninstall-extension', name])
+        err = significant_stderr(err)
         if rc != 0 or err:
             module.fail_json(
                 msg='Error while uninstalling extension [%s]: %s' %
