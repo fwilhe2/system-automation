@@ -145,6 +145,10 @@ system_development_packages:
   RedHat:
     - "@C Development Tools and Libraries"
     - cmake
+  # EL distributions do not have the Fedora group names
+  AlmaLinux:
+    - "@Development Tools"
+    - cmake
 
 directories:
   - "~/temp"

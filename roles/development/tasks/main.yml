@@ -17,7 +17,7 @@
   ansible.builtin.package:
     state: present
     name: "{{ item }}"
-  loop: "{{ system_development_packages[ansible_os_family] }}"
+  loop: "{{ system_development_packages[ansible_distribution] | default(system_development_packages[ansible_os_family]) }}"
   tags: development
   when: ansible_os_family == 'Debian' or ansible_os_family == 'RedHat'
 
