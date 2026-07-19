@@ -30,7 +30,9 @@ jobs:
       - name: Build Test Container deb ${{ matrix.version }}
         run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-deb-${{ matrix.version }} --file test/container/Containerfile.dpkg .
       - name: Run Test deb ${{ matrix.version }}
-        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-deb-${{ matrix.version }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: docker run --user user --tty --env GITHUB_TOKEN --volume $PWD:/mnt system-automation-test-deb-${{ matrix.version }}
 
   yum:
     runs-on: ubuntu-24.04${{ matrix.runner }}
@@ -44,7 +46,9 @@ jobs:
       - name: Build Test Container Fedora ${{ matrix.version }}
         run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-fedora-${{ matrix.version }} --file test/container/Containerfile.fedora .
       - name: Run Test Fedora ${{ matrix.version }}
-        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-fedora-${{ matrix.version }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: docker run --user user --tty --env GITHUB_TOKEN --volume $PWD:/mnt system-automation-test-fedora-${{ matrix.version }}
 
   el:
     runs-on: ubuntu-24.04${{ matrix.runner }}
@@ -58,7 +62,9 @@ jobs:
       - name: Build Test Container EL ${{ matrix.version }}
         run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-el-${{ matrix.version }} --file test/container/Containerfile.el .
       - name: Run Test EL ${{ matrix.version }}
-        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-el-${{ matrix.version }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: docker run --user user --tty --env GITHUB_TOKEN --volume $PWD:/mnt system-automation-test-el-${{ matrix.version }}
 
   zypper:
     runs-on: ubuntu-24.04${{ matrix.runner }}
@@ -72,7 +78,9 @@ jobs:
       - name: Build Test Container opensuse ${{ matrix.version }}
         run: docker build --build-arg=VERSION=${{ matrix.version }} -t system-automation-test-opensuse-${{ matrix.version }} --file test/container/Containerfile.opensuse .
       - name: Run Test opensuse ${{ matrix.version }}
-        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-opensuse-${{ matrix.version }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: docker run --user user --tty --env GITHUB_TOKEN --volume $PWD:/mnt system-automation-test-opensuse-${{ matrix.version }}
 
   pacman:
     runs-on: ubuntu-24.04
@@ -81,7 +89,9 @@ jobs:
       - name: Build Test Container archlinux
         run: docker build -t system-automation-test-archlinux --file test/container/Containerfile.archlinux .
       - name: Run Test archlinux
-        run: docker run --user user --tty --volume $PWD:/mnt system-automation-test-archlinux
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: docker run --user user --tty --env GITHUB_TOKEN --volume $PWD:/mnt system-automation-test-archlinux
 
   syntax-check:
     runs-on: ubuntu-24.04
