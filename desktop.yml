@@ -9,8 +9,14 @@
     - default.config.yml
 
   roles:
+    # Skipped where Microsoft's repo signing fails modern OpenPGP verifiers:
+    # Tumbleweed's rpm rejects the key armor, and the stale arm64 'code'
+    # package ships a SHA-1-signed keyring that Debian's sqv rejects
     - role: iesplin.vscode
       become: true
+      when: >-
+        ansible_distribution != 'openSUSE Tumbleweed'
+        and not (ansible_distribution == 'Debian' and ansible_architecture == 'aarch64')
 
     - role: greenleader.codium
       become: true
