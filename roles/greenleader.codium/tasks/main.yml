@@ -3,13 +3,29 @@
 
 ---
 # tasks file for ansible-role-codium
-- name: Ensure GPG key for repo is installed (RedHat/Suse)
+- name: Ensure GPG key for repo is installed (RedHat)
   ansible.builtin.rpm_key:
     state: present
     key: https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg
     fingerprint: "{{ gpg_fingerprint }}"
   when:
-    - ansible_os_family == 'RedHat' or ansible_os_family == 'Suse'
+    - ansible_os_family == 'RedHat'
+
+# rpm_key on Tumbleweed (ansible-core 2.21) fails with 'Unable to parse PGP
+# key armor' on keys that rpm itself imports fine, so import directly
+- name: Check whether GPG key for repo is installed (Suse)
+  ansible.builtin.command: rpm -q gpg-pubkey-{{ gpg_fingerprint[-8:] | lower }}
+  register: codium_gpg_key_check
+  changed_when: false
+  failed_when: false
+  when:
+    - ansible_os_family == 'Suse'
+
+- name: Ensure GPG key for repo is installed (Suse)
+  ansible.builtin.command: rpm --import https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg
+  when:
+    - ansible_os_family == 'Suse'
+    - codium_gpg_key_check.rc != 0
 
 - name: Ensure repo is installed (RedHat)
   ansible.builtin.yum_repository:
