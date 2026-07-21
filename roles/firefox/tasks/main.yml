@@ -18,7 +18,7 @@
     state: directory
     mode: "750"
 
-- name: Download and Firefox Developer
+- name: Download Firefox Developer
   get_url:
     url: "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US"
     dest: "/tmp/firefox-devedition-latest.tar.xz"
@@ -43,12 +43,15 @@
     remote_src: yes
   changed_when: false
 
+- name: Create Profile Developer
+  ansible.builtin.command: /opt/firefox/firefox-devedition/firefox/firefox -CreateProfile Developer
+
 - name: Create Firefox Developer Desktop Entry
   ansible.builtin.template:
     src: templates/firefox-developer.desktop.j2
     dest: ~/.local/share/applications/firefox-developer.desktop
 
-- name: Download and Firefox Nightly
+- name: Download Firefox Nightly
   get_url:
     url: "https://download.mozilla.org/?product=firefox-nightly-latest-ssl&os=linux64&lang=en-US"
     dest: "/tmp/firefox-nightly-latest.tar.xz"
@@ -72,6 +75,9 @@
     dest: "/opt/firefox/firefox-nightly/"
     remote_src: yes
   changed_when: false
+
+- name: Create Profile Nightly
+  ansible.builtin.command: /opt/firefox/firefox-nightly/firefox/firefox -CreateProfile Nightly
 
 - name: Create Firefox Nightly Desktop Entry
   ansible.builtin.template:
