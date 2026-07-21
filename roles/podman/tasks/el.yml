@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- name: Install podman
+  dnf:
+    name: podman
+    state: present
+  become: true
+  when: ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora'

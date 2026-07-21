@@ -3,7 +3,7 @@
 
 ---
 - hosts: all
-  name: Common Playbook
+  name: Homeserver Playbook
 
   vars_files:
     - [default.config.yml, config.yml]
@@ -11,9 +11,5 @@
   roles:
     - basic
     - dotfiles
-    - bin
-    - directories
-    - docker
     - podman
-    - development
-    - virtualization
+    - homeserver
