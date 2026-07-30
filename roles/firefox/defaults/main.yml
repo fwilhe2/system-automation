@@ -9,6 +9,13 @@
 # explicit path instead of a profile name.
 firefox_profile_root: "{{ ansible_env.HOME }}/.local/share/firefox-profiles"
 
+# The names download.mozilla.org uses for the Linux builds it ships. Mozilla
+# publishes these channels for x86_64 and arm64 only, so an unknown
+# architecture fails the lookup rather than downloading the wrong binary.
+firefox_download_os:
+  x86_64: linux64
+  aarch64: linux64-aarch64
+
 firefox_channels:
   - id: devedition
     display_name: Firefox Developer

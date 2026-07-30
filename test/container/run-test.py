@@ -4,6 +4,7 @@
 import subprocess
 import json
 import os
+import platform
 import re
 import sys
 import pathlib
@@ -181,11 +182,28 @@ def javascript_string_list(source, name):
     return re.findall(r'"([^"]+)"', match.group(1))
 
 
+def elf_machine(binary):
+    """Read e_machine out of an ELF header, without needing 'file' installed."""
+    with open(binary, "rb") as elf:
+        header = elf.read(20)
+    assert_equals(header[:4], b"\x7fELF", f"Expected '{binary}' to be an ELF binary.")
+    return int.from_bytes(header[18:20], "little")
+
+
 def assert_firefox_setup():
     home = pathlib.Path.home()
+    # https://refspecs.linuxfoundation.org/elf/gabi4+/ch4.eheader.html
+    expected_machine = {"x86_64": 0x3E, "aarch64": 0xB7}[platform.machine()]
 
     for channel, display_name in firefox_channels.items():
         install = pathlib.Path(f"/opt/firefox/firefox-{channel}/firefox")
+
+        # Mozilla serves x86_64 unless the download URL asks for another
+        # architecture, so a wrong URL yields a browser that cannot run here.
+        assert_equals(
+            elf_machine(install / "firefox"), expected_machine,
+            f"{display_name} was built for a different architecture than "
+            f"{platform.machine()}. Check the os= parameter of the download URL.")
 
         # Firefox opens the profile manager and waits forever when the --profile
         # directory does not exist, so its presence is what makes the browser
