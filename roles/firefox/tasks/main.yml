@@ -18,68 +18,81 @@
     state: directory
     mode: "750"
 
-- name: Download Firefox Developer
-  get_url:
-    url: "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US"
-    dest: "/tmp/firefox-devedition-latest.tar.xz"
+- name: Download Firefox
+  ansible.builtin.get_url:
+    url: "https://download.mozilla.org/?product={{ item.product }}&os=linux64&lang=en-US"
+    dest: "/tmp/firefox-{{ item.id }}-latest.tar.xz"
+    mode: "0644"
+  loop: "{{ firefox_channels }}"
+  loop_control:
+    label: "{{ item.display_name }}"
   changed_when: false
 
-- name: Ensure Firefox Developer directory exists
+- name: Ensure Firefox directory exists
   become: true
   become_user: root
   ansible.builtin.file:
-    path: "/opt/firefox/firefox-devedition/"
+    path: "/opt/firefox/firefox-{{ item.id }}/"
     state: directory
     mode: "750"
     owner: "{{ username }}"
     group: "{{ username }}"
+  loop: "{{ firefox_channels }}"
+  loop_control:
+    label: "{{ item.display_name }}"
 
-- name: Extract Firefox Developer
+- name: Extract Firefox
   become: true
   become_user: root
   ansible.builtin.unarchive:
-    src: "/tmp/firefox-devedition-latest.tar.xz"
-    dest: "/opt/firefox/firefox-devedition/"
-    remote_src: yes
+    src: "/tmp/firefox-{{ item.id }}-latest.tar.xz"
+    dest: "/opt/firefox/firefox-{{ item.id }}/"
+    remote_src: true
+  loop: "{{ firefox_channels }}"
+  loop_control:
+    label: "{{ item.display_name }}"
   changed_when: false
 
-- name: Create Profile Developer
-  ansible.builtin.command: /opt/firefox/firefox-devedition/firefox/firefox -CreateProfile Developer
-
-- name: Create Firefox Developer Desktop Entry
-  ansible.builtin.template:
-    src: templates/firefox-developer.desktop.j2
-    dest: ~/.local/share/applications/firefox-developer.desktop
-
-- name: Download Firefox Nightly
-  get_url:
-    url: "https://download.mozilla.org/?product=firefox-nightly-latest-ssl&os=linux64&lang=en-US"
-    dest: "/tmp/firefox-nightly-latest.tar.xz"
-  changed_when: false
-
-- name: Ensure Firefox Nightly directory exists
-  become: true
-  become_user: root
+# Firefox refuses to start on a --profile path that does not exist yet (it opens
+# the profile manager and waits), but it happily populates an existing empty
+# directory. Creating the directory here is all the "profile creation" that is
+# needed - no -CreateProfile, no profiles.ini entry, no manual step.
+- name: Ensure Firefox profile directory exists
   ansible.builtin.file:
-    path: "/opt/firefox/firefox-nightly/"
+    path: "{{ firefox_profile_root }}/{{ item.id }}"
     state: directory
-    mode: "750"
-    owner: "{{ username }}"
-    group: "{{ username }}"
+    mode: "0700"
+  loop: "{{ firefox_channels }}"
+  loop_control:
+    label: "{{ item.display_name }}"
 
-- name: Extract Firefox Firefox Nightly
+# Enterprise policies are read per install directory, and every install
+# directory here is dedicated to one channel, so this configures exactly one
+# profile. This is what installs add-ons and locks preferences.
+- name: Configure Firefox enterprise policies
   become: true
   become_user: root
-  ansible.builtin.unarchive:
-    src: "/tmp/firefox-nightly-latest.tar.xz"
-    dest: "/opt/firefox/firefox-nightly/"
-    remote_src: yes
-  changed_when: false
-
-- name: Create Profile Nightly
-  ansible.builtin.command: /opt/firefox/firefox-nightly/firefox/firefox -CreateProfile Nightly
-
-- name: Create Firefox Nightly Desktop Entry
   ansible.builtin.template:
-    src: templates/firefox-nightly.desktop.j2
-    dest: ~/.local/share/applications/firefox-nightly.desktop
+    src: templates/policies.json.j2
+    dest: "/opt/firefox/firefox-{{ item.id }}/firefox/distribution/policies.json"
+    mode: "0644"
+    validate: "python3 -m json.tool %s"
+  loop: "{{ firefox_channels }}"
+  loop_control:
+    label: "{{ item.display_name }}"
+
+- name: Create Firefox Desktop Entry
+  ansible.builtin.template:
+    src: templates/firefox.desktop.j2
+    dest: "~/.local/share/applications/firefox-{{ item.id }}.desktop"
+    mode: "0644"
+  loop: "{{ firefox_channels }}"
+  loop_control:
+    label: "{{ item.display_name }}"
+
+# The Developer Edition entry used to be named after the channel's marketing
+# name rather than its product id.
+- name: Remove superseded Firefox Desktop Entry
+  ansible.builtin.file:
+    path: "~/.local/share/applications/firefox-developer.desktop"
+    state: absent

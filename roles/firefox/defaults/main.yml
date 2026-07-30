@@ -1,0 +1,43 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# Profiles live outside ~/.mozilla so they are never registered in the shared
+# profiles.ini and cannot be picked up (or renumbered) by the system Firefox.
+# Recent Firefox versions relocate the shared root to ~/.config/mozilla/firefox
+# on machines without an existing ~/.mozilla, which is another reason to pass an
+# explicit path instead of a profile name.
+firefox_profile_root: "{{ ansible_env.HOME }}/.local/share/firefox-profiles"
+
+firefox_channels:
+  - id: devedition
+    display_name: Firefox Developer
+    product: firefox-devedition-latest-ssl
+    remoting_name: firefox-developer
+
+  - id: nightly
+    display_name: Firefox Nightly
+    product: firefox-nightly-latest-ssl
+    remoting_name: firefox-nightly
+
+# Add-ons force-installed via enterprise policy, keyed by add-on ID.
+# The ID has to match the one in the XPI, otherwise Firefox rejects the install.
+firefox_extensions:
+  "uBlock0@raymondhill.net": "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"
+
+# Preferences locked via enterprise policy (about:config shows them greyed out).
+# Firefox rejects preferences that a dedicated policy already owns, so telemetry
+# and default browser prefs are set through the policies below, not from here.
+firefox_preferences:
+  browser.aboutConfig.showWarning: false
+  browser.newtabpage.activity-stream.showSponsored: false
+  browser.newtabpage.activity-stream.showSponsoredTopSites: false
+  extensions.getAddons.showPane: false
+
+# Policies that are not plain preferences. The in-app updater is disabled
+# because /opt/firefox is root-owned and updates are driven by update-firefox.sh.
+firefox_policies:
+  DisableAppUpdate: true
+  DisableFirefoxStudies: true
+  DisableTelemetry: true
+  DontCheckDefaultBrowser: true

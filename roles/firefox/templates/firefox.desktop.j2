@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+{% set binary = "/opt/firefox/firefox-" ~ item.id ~ "/firefox/firefox" %}
+{% set profile = firefox_profile_root ~ "/" ~ item.id %}
+{# MOZ_APP_REMOTINGNAME sets both the Wayland app_id and the DBus remote name, #}
+{# so the window matches StartupWMClass and this channel never remote-controls #}
+{# an already running Firefox of a different channel. --name does the same for X11. #}
+{% set command = "env MOZ_APP_REMOTINGNAME=" ~ item.remoting_name ~ " " ~ binary ~ " --name " ~ item.remoting_name ~ " --private-window --profile " ~ profile %}
+[Desktop Entry]
+Version=1.0
+Name={{ item.display_name }}
+GenericName=Web Browser
+Comment=Browse the Web
+Exec={{ command }} %u
+Icon={{ binary | dirname }}/browser/chrome/icons/default/default128.png
+Terminal=false
+Type=Application
+MimeType=text/html;text/xml;application/xhtml+xml;application/vnd.mozilla.xul+xml;text/mml;x-scheme-handler/http;x-scheme-handler/https;
+StartupNotify=true
+StartupWMClass={{ item.remoting_name }}
+Categories=Network;WebBrowser;
+Keywords=web;browser;internet;
+Actions=new-private-window;
+
+[Desktop Action new-private-window]
+Name=New Private Window
+Exec={{ command }} %u
