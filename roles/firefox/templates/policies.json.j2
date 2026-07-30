@@ -1,0 +1,25 @@
+{# SPDX-FileCopyrightText: Florian Wilhelm #}
+{# SPDX-License-Identifier: MIT #}
+{
+  "policies": {
+{% for key, value in firefox_policies.items() %}
+    {{ key | to_json }}: {{ value | to_json }},
+{% endfor %}
+    "ExtensionSettings": {
+{% for addon_id, url in firefox_extensions.items() %}
+      {{ addon_id | to_json }}: {
+        "install_url": {{ url | to_json }},
+        "installation_mode": "force_installed"
+      }{{ "," if not loop.last else "" }}
+{% endfor %}
+    },
+    "Preferences": {
+{% for name, value in firefox_preferences.items() %}
+      {{ name | to_json }}: {
+        "Value": {{ value | to_json }},
+        "Status": "locked"
+      }{{ "," if not loop.last else "" }}
+{% endfor %}
+    }
+  }
+}
