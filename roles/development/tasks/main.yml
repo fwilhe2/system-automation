@@ -7,8 +7,7 @@
   become_user: root
   ansible.builtin.package:
     state: present
-    name: "{{ item }}"
-  loop: "{{ development_packages[ansible_facts['os_family']] }}"
+    name: "{{ development_packages[ansible_facts['os_family']] }}"
   tags: development
 
 - name: Install System Development Packages
@@ -16,8 +15,7 @@
   become_user: root
   ansible.builtin.package:
     state: present
-    name: "{{ item }}"
-  loop: "{{ system_development_packages[ansible_facts['distribution']] | default(system_development_packages[ansible_facts['os_family']]) }}"
+    name: "{{ system_development_packages[ansible_facts['distribution']] | default(system_development_packages[ansible_facts['os_family']]) }}"
   tags: development
   when: ansible_facts['os_family'] == 'Debian' or ansible_facts['os_family'] == 'RedHat'
 

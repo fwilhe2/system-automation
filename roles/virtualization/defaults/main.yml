@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# Keyed by distribution first, falling back to os_family, because Fedora and
+# the EL distributions share an os_family but not the package name.
+virtualization_packages:
+  Fedora: qemu
+  RedHat: qemu-kvm
+  Debian: qemu-system
+  Suse: qemu
+  Archlinux: qemu-base

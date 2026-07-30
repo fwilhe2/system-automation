@@ -10,7 +10,7 @@ import sys
 
 def ansible_playbook_executable():
     in_path = shutil.which("ansible-playbook")
-    if in_path == None:
+    if in_path is None:
         return "/home/user/.local/bin/ansible-playbook"
     return in_path
 

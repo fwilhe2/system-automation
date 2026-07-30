@@ -66,7 +66,7 @@ Fedora, EL, openSUSE and Arch, on amd64 and arm64. The two mechanisms for this:
 - Where a whole role cannot work somewhere, the `when:` guard lives on the role in the
   playbook (see the vscode entry in `desktop.yml`), with a comment saying why.
 
-Distro-specific task files (`roles/docker/tasks/suse.yml`) are included from the role's
+Distro-specific task files (`roles/docker/tasks/deb.yml`) are included from the role's
 `main.yml` when the split is too large for a `when:`.
 
 **Idempotence is a hard contract.** `run_ansible()` in `run-test.py` applies every playbook

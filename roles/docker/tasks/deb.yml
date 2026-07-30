@@ -10,44 +10,34 @@
 - name: Uninstall old versions
   ansible.builtin.apt:
     state: absent
-    name: "{{ item }}"
-  loop:
-    - docker
-    - docker-engine
-    - docker.io
-    - containerd
-    - runc
+    name:
+      - docker
+      - docker-engine
+      - docker.io
+      - containerd
+      - runc
   become: true
 
 - name: Set up the repository
   ansible.builtin.apt:
     state: present
-    name: "{{ item }}"
-  loop:
-    - ca-certificates
-    - curl
-    - gnupg
-    - lsb-release
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+      # Feeds ansible_facts['lsb'], which the codename below reads
+      - lsb-release
   become: true
 
-# Special handling because Docker provides no packages for Ubuntu's development branch
-- name: Get Ubuntu codename
+# Docker publishes no packages for the development branches, so those fall back
+# to the newest codename it does publish. Ubuntu calls its development branch
+# out in the description, Debian's is the one that still says 'sid'.
+- name: Get codename for the Docker APT repository
   ansible.builtin.set_fact:
-    deb_release_codename: "{{ 'jammy' if ansible_facts['lsb'].description is search('development branch', ignorecase=True) else ansible_facts['distribution_release'] }}"
-  when: ansible_facts['distribution'] == 'Ubuntu'
-
-# Special handling because Docker provides no packages for Debian Trixie as of now
-- name: Get Debian codename
-  ansible.builtin.set_fact:
-    deb_release_codename: "{{ 'trixie' if ansible_facts['lsb'].description is search('sid', ignorecase=True) else ansible_facts['distribution_release'] }}"
-  when: ansible_facts['distribution'] == 'Debian'
-
-- name: dbg
-  ansible.builtin.debug:
-    msg: |
-      Debian codename for Docker apt repo: {{ deb_release_codename }}
-      Actual ansible_facts['distribution_release']: {{ ansible_facts['distribution_release'] }} ({{ ansible_facts['lsb'].description }})
-      Ansible Distribution: {{ansible_facts['distribution']|lower}}
+    deb_release_codename: >-
+      {{ docker_development_branch_codename[ansible_facts['distribution']] | default(ansible_facts['distribution_release'])
+      if ansible_facts['lsb'].description is search('development branch|sid', ignorecase=True)
+      else ansible_facts['distribution_release'] }}
 
 - name: Add Docker APT repository
   ansible.builtin.deb822_repository:
@@ -64,12 +54,11 @@
 - name: Install Docker Engine
   ansible.builtin.apt:
     state: present
-    name: "{{ item }}"
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
     update_cache: yes
-  loop:
-    - docker-ce
-    - docker-ce-cli
-    - containerd.io
   become: true
 
 - name: Start and enable the docker service
@@ -96,9 +85,7 @@
 - name: Install podman
   ansible.builtin.apt:
     state: present
-    name: "{{ item }}"
-  loop:
-    - podman
+    name: podman
   become: true
   # TODO: Update once focal is not required anymore
   when: ansible_facts['distribution_release'] != "focal"
