@@ -11,6 +11,22 @@
   when:
     - ansible_os_family == 'RedHat'
 
+# rpm_key on Tumbleweed (ansible-core 2.21) fails with 'Unable to parse PGP
+# key armor' on keys that rpm itself imports fine, so import directly
+- name: Check whether GPG key for repo is installed (Suse)
+  ansible.builtin.command: rpm -q gpg-pubkey-{{ gpg_fingerprint[-8:] | lower }}
+  register: codium_gpg_key_check
+  changed_when: false
+  failed_when: false
+  when:
+    - ansible_os_family == 'Suse'
+
+- name: Ensure GPG key for repo is installed (Suse)
+  ansible.builtin.command: rpm --import https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg
+  when:
+    - ansible_os_family == 'Suse'
+    - codium_gpg_key_check.rc != 0
+
 - name: Ensure repo is installed (RedHat)
   ansible.builtin.yum_repository:
     name: codium
@@ -36,6 +52,24 @@
     enabled: true
   when:
     - ansible_os_family == 'Debian'
+
+- name: Add VSCodium repo file
+  ansible.builtin.copy:
+    dest: /etc/zypp/repos.d/vscodium.repo
+    content: |
+      [gitlab.com_paulcarroty_vscodium_repo]
+      name=gitlab.com_paulcarroty_vscodium_repo
+      baseurl=https://download.vscodium.com/rpms/
+      enabled=1
+      gpgcheck=1
+      repo_gpgcheck=1
+      gpgkey=https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/-/raw/master/pub.gpg
+      metadata_expire=1h
+    owner: root
+    group: root
+    mode: '0644'
+  when:
+    - ansible_os_family == 'Suse'
 
 - name: Ensure codium is installed
   ansible.builtin.package:

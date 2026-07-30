@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- name: Purge Snap
+  hosts: all
+  become: true
+
+  tasks:
+    - when:
+        - "ansible_os_family | lower == 'debian'"
+      block:
+        - name: Purge Snap
+          ansible.builtin.include_role:
+            name: bodsch.ansible-snapd

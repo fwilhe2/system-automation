@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Florian Wilhelm
 // SPDX-License-Identifier: MIT
 
-= system-automation
+= System Automation powered by Ansible™
 :experimental: yes
 ifdef::env-github[]
 :status:
@@ -17,20 +17,19 @@ endif::[]
 image::https://github.com/fwilhe2/system-automation/workflows/CI/badge.svg[CI Job]
 image::https://api.reuse.software/badge/github.com/fwilhe2/system-automation[REUSE status]
 
-https://api.reuse.software/info/github.com/fwilhe2/system-automation[REUSE status]
-
-System Automation powered by Ansible™
+A set of Ansible playbooks to setup Linux machines.
 
 == Project Layout
 
 This project contains multiple playbooks:
 
 * `epel.yml`: Helper to add the Extra Packages for Enterprise Linux repos
+* `snap.yml`: Remove/disable snap
 * `common.yml`: Software and setup which does not require a graphical environment
 * `minimal.yml`: Subset of the common playbook to get a nice cli environment without too many packages
 * `desktop.yml`: Setup for desktop computers
-* `vm-host.yml`: Skips development tools, ment for hosts running https://github.com/fwilhe2/dev[dev]
-* `dev-env.yml`: Skips virtualization tools, ment for guests running https://github.com/fwilhe2/dev[dev]
+* `vm-host.yml`: Skips development tools, meant for hosts running https://github.com/fwilhe2/dev[dev]
+* `dev-env.yml`: Skips virtualization tools, meant for guests running https://github.com/fwilhe2/dev[dev]
 
 == Preparation
 
@@ -47,6 +46,11 @@ sudo dnf install -y ansible-core curl bash unzip
 .Preparation for Ubuntu/Debian
 ----
 sudo apt -y install ansible curl bash unzip
+----
+
+.Preparation for opensuse
+----
+sudo zypper --non-interactive install git ansible curl unzip bash
 ----
 
 .Preparation for Archlinux
@@ -107,24 +111,26 @@ https://github.com/lima-vm/lima[Lima] is a tool written in go for running virtua
 
 Files in the root of this repo named like `lima_*.yaml` contain vm definitions for testing this repo.
 
-.Running the playbook in a vm using lima
+.Running the playbook in vms using lima
 ----
-# pick the one you need
-export SYSAUTO_LIMA_DISTRO=debian
-export SYSAUTO_LIMA_DISTRO=fedora
-limactl create --name=system-automation-$SYSAUTO_LIMA_DISTRO ./lima_$SYSAUTO_LIMA_DISTRO.yaml
-limactl start system-automation-$SYSAUTO_LIMA_DISTRO
-limactl shell system-automation-$SYSAUTO_LIMA_DISTRO
+# boot both fedora and debian
+limactl start --yes lima_fedora.yaml
+limactl start --yes lima_debian.yaml
 
-# Inside the vm, no password needed for become, just press enter
-./run.sh
+# run the common playbook on both vms
+ansible-playbook --inventory lima-inventory.yaml common.yml
 
-limactl stop system-automation-$SYSAUTO_LIMA_DISTRO
+# inspect the vms if needed
+limactl shell lima_fedora
+limactl shell lima_debian
+
+# remove the vms when you're done
+limactl delete -f lima_fedora lima_debian
 ----
 
 == License
 
-Copyright © 2016-2023 Florian Wilhelm
+Copyright © 2016-2026 Florian Wilhelm
 
 Free use of this software is granted under the terms of the MIT License.
 
@@ -147,9 +153,11 @@ https://git.sr.ht/~gotmax23/ansible-collection-epel[Ansible collection - gotmax2
 https://github.com/lima-vm/lima[lima - linux virtual machines] (`lima_*yaml`)::
   Based on examples by Akihiro Suda and https://github.com/lima-vm/lima/graphs/contributors[the lima contributors] under the _Apache-2.0 license_
 
+https://github.com/bodsch/ansible-snapd[Ansible Role: snapd] (`roles/bodsch.ansible-snapd`)::
+  Copyright © Bodo Schulz under the _BSD-2-Clause License_
+
 == References
 
-* https://docs.ansible.com/ansible/2.9/modules/list_of_all_modules.html[Ansible Docs: All Modules]
 * http://www.whitewashing.de/2013/11/19/setting_up_development_machines_ansible_edition.html[Setting up development machines: Ansible edition]
 * https://github.com/geerlingguy/mac-dev-playbook
 * https://github.com/geerlingguy/ansible-role-docker

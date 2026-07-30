@@ -101,12 +101,25 @@ def print_os_version():
     print(distro.name(pretty=True))
 
 
+def print_sbom():
+  if distro.id() == 'debian' or distro.id() == 'ubuntu':
+    subprocess.run(['dpkg-query', '--list', '--no-pager'])
+
+  if distro.id() == 'centos' or distro.id() == 'fedora' or distro.id() == 'almalinux' or distro.id() == 'rocky':
+    subprocess.run(['dnf', '--assumeyes', 'list', 'installed'])
+
+  if 'opensuse' in distro.id():
+    subprocess.run(['zypper', 'search', '--installed-only', '--details'])
+
 print_ansible_version()
 print_os_version()
 run_group(install_ansible_galaxy_dependencies, "Install Dependencies from Ansible Galaxy")
 run_group(run_ansible, "Running Playbook EPEL", "/home/user/epel.yml")
+run_group(run_ansible, "Running Playbook Snap", "/home/user/snap.yml")
 run_group(run_ansible, "Running Playbook common", "/home/user/common.yml")
 run_group(run_ansible, "Running Playbook desktop", "/home/user/desktop.yml")
+run_group(print_sbom, "Print SBOM")
+
 
 # Assertions in set-up system follow here
 

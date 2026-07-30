@@ -10,6 +10,9 @@
 - ansible.builtin.include_tasks: setup-redhat-repo.yml
   when: ansible_os_family == 'RedHat'
 
+- ansible.builtin.include_tasks: setup-suse-repo.yml
+  when: ansible_os_family == 'Suse'
+
 - name: Install Visual Studio Code
   package:
     name: code

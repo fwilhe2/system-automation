@@ -8,6 +8,8 @@ FROM debian:${VERSION}
 ENV TERM=xterm
 ENV DEBIAN_FRONTEND=noninteractive
 
+RUN dpkg --print-architecture
+
 RUN apt-get update && apt-get install -y \
   curl \
   bash \

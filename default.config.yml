@@ -18,13 +18,17 @@ basic_packages:
     - python3
     - rdiff-backup
     - silversearcher-ag
-    - tldr
+    - tealdeer
     - unzip
     - vim
     - yapf3
     - zsh
     - net-tools
     - bridge-utils
+    - zip
+    - python3-lxml
+    - rsync
+    - restic
   RedHat:
     - apg
     - curl
@@ -44,6 +48,9 @@ basic_packages:
     - net-tools
     - bridge-utils
     - bzip2
+    - python3-lxml
+    - rsync
+    - restic
   Suse:
     - apg
     - bzip2
@@ -57,7 +64,6 @@ basic_packages:
     - mc
     - rdiff-backup
     - tar
-    - the_silver_searcher
     - unzip
     - vim
     - xz
@@ -92,6 +98,12 @@ desktop_packages:
     - "libreoffice"
     - "libreoffice-langpack-de"
     - "xclip"
+  Suse:
+    - "firefox"
+    - "keepassxc"
+    - "libreoffice"
+    - "libreoffice-l10n-de"
+    - "xclip"
 
 development_packages:
   Debian:
@@ -105,7 +117,7 @@ development_packages:
   RedHat:
     - cargo
     - golang
-    - java-21-openjdk-devel
+    - java-25-openjdk-devel
     - maven
     - nodejs
     - npm
@@ -113,7 +125,7 @@ development_packages:
   Suse:
     - cargo
     - go
-    - java-21-openjdk-devel
+    - java-25-openjdk-devel
     - maven
     - nodejs-default
     - npm-default
@@ -132,6 +144,10 @@ system_development_packages:
     - cmake
   RedHat:
     - "@C Development Tools and Libraries"
+    - cmake
+  # EL distributions do not have the Fedora group names
+  AlmaLinux:
+    - "@Development Tools"
     - cmake
 
 directories:
@@ -153,3 +169,4 @@ codium_extensions:
   - redhat.vscode-yaml
   - rust-lang.rust
   - streetsidesoftware.code-spell-checker
+  - streetsidesoftware.code-spell-checker-german

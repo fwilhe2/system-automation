@@ -7,7 +7,8 @@ FROM fedora:$VERSION
 
 ENV TERM=xterm
 
-RUN dnf --assumeyes update && dnf --assumeyes install git ansible curl unzip bash python3-distro \
+# util-linux provides su, which the test runner uses via --become-method=su
+RUN dnf --assumeyes update && dnf --assumeyes install git ansible curl unzip bash python3-distro util-linux \
   && mkdir -p /home/user && echo "user:x:1001:1001:user:/home/user:/bin/bash" >> /etc/passwd \
   && chown -R user /home/user
 

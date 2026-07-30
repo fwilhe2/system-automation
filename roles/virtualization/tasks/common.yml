@@ -8,6 +8,11 @@
   uri:
     url: "https://api.github.com/repos/lima-vm/lima/releases/latest"
     return_content: yes
+    # Authenticate if a token is available; anonymous requests share a
+    # 60/hour rate limit per IP, which CI runners regularly exhaust
+    headers: "{{ {'Authorization': 'Bearer ' + github_token} if github_token else {} }}"
+  vars:
+    github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"
   register: latest_release
   changed_when: false
 
