@@ -88,6 +88,7 @@ Tag a task `notest` to have CI skip it (`--skip-tags notest`); currently only fl
   comments, put the tags in a Jinja comment in the `.j2` template or add a `.license`
   sidecar; `.reuse/dep5` covers the exceptions.
 - YAML is prettier-formatted. `.j2` templates are not.
-- Facts are used in the `ansible_os_family` / `ansible_architecture` style throughout, which
-  ansible-core deprecates in favour of `ansible_facts[...]`. Match the surrounding style
-  rather than migrating one file.
+- Facts are referenced as `ansible_facts['os_family']`, never as top-level `ansible_*`
+  variables, which ansible-core 2.24 removes. Single quotes inside the brackets: the
+  double-quoted form nests badly inside double-quoted YAML scalars. `ansible_version` and
+  `ansible_managed` are magic variables rather than facts and keep their names.

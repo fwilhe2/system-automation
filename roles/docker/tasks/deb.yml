@@ -33,27 +33,27 @@
 # Special handling because Docker provides no packages for Ubuntu's development branch
 - name: Get Ubuntu codename
   ansible.builtin.set_fact:
-    deb_release_codename: "{{ 'jammy' if ansible_lsb.description is search('development branch', ignorecase=True) else ansible_distribution_release }}"
-  when: ansible_distribution == 'Ubuntu'
+    deb_release_codename: "{{ 'jammy' if ansible_facts['lsb'].description is search('development branch', ignorecase=True) else ansible_facts['distribution_release'] }}"
+  when: ansible_facts['distribution'] == 'Ubuntu'
 
 # Special handling because Docker provides no packages for Debian Trixie as of now
 - name: Get Debian codename
   ansible.builtin.set_fact:
-    deb_release_codename: "{{ 'trixie' if ansible_lsb.description is search('sid', ignorecase=True) else ansible_distribution_release }}"
-  when: ansible_distribution == 'Debian'
+    deb_release_codename: "{{ 'trixie' if ansible_facts['lsb'].description is search('sid', ignorecase=True) else ansible_facts['distribution_release'] }}"
+  when: ansible_facts['distribution'] == 'Debian'
 
 - name: dbg
   ansible.builtin.debug:
     msg: |
       Debian codename for Docker apt repo: {{ deb_release_codename }}
-      Actual ansible_distribution_release: {{ ansible_distribution_release }} ({{ ansible_lsb.description }})
-      Ansible Distribution: {{ansible_distribution|lower}}
+      Actual ansible_facts['distribution_release']: {{ ansible_facts['distribution_release'] }} ({{ ansible_facts['lsb'].description }})
+      Ansible Distribution: {{ansible_facts['distribution']|lower}}
 
 - name: Add Docker APT repository
   ansible.builtin.deb822_repository:
     name: docker
     types: [deb]
-    uris: "https://download.docker.com/linux/{{ansible_distribution|lower}}"
+    uris: "https://download.docker.com/linux/{{ansible_facts['distribution']|lower}}"
     suites: "{{ deb_release_codename }}"
     components: [stable]
     signed_by: https://download.docker.com/linux/ubuntu/gpg
@@ -101,4 +101,4 @@
     - podman
   become: true
   # TODO: Update once focal is not required anymore
-  when: ansible_distribution_release != "focal"
+  when: ansible_facts['distribution_release'] != "focal"

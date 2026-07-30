@@ -9,4 +9,4 @@
   community.general.zypper:
     state: present
     name: podman
-  when: ansible_os_family == 'Suse'
+  when: ansible_facts['os_family'] == 'Suse'
