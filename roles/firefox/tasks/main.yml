@@ -2,13 +2,15 @@
 # SPDX-License-Identifier: MIT
 
 ---
+# Readable by everyone like any other /opt install, so a second account can run
+# the browser too. What is private is the profile, not the program.
 - name: Ensure /opt/firefox directory exists
   become: true
   become_user: root
   ansible.builtin.file:
     path: "/opt/firefox"
     state: directory
-    mode: "750"
+    mode: "755"
     owner: "{{ username }}"
     group: "{{ username }}"
 
@@ -34,7 +36,7 @@
   ansible.builtin.file:
     path: "/opt/firefox/firefox-{{ item.id }}/"
     state: directory
-    mode: "750"
+    mode: "755"
     owner: "{{ username }}"
     group: "{{ username }}"
   loop: "{{ firefox_channels }}"
