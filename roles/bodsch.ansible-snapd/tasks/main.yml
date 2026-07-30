@@ -1,11 +1,12 @@
 # SPDX-FileCopyrightText: Bodo Schulz
+# SPDX-FileCopyrightText: Florian Wilhelm
 # SPDX-License-Identifier: BSD-2-Clause
 
 ---
 
 - name: run only for debian based
   when:
-    - ansible_os_family | lower != "debian"
+    - ansible_facts['os_family'] | lower != "debian"
   block:
     - name: message
       ansible.builtin.debug:
@@ -70,7 +71,7 @@
 
     - name: find nap mountpoints
       ansible.builtin.set_fact:
-        snap_mounts: "{{ ansible_mounts | snap_mounts }}"
+        snap_mounts: "{{ ansible_facts['mounts'] | snap_mounts }}"
 
     - name: unmount snap
       become: true

@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: Sion Fandrick
+# SPDX-FileCopyrightText: Florian Wilhelm
 # SPDX-License-Identifier: MIT
 
 ---
@@ -9,7 +10,7 @@
     key: https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg
     fingerprint: "{{ gpg_fingerprint }}"
   when:
-    - ansible_os_family == 'RedHat'
+    - ansible_facts['os_family'] == 'RedHat'
 
 # rpm_key on Tumbleweed (ansible-core 2.21) fails with 'Unable to parse PGP
 # key armor' on keys that rpm itself imports fine, so import directly
@@ -19,12 +20,12 @@
   changed_when: false
   failed_when: false
   when:
-    - ansible_os_family == 'Suse'
+    - ansible_facts['os_family'] == 'Suse'
 
 - name: Ensure GPG key for repo is installed (Suse)
   ansible.builtin.command: rpm --import https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg
   when:
-    - ansible_os_family == 'Suse'
+    - ansible_facts['os_family'] == 'Suse'
     - codium_gpg_key_check.rc != 0
 
 - name: Ensure repo is installed (RedHat)
@@ -38,7 +39,7 @@
     repo_gpgcheck: true
     state: present
   when:
-    - ansible_os_family == 'RedHat'
+    - ansible_facts['os_family'] == 'RedHat'
 
 - name: Ensure repo is installed (Debian)
   ansible.builtin.deb822_repository:
@@ -51,7 +52,7 @@
     state: present
     enabled: true
   when:
-    - ansible_os_family == 'Debian'
+    - ansible_facts['os_family'] == 'Debian'
 
 - name: Add VSCodium repo file
   ansible.builtin.copy:
@@ -69,7 +70,7 @@
     group: root
     mode: '0644'
   when:
-    - ansible_os_family == 'Suse'
+    - ansible_facts['os_family'] == 'Suse'
 
 - name: Ensure codium is installed
   ansible.builtin.package:
