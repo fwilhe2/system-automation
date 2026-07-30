@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# Codename to use for the Docker APT repository on the distributions'
+# development branches, which Docker itself does not publish packages for.
+docker_development_branch_codename:
+  Ubuntu: jammy
+  Debian: trixie

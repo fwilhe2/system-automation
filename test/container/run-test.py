@@ -20,7 +20,7 @@ def assert_equals(first, second, message):
 
 
 def assert_true(val, message):
-    if val == False:
+    if not val:
         sys.exit(
             f"Assertion failed. '{val}' should equal 'True', but did not. Message: {message}"
         )
@@ -39,33 +39,23 @@ def run_group(fn, name, *args):
     print("::endgroup::")
 
 def install_ansible_galaxy_dependencies():
-    subprocess.run([ansible_galaxy_executable(), 'install', '-r', '/home/user/requirements.yml'])
+    subprocess.run([executable('ansible-galaxy'), 'install', '-r', '/home/user/requirements.yml'])
 
 def run_ansible(playbook):
+    command = [
+        executable("ansible-playbook"),
+        "--become-method=su",
+        "--skip-tags",
+        "notest",
+    ]
     assert_equals(
-        subprocess.run([
-            ansible_playbook_executable(),
-            "--become-method=su",
-            "--skip-tags",
-            "notest",
-            "-vv",
-            playbook,
-        ]).returncode,
+        subprocess.run(command + ["-vv", playbook]).returncode,
         0,
         f"Expected running playbook '{playbook}' to return exit code 0.",
     )
     # Idempotence check: Run again and verify nothing fails or changes the second time
     # Idea via https://github.com/geerlingguy/mac-dev-playbook/blob/7382e0241fe27cf17fabe31582af0269551e7004/.github/workflows/ci.yml#L71
-    rerun = subprocess.run(
-        [
-            ansible_playbook_executable(),
-            "--become-method=su",
-            "--skip-tags",
-            "notest",
-            playbook,
-        ],
-        capture_output=True,
-    )
+    rerun = subprocess.run(command + [playbook], capture_output=True)
 
     rerun_stdout = rerun.stdout.decode("utf-8")
     rerun_stderr = rerun.stderr.decode("utf-8")
@@ -84,20 +74,13 @@ def run_ansible(playbook):
 
 
 def print_ansible_version():
-    subprocess.run([ansible_playbook_executable(), "--version"])
+    subprocess.run([executable("ansible-playbook"), "--version"])
 
 
-def ansible_playbook_executable():
-    in_path = shutil.which("ansible-playbook")
-    if in_path == None:
-        return "/home/user/.local/bin/ansible-playbook"
-    return in_path
+def executable(name):
+    """Locate a tool, falling back to where pip installs it for the test user."""
+    return shutil.which(name) or f"/home/user/.local/bin/{name}"
 
-def ansible_galaxy_executable():
-    in_path = shutil.which("ansible-galaxy")
-    if in_path == None:
-        return "/home/user/.local/bin/ansible-galaxy"
-    return in_path
 
 def print_os_version():
     print(distro.name(pretty=True))
@@ -127,25 +110,19 @@ run_group(print_sbom, "Print SBOM")
 
 
 def assert_system_properties():
-    expected_binaries = ["javac", "mvn", "go", "keepassxc-cli"]
-
-    expected_binaries_command = {
+    expected_binaries = {
         "javac": "-version",
         "mvn": "-version",
         "go": "version",
         "keepassxc-cli": "-version",
-        "cargo": "--version",
-        "topgrade": "--version",
-        "limactl": "--version",
-        "qemu-system-x86_64": "--version",
     }
 
-    for binary in expected_binaries:
+    for binary, version_argument in expected_binaries.items():
         binary_with_path = shutil.which(binary)
-        if binary_with_path == None:
+        if binary_with_path is None:
             sys.exit(f"Error: Could not find {binary}")
         print(f"Found binary for {binary} at '{binary_with_path}'")
-        script = f"set -e && {binary_with_path} {expected_binaries_command[binary]}"
+        script = f"set -e && {binary_with_path} {version_argument}"
         assert_equals(
             subprocess.run(["bash", "-c", f"{script}"]).returncode,
             0,
