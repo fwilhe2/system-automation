@@ -23,7 +23,7 @@
 
 - name: Download and extract Lima binary
   get_url:
-    url: "https://github.com/lima-vm/lima/releases/download/{{ lima_version }}/lima-{{ lima_version[1:] }}-{{ ansible_system | lower }}-{{ ansible_architecture | lower }}.tar.gz"
+    url: "https://github.com/lima-vm/lima/releases/download/{{ lima_version }}/lima-{{ lima_version[1:] }}-{{ ansible_facts['system'] | lower }}-{{ ansible_facts['architecture'] | lower }}.tar.gz"
     dest: "/tmp/lima-{{ lima_version }}.tar.gz"
   changed_when: false
 

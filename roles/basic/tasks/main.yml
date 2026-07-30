@@ -8,7 +8,7 @@
   ansible.builtin.package:
     state: present
     name: "{{ item }}"
-  loop: "{{ basic_packages[ansible_os_family] }}"
+  loop: "{{ basic_packages[ansible_facts['os_family']] }}"
   tags: basic
   ignore_errors: true
 
@@ -17,7 +17,7 @@
   community.general.alternatives:
     name: editor
     path: /usr/bin/vim
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian'
   tags: basic
 
 - name: Configure user

@@ -136,7 +136,8 @@ Free use of this software is granted under the terms of the MIT License.
 
 === Copyright Notice
 
-This project ships the following 3rd party software:
+This project ships the following 3rd party software.
+The copies below have been modified, so they do not match their upstream projects:
 
 https://github.com/green-leader/ansible-role-codium[ansible-role-codium] (`roles/greenleader.codium`)::
   Copyright © Sion Fandrick under the _MIT License_

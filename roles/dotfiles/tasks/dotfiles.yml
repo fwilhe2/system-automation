@@ -28,28 +28,28 @@
     src: files/dnf-aliases.txt
     dest: ~/.dotfiles/aliases_package_manager
     mode: "640"
-  when: ansible_os_family == 'RedHat'
+  when: ansible_facts['os_family'] == 'RedHat'
 
 - name: Copy Package Manager Aliases File
   ansible.builtin.copy:
     src: files/apt-aliases.txt
     dest: ~/.dotfiles/aliases_package_manager
     mode: "640"
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian'
 
 - name: Copy Package Manager Aliases File
   ansible.builtin.copy:
     src: files/pacman-aliases.txt
     dest: ~/.dotfiles/aliases_package_manager
     mode: "640"
-  when: ansible_os_family == 'Archlinux'
+  when: ansible_facts['os_family'] == 'Archlinux'
 
 - name: Copy Package Manager Aliases File
   ansible.builtin.copy:
     src: files/zypper-aliases.txt
     dest: ~/.dotfiles/aliases_package_manager
     mode: "640"
-  when: ansible_os_family == 'Suse'
+  when: ansible_facts['os_family'] == 'Suse'
 
 - name: Make Symlink for Package Manager Aliases File
   ansible.builtin.file:

@@ -15,8 +15,8 @@
     - role: iesplin.vscode
       become: true
       when: >-
-        ansible_distribution != 'openSUSE Tumbleweed'
-        and not (ansible_distribution == 'Debian' and ansible_architecture == 'aarch64')
+        ansible_facts['distribution'] != 'openSUSE Tumbleweed'
+        and not (ansible_facts['distribution'] == 'Debian' and ansible_facts['architecture'] == 'aarch64')
 
     - role: greenleader.codium
       become: true
@@ -37,7 +37,7 @@
       ansible.builtin.package:
         state: present
         name: "{{ item }}"
-      loop: "{{ desktop_packages[ansible_os_family] }}"
+      loop: "{{ desktop_packages[ansible_facts['os_family']] }}"
 
     - name: Install VS Codium Extensions
       codium-extensions:

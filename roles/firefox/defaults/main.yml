@@ -7,7 +7,7 @@
 # Recent Firefox versions relocate the shared root to ~/.config/mozilla/firefox
 # on machines without an existing ~/.mozilla, which is another reason to pass an
 # explicit path instead of a profile name.
-firefox_profile_root: "{{ ansible_env.HOME }}/.local/share/firefox-profiles"
+firefox_profile_root: "{{ ansible_facts['env'].HOME }}/.local/share/firefox-profiles"
 
 # The names download.mozilla.org uses for the Linux builds it ships. Mozilla
 # publishes these channels for x86_64 and arm64 only, so an unknown
