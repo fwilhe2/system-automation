@@ -9,7 +9,9 @@ import re
 import sys
 import pathlib
 import shutil
+import urllib.request
 import distro
+import yaml
 
 
 def assert_equals(first, second, message):
@@ -137,15 +139,31 @@ firefox_channels = {
 }
 
 
-def read_from_omni(omni, path):
+def read_from_archive(archive, path):
     # unzip exits 2 on the non-standard headers omni.ja uses, but still extracts
     # the file correctly, so the output is checked instead of the return code.
-    result = subprocess.run(["unzip", "-p", str(omni), path], capture_output=True)
+    result = subprocess.run(["unzip", "-p", str(archive), path], capture_output=True)
     assert_true(
         len(result.stdout) > 0,
-        f"Expected to read '{path}' from '{omni}': {result.stderr.decode('utf-8')}",
+        f"Expected to read '{path}' from '{archive}': {result.stderr.decode('utf-8')}",
     )
     return result.stdout.decode("utf-8")
+
+
+def firefox_install(channel):
+    return pathlib.Path(f"/opt/firefox/firefox-{channel}/firefox")
+
+
+def installed_policies(channel):
+    policies = firefox_install(channel) / "distribution/policies.json"
+    return json.loads(policies.read_text())["policies"]
+
+
+def firefox_role_defaults():
+    """The role's own defaults, to check the generated policies against."""
+    repository = pathlib.Path(__file__).resolve().parents[2]
+    return yaml.safe_load(
+        (repository / "roles/firefox/defaults/main.yml").read_text())
 
 
 def javascript_string_list(source, name):
@@ -167,13 +185,129 @@ def elf_machine(binary):
     return int.from_bytes(header[18:20], "little")
 
 
+def assert_preferences_are_settable(policies, source, display_name):
+    """Firefox silently drops preferences it does not allow, and only reports
+    them in about:policies, so they have to be checked up front."""
+    allowed_prefixes = javascript_string_list(source, "allowedPrefixes")
+    allowed_security_prefs = javascript_string_list(source, "allowedSecurityPrefs")
+    blocked_prefs = javascript_string_list(source, "blockedPrefs")
+
+    for preference in policies.get("Preferences", {}):
+        if preference.startswith("security."):
+            allowed = preference in allowed_security_prefs
+        else:
+            allowed = any(
+                preference.startswith(prefix) for prefix in allowed_prefixes)
+        assert_true(
+            allowed and preference not in blocked_prefs,
+            f"{display_name} refuses to set '{preference}' via the "
+            f"Preferences policy. Use the dedicated policy for it instead.")
+
+
+def assert_policy_values_are_valid(policies, schema, display_name):
+    """The enums the schema spells out, for the two policies this role fills
+    from configuration. A misspelled status or installation mode is not an
+    error to Firefox, it just drops the entry."""
+    statuses = single_pattern(schema["Preferences"])["properties"]["Status"]["enum"]
+    for preference, setting in policies.get("Preferences", {}).items():
+        assert_true(
+            setting["Status"] in statuses,
+            f"'{setting['Status']}' of '{preference}' is not a preference "
+            f"status {display_name} knows about, it accepts {statuses}.")
+
+    # The catch-all "*" entry is described separately from the per-add-on ones,
+    # and only the latter can install anything.
+    modes = single_pattern(
+        schema["ExtensionSettings"])["properties"]["installation_mode"]["enum"]
+    for addon_id, settings in policies.get("ExtensionSettings", {}).items():
+        assert_true(
+            settings["installation_mode"] in modes,
+            f"'{settings['installation_mode']}' of '{addon_id}' is not an "
+            f"installation mode {display_name} knows about, it accepts {modes}.")
+        assert_true(
+            "install_url" in settings,
+            f"'{addon_id}' has no install_url, so {display_name} has nowhere "
+            f"to install it from.")
+
+
+def single_pattern(policy_schema):
+    """The sub-schema of a policy whose keys are user-chosen names."""
+    patterns = list(policy_schema["patternProperties"].values())
+    assert_equals(
+        len(patterns), 1,
+        f"Expected exactly one pattern in {policy_schema['patternProperties']}. "
+        f"Firefox restructured the schema and this test needs to be updated.")
+    return patterns[0]
+
+
+def assert_policies_match_defaults(policies, defaults, display_name):
+    """The template takes a preference either as a bare value or as a mapping
+    that names a status, and an add-on with or without an installation mode, so
+    both spellings are checked here. A preference that silently ends up locked
+    greys out a working checkbox in the settings UI."""
+    for name, preference in defaults["firefox_preferences"].items():
+        expected = preference if isinstance(preference, dict) else {
+            "value": preference
+        }
+        assert_true(
+            name in policies["Preferences"],
+            f"'{name}' is configured for the role but missing from the "
+            f"policies of {display_name}.")
+        generated = policies["Preferences"][name]
+        assert_equals(generated["Value"], expected["value"],
+                      f"Wrong value generated for preference '{name}'.")
+        assert_equals(generated["Status"], expected.get("status", "locked"),
+                      f"Wrong status generated for preference '{name}'.")
+
+    for addon_id, addon in defaults["firefox_extensions"].items():
+        assert_true(
+            addon_id in policies["ExtensionSettings"],
+            f"'{addon_id}' is configured for the role but missing from the "
+            f"policies of {display_name}.")
+        generated = policies["ExtensionSettings"][addon_id]
+        assert_equals(generated["install_url"], addon["url"],
+                      f"Wrong install_url generated for '{addon_id}'.")
+        assert_equals(generated["installation_mode"],
+                      addon.get("mode", "normal_installed"),
+                      f"Wrong installation mode generated for '{addon_id}'.")
+
+
+def assert_addon_ids_match_their_xpi():
+    """The policy names the add-on it installs by ID, and Firefox rejects the
+    install when the XPI declares a different one. The add-on ID and the AMO
+    slug in the URL are picked independently of each other, so nothing but this
+    check keeps the pair honest - and a mismatch is invisible until a browser
+    starts up without the add-on."""
+    for addon_id, settings in installed_policies("nightly").get(
+            "ExtensionSettings", {}).items():
+        xpi = pathlib.Path(f"/tmp/{addon_id}.xpi")
+        request = urllib.request.Request(
+            settings["install_url"],
+            # addons.mozilla.org answers 403 to the default urllib agent.
+            headers={"User-Agent": "system-automation-test"})
+        with urllib.request.urlopen(request) as response:
+            xpi.write_bytes(response.read())
+
+        manifest = json.loads(read_from_archive(xpi, "manifest.json"))
+        gecko = (manifest.get("browser_specific_settings")
+                 or manifest.get("applications") or {}).get("gecko", {})
+        assert_equals(
+            gecko.get("id"), addon_id,
+            f"The add-on behind '{settings['install_url']}' calls itself "
+            f"'{gecko.get('id')}', so Firefox refuses to install it as "
+            f"'{addon_id}'. Check the slug in the URL against the ID.")
+        xpi.unlink()
+        print(f"{addon_id}: served by {settings['install_url']}")
+
+
 def assert_firefox_setup():
     home = pathlib.Path.home()
+    defaults = firefox_role_defaults()
     # https://refspecs.linuxfoundation.org/elf/gabi4+/ch4.eheader.html
     expected_machine = {"x86_64": 0x3E, "aarch64": 0xB7}[platform.machine()]
 
     for channel, display_name in firefox_channels.items():
-        install = pathlib.Path(f"/opt/firefox/firefox-{channel}/firefox")
+        install = firefox_install(channel)
 
         # Mozilla serves x86_64 unless the download URL asks for another
         # architecture, so a wrong URL yields a browser that cannot run here.
@@ -214,39 +348,29 @@ def assert_firefox_setup():
         # Validate the generated policies against the rules of the very Firefox
         # build that was just installed, so this keeps working as Firefox
         # changes which policies and preferences it accepts.
-        policies = json.loads(
-            (install / "distribution/policies.json").read_text())["policies"]
+        policies = installed_policies(channel)
         omni = install / "browser/omni.ja"
 
         schema = json.loads(
-            read_from_omni(omni, "modules/policies/policies-schema.json"))
+            read_from_archive(omni, "modules/policies/policies-schema.json"))
         for policy in policies:
             assert_true(
                 policy in schema["properties"],
                 f"'{policy}' is not a policy {display_name} knows about.")
 
-        source = read_from_omni(omni, "modules/policies/Policies.sys.mjs")
-        allowed_prefixes = javascript_string_list(source, "allowedPrefixes")
-        allowed_security_prefs = javascript_string_list(source,
-                                                        "allowedSecurityPrefs")
-        blocked_prefs = javascript_string_list(source, "blockedPrefs")
+        assert_preferences_are_settable(
+            policies,
+            read_from_archive(omni, "modules/policies/Policies.sys.mjs"),
+            display_name)
+        assert_policy_values_are_valid(policies, schema["properties"],
+                                       display_name)
+        assert_policies_match_defaults(policies, defaults, display_name)
 
-        # Firefox silently drops preferences it does not allow, and only reports
-        # them in about:policies, so they have to be checked up front.
-        for preference in policies.get("Preferences", {}):
-            if preference.startswith("security."):
-                allowed = preference in allowed_security_prefs
-            else:
-                allowed = any(
-                    preference.startswith(prefix)
-                    for prefix in allowed_prefixes)
-            assert_true(
-                allowed and preference not in blocked_prefs,
-                f"{display_name} refuses to set '{preference}' via the "
-                f"Preferences policy. Use the dedicated policy for it instead.")
-
-        print(f"{display_name}: profile, desktop entry and "
+        print(f"{display_name}: profile, desktop entry, "
+              f"{len(policies['ExtensionSettings'])} add-ons, "
+              f"{len(policies['Preferences'])} preferences and "
               f"{len(policies)} policies are valid")
 
 
 run_group(assert_firefox_setup, "Assert Firefox Setup")
+run_group(assert_addon_ids_match_their_xpi, "Assert Firefox Add-on IDs")

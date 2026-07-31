@@ -27,19 +27,54 @@ firefox_channels:
     product: firefox-nightly-latest-ssl
     remoting_name: firefox-nightly
 
-# Add-ons force-installed via enterprise policy, keyed by add-on ID.
-# The ID has to match the one in the XPI, otherwise Firefox rejects the install.
+# Add-ons installed via enterprise policy, keyed by add-on ID. The ID has to
+# match the one in the XPI, otherwise Firefox rejects the install. `mode` is the
+# policy's installation_mode and defaults to normal_installed, which installs the
+# add-on but still lets it be disabled or removed - the right default in a
+# nightly browser, where an add-on is a suspect whenever a page misbehaves.
+# force_installed is for the ad blocker only, which should never be off by accident.
 firefox_extensions:
-  "uBlock0@raymondhill.net": "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"
+  "uBlock0@raymondhill.net":
+    url: "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"
+    mode: force_installed
 
-# Preferences locked via enterprise policy (about:config shows them greyed out).
-# Firefox rejects preferences that a dedicated policy already owns, so telemetry
-# and default browser prefs are set through the policies below, not from here.
+  "sponsorBlocker@ajay.app":
+    url: "https://addons.mozilla.org/firefox/downloads/latest/sponsorblock/latest.xpi"
+
+  "jid1-KKzOGWgsW3Ao4Q@jetpack":
+    url: "https://addons.mozilla.org/firefox/downloads/latest/i-dont-care-about-cookies/latest.xpi"
+
+  "{b9db16a4-6edc-47ec-a1f4-b86292ed211d}":
+    url: "https://addons.mozilla.org/firefox/downloads/latest/video-downloadhelper/latest.xpi"
+
+  "MinYT@example.org":
+    url: "https://addons.mozilla.org/firefox/downloads/latest/youtube-suite-search-fixer/latest.xpi"
+
+# Preferences set via enterprise policy. A bare value is locked (about:config
+# shows it greyed out); the mapping form takes an explicit `status`, where
+# `default` seeds the value but leaves the toggle usable - anything with a
+# checkbox in the settings UI wants that, otherwise the checkbox is dead.
+# Firefox rejects preferences that a dedicated policy already owns, so telemetry,
+# default browser and DRM prefs are set through the policies below, not from here.
 firefox_preferences:
   browser.aboutConfig.showWarning: false
   browser.newtabpage.activity-stream.showSponsored: false
   browser.newtabpage.activity-stream.showSponsoredTopSites: false
   extensions.getAddons.showPane: false
+
+  # New tab widgets that ship enabled and are pure clutter here.
+  browser.newtabpage.activity-stream.widgets.focusTimer.enabled: false
+  browser.newtabpage.activity-stream.widgets.lists.enabled: false
+  browser.newtabpage.activity-stream.widgets.sportsWidget.enabled: false
+
+  browser.toolbars.bookmarks.visibility:
+    value: always
+    status: default
+
+  # The UI language, so the translation bar has nothing to offer.
+  browser.translations.neverTranslateLanguages:
+    value: de
+    status: default
 
 # Policies that are not plain preferences. The in-app updater is disabled
 # because /opt/firefox is root-owned and updates are driven by update-firefox.sh.
@@ -48,3 +83,17 @@ firefox_policies:
   DisableFirefoxStudies: true
   DisableTelemetry: true
   DontCheckDefaultBrowser: true
+
+  # Widevine, so streaming sites work without the per-profile prompt.
+  EncryptedMediaExtensions:
+    Enabled: true
+    Locked: true
+
+  Handlers:
+    schemes:
+      mailto:
+        action: useHelperApp
+        ask: false
+        handlers:
+          - name: Gmail
+            uriTemplate: "https://mail.google.com/mail/?extsrc=mailto&url=%s"

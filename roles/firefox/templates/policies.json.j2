@@ -6,18 +6,20 @@
     {{ key | to_json }}: {{ value | to_json }},
 {% endfor %}
     "ExtensionSettings": {
-{% for addon_id, url in firefox_extensions.items() %}
+{% for addon_id, addon in firefox_extensions.items() %}
       {{ addon_id | to_json }}: {
-        "install_url": {{ url | to_json }},
-        "installation_mode": "force_installed"
+        "install_url": {{ addon['url'] | to_json }},
+        "installation_mode": {{ addon['mode'] | default("normal_installed") | to_json }}
       }{{ "," if not loop.last else "" }}
 {% endfor %}
     },
     "Preferences": {
-{% for name, value in firefox_preferences.items() %}
+{% for name, pref in firefox_preferences.items() %}
+{# A bare value is the shorthand for a locked preference. #}
+{% set spec = pref if pref is mapping else {"value": pref} %}
       {{ name | to_json }}: {
-        "Value": {{ value | to_json }},
-        "Status": "locked"
+        "Value": {{ spec['value'] | to_json }},
+        "Status": {{ spec['status'] | default("locked") | to_json }}
       }{{ "," if not loop.last else "" }}
 {% endfor %}
     }
