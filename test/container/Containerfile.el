@@ -22,4 +22,8 @@ USER user
 
 COPY . /home/user
 
+# ansible.cfg is only read from the working directory, so the repo copy is
+# picked up here rather than the image running without any config at all
+WORKDIR /home/user
+
 ENTRYPOINT ["python3", "/home/user/test/container/run-test.py"]
