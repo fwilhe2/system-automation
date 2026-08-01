@@ -14,8 +14,8 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-image::https://github.com/fwilhe2/system-automation/workflows/CI/badge.svg[CI Job]
-image::https://api.reuse.software/badge/github.com/fwilhe2/system-automation[REUSE status]
+image:https://github.com/fwilhe2/system-automation/workflows/CI/badge.svg[CI Job,link=https://github.com/fwilhe2/system-automation/actions/workflows/main.yml]
+image:https://api.reuse.software/badge/github.com/fwilhe2/system-automation[REUSE status,link=https://api.reuse.software/info/github.com/fwilhe2/system-automation]
 
 A set of Ansible playbooks to setup Linux machines.
 
@@ -30,22 +30,39 @@ This project contains multiple playbooks:
 * `desktop.yml`: Setup for desktop computers
 * `vm-host.yml`: Skips development tools, meant for hosts running https://github.com/fwilhe2/dev[dev]
 * `dev-env.yml`: Skips virtualization tools, meant for guests running https://github.com/fwilhe2/dev[dev]
+* `clone-git-repos.yml`: Clones the author's git repositories into `~/code`
+
+== Configuration
+
+`default.config.yml` holds the `username` and the package lists.
+
+To change settings, put the keys you want to override into a file named `config.yml` next to
+it. It is gitignored and picked up automatically by every playbook, so no extra flag is
+needed:
+
+.config.yml
+----
+username: alice
+----
+
+Only the keys present in `config.yml` are overridden, the rest keep the values from
+`default.config.yml`. Leaving the file out entirely is fine.
 
 == Preparation
 
 .Preparation for Fedora
 ----
-sudo dnf install -y ansible curl bash unzip
+sudo dnf install -y git ansible curl bash unzip
 ----
 
 .Preparation for *EL-like
 ----
-sudo dnf install -y ansible-core curl bash unzip
+sudo dnf install -y git ansible-core curl bash unzip
 ----
 
 .Preparation for Ubuntu/Debian
 ----
-sudo apt -y install ansible curl bash unzip
+sudo apt -y install git ansible curl bash unzip
 ----
 
 .Preparation for opensuse
@@ -74,6 +91,30 @@ This requires `ansible`, `curl`, `bash` and `unzip`.
 
 == Setup (traditional)
 
+.Get the sources
+----
+git clone https://github.com/fwilhe2/system-automation.git
+cd system-automation
+----
+
+.Install the collections the roles depend on
+----
+ansible-galaxy install -r requirements.yml
+----
+
+IMPORTANT: This step is not optional. Several roles use modules from `community.general`,
+and the first one of them runs early in the `common` playbook.
+
+.Enable EPEL (*EL-like only) and remove snap (Debian/Ubuntu only)
+----
+ansible-playbook --ask-become-pass --inventory inventory epel.yml
+ansible-playbook --ask-become-pass --inventory inventory snap.yml
+----
+
+Both playbooks are no-ops on distributions they do not apply to, so running them
+unconditionally is safe. On *EL-like systems `epel.yml` has to run before `common.yml`,
+otherwise packages from EPEL are missing.
+
 .Run `common` playbook
 ----
 ansible-playbook --ask-become-pass --inventory inventory common.yml
@@ -84,26 +125,75 @@ ansible-playbook --ask-become-pass --inventory inventory common.yml
 ansible-playbook --ask-become-pass --inventory inventory desktop.yml
 ----
 
+`run.sh` wraps the same command, taking the playbook name without the `.yml` suffix
+and defaulting to `common`:
+
+----
+./run.sh
+./run.sh desktop
+----
+
 == Testing
 
 === Containerfile
 
-Containerfiles are available for testing.
-They are run automatically via the CI workflow.
+A Containerfile exists per package manager, and all of them are built and run by the CI
+workflow. They apply `epel.yml`, `snap.yml`, `common.yml` and `desktop.yml`, each one twice
+to check idempotence, and then assert properties of the resulting system
+(`test/container/run-test.py`).
 
-For running them locally, use:
+The convenient way to run one locally is `local-test-env.sh`, which builds the image and
+drops you into it. It uses `podman` when available and `docker` otherwise:
+
+----
+./local-test-env.sh fedora            # run the test suite in a fedora:devel container
+./local-test-env.sh fedora bash       # ... with a shell instead of the test runner
+----
+
+Inside an interactive container, `python3 test/container/run-playbook.py <name>` applies a
+single playbook without the assertions.
+
+To build the images by hand, note that the `VERSION` build argument is not uniform:
+
+[cols="1,2,3"]
+|===
+| Containerfile | `VERSION` is | Example
+
+| `Containerfile.dpkg`
+| a full image reference
+| `debian:testing`, `ubuntu:rolling`
+
+| `Containerfile.el`
+| a full image reference
+| `almalinux:10`
+
+| `Containerfile.fedora`
+| a bare tag, the image name is fixed
+| `latest`, `devel`
+
+| `Containerfile.opensuse`
+| a tag below `registry.opensuse.org/opensuse/`
+| `tumbleweed`, `leap:16.0`
+
+| `Containerfile.archlinux`
+| unused, the image is always `archlinux`
+| --
+|===
 
 .Test on Debian
 ----
-docker build --build-arg=VERSION=debian:testing -t system-automation-test-debian-latest --file test/container/Containerfile.dpkg .
-docker run --tty --volume $PWD:/mnt system-automation-test-debian-latest
+docker build --build-arg=VERSION=debian:testing -t system-automation-test-debian --file test/container/Containerfile.dpkg .
+docker run --tty --volume $PWD:/mnt system-automation-test-debian
 ----
 
 .Test on Fedora
 ----
-docker build --build-arg=VERSION=latest -t system-automation-test-fedora-latest --file test/container/Containerfile.fedora .
-docker run --tty --volume $PWD:/mnt system-automation-test-fedora-latest
+docker build --build-arg=VERSION=latest -t system-automation-test-fedora --file test/container/Containerfile.fedora .
+docker run --tty --volume $PWD:/mnt system-automation-test-fedora
 ----
+
+NOTE: `Containerfile.archlinux` applies `common.yml` directly instead of running
+`run-test.py`, so the Arch job checks that the playbook succeeds but not the assertions.
 
 === Lima
 
@@ -127,6 +217,17 @@ limactl shell lima_debian
 # remove the vms when you're done
 limactl delete -f lima_fedora lima_debian
 ----
+
+The vm definitions pin the image location and its digest, so they go stale when a new
+release is published. `lima_fedora_update.py` refreshes those fields in `lima_fedora.yaml`.
+
+The `CI with Lima VM` workflow runs the same thing on GitHub Actions, but only when
+triggered manually via `workflow_dispatch`.
+
+=== Debugging
+
+`debug/` holds a small node-based setup for reproducing playbook failures locally;
+see `debug/README.md`.
 
 == License
 

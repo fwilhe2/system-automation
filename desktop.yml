@@ -8,6 +8,12 @@
   vars_files:
     - default.config.yml
 
+  pre_tasks:
+    - name: Load Configuration Overrides
+      ansible.builtin.include_vars: "{{ item }}"
+      loop: "{{ query('ansible.builtin.first_found', ['config.yml'], errors='ignore') }}"
+      tags: always
+
   roles:
     # Skipped where Microsoft's repo signing fails modern OpenPGP verifiers:
     # Tumbleweed's rpm rejects the key armor, and the stale arm64 'code'
