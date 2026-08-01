@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+name: Lint (fast, no build)
+on:
+  push:
+  workflow_dispatch:
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # The playbook uses community.general.make, so the collection has to be
+      # present or every make task is reported as an unresolvable module.
+      - uses: ansible/ansible-lint@262624cd0ab22a4221293216856c59671ce7aa5e # v26.6.0
+        with:
+          args: playbook.yaml
+          requirements_file: requirements.yml
+
+      - name: Check formatting
+        run: npx --yes prettier --check README.md "**/*.yml" "**/*.yaml"
