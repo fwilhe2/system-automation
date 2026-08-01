@@ -36,19 +36,17 @@ This project contains multiple playbooks:
 
 `default.config.yml` holds the `username` and the package lists.
 
-To change settings without editing that file, put the keys you want to override into a
-gitignored `config.yml` and pass it as extra vars, which take precedence over everything else:
+To change settings, put the keys you want to override into a file named `config.yml` next to
+it. It is gitignored and picked up automatically by every playbook, so no extra flag is
+needed:
 
+.config.yml
 ----
-ansible-playbook --ask-become-pass --inventory inventory --extra-vars "@config.yml" common.yml
+username: alice
 ----
 
-Only the keys present in `config.yml` are overridden; the rest keep their defaults.
-
-CAUTION: The playbooks also declare `vars_files: - [default.config.yml, config.yml]`, which
-reads as an override but is not one. Ansible uses the first file in such a list that exists,
-and `default.config.yml` always exists, so `config.yml` is never picked up that way. Use
-`--extra-vars` as shown above.
+Only the keys present in `config.yml` are overridden, the rest keep the values from
+`default.config.yml`. Leaving the file out entirely is fine.
 
 == Preparation
 

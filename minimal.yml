@@ -6,7 +6,13 @@
   hosts: all
 
   vars_files:
-    - [default.config.yml, config.yml]
+    - default.config.yml
+
+  pre_tasks:
+    - name: Load Configuration Overrides
+      ansible.builtin.include_vars: "{{ item }}"
+      loop: "{{ query('ansible.builtin.first_found', ['config.yml'], errors='ignore') }}"
+      tags: always
 
   roles:
     - basic

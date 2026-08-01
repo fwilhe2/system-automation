@@ -59,9 +59,13 @@ prerequisites applied before the others. Tagging is inconsistent: most roles rep
 which of the two a role uses before relying on `--tags`.
 
 **Configuration is one variable file.** `default.config.yml` holds `username` plus package
-lists and is overridden by a gitignored `config.yml` via `vars_files: - [default.config.yml,
-config.yml]` — first file found wins. `desktop.yml` currently lists only the default, so
-overrides do not reach it.
+lists, loaded via `vars_files`. Every playbook then has a `Load Configuration Overrides`
+pre-task that `include_vars` a gitignored `config.yml` through
+`query('first_found', ['config.yml'], errors='ignore')`, so the file is optional and only the
+keys it defines are overridden. `include_vars` outranks `vars_files` in precedence, and the
+pre-task is tagged `always` so overrides survive a `--tags` run. Do not fold this back into
+`vars_files: - [default.config.yml, config.yml]`: that form takes the first file that exists,
+which is always the default, so `config.yml` would never be read.
 
 **Everything must work on five package managers and two architectures.** Debian/Ubuntu,
 Fedora, EL, openSUSE and Arch, on amd64 and arm64. The two mechanisms for this:
