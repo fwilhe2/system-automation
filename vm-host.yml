@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: MIT
 
 ---
-- hosts: all
-  name: VM Host
+- name: VM Host
+  hosts: all
 
   vars_files:
     - [default.config.yml, config.yml]

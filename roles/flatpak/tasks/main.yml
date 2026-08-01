@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: MIT
 
 ---
-- import_tasks: dnf.yml
+- name: Set up Flatpak
+  ansible.builtin.import_tasks: dnf.yml
   tags:
     # Can't run in containers
     - notest

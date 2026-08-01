@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: MIT
 
 ---
-- hosts: all
+- name: Clone Git Repositories
+  hosts: all
 
   tasks:
     - name: Create ~/code Directory

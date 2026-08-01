@@ -5,33 +5,37 @@
 
 ---
 - name: Get latest Lima release version
-  uri:
+  ansible.builtin.uri:
     url: "https://api.github.com/repos/lima-vm/lima/releases/latest"
-    return_content: yes
+    return_content: true
     # Authenticate if a token is available; anonymous requests share a
     # 60/hour rate limit per IP, which CI runners regularly exhaust
     headers: "{{ {'Authorization': 'Bearer ' + github_token} if github_token else {} }}"
   vars:
     github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"
-  register: latest_release
+  register: virtualization_latest_release
   changed_when: false
 
 - name: Extract Lima release version
-  set_fact:
-    lima_version: "{{ latest_release.json.tag_name }}"
+  ansible.builtin.set_fact:
+    virtualization_lima_version: "{{ virtualization_latest_release.json.tag_name }}"
   changed_when: false
 
 - name: Download and extract Lima binary
-  get_url:
-    url: "https://github.com/lima-vm/lima/releases/download/{{ lima_version }}/lima-{{ lima_version[1:] }}-{{ ansible_facts['system'] | lower }}-{{ ansible_facts['architecture'] | lower }}.tar.gz"
-    dest: "/tmp/lima-{{ lima_version }}.tar.gz"
+  vars:
+    lima_archive: >-
+      lima-{{ virtualization_lima_version[1:] }}-{{ ansible_facts['system'] | lower }}-{{ ansible_facts['architecture'] | lower }}.tar.gz
+  ansible.builtin.get_url:
+    url: "https://github.com/lima-vm/lima/releases/download/{{ virtualization_lima_version }}/{{ lima_archive }}"
+    dest: "/tmp/lima-{{ virtualization_lima_version }}.tar.gz"
+    mode: "600"
   changed_when: false
 
 - name: Extract Lima binary
   become: true
   become_user: root
   ansible.builtin.unarchive:
-    src: "/tmp/lima-{{ lima_version }}.tar.gz"
+    src: "/tmp/lima-{{ virtualization_lima_version }}.tar.gz"
     dest: "/usr/local"
-    remote_src: yes
+    remote_src: true
   changed_when: false

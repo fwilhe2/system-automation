@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: MIT
 
 ---
-- hosts: all
-  name: Minimal Playbook
+- name: Minimal Playbook
+  hosts: all
 
   vars_files:
     - [default.config.yml, config.yml]

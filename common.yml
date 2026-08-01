@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: MIT
 
 ---
-- hosts: all
-  name: Common Playbook
+- name: Common Playbook
+  hosts: all
 
   vars_files:
     - [default.config.yml, config.yml]

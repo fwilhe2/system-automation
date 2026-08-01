@@ -19,8 +19,14 @@ ansible-playbook --ask-become-pass --inventory inventory desktop.yml --tags fire
 for p in common desktop minimal dev-env vm-host epel snap clone-git-repos; do
   ansible-playbook --inventory inventory --syntax-check "$p.yml"; done
 
-./format-files.sh                    # prettier over **/*.yml (also reformats vendored roles)
+./format-files.sh                    # prettier over **/*.yml, minus .prettierignore
 reuse lint                           # licence headers, enforced by its own workflow
+
+# What the lint workflow runs. The repo is clean at ansible-lint's default
+# profile; keep it that way. Configuration (exclusions, skipped rules and why)
+# lives in .ansible-lint.
+uvx --from ansible-lint ansible-lint
+npx prettier --check "./**/*.yml"
 ```
 
 ### Container tests
@@ -79,7 +85,8 @@ Tag a task `notest` to have CI skip it (`--skip-tags notest`); currently only fl
 
 **Vendored roles.** `greenleader.codium`, `iesplin.vscode`, `gotmax23.epel*`,
 `bodsch.ansible-snapd` and `library/codium-extensions` are third-party copies whose licences
-`README.adoc` documents. Prefer working around them over editing them.
+`README.adoc` documents. Prefer working around them over editing them; they are excluded
+from both `.ansible-lint` and `.prettierignore` so the linters do not push edits into them.
 
 ## Conventions
 

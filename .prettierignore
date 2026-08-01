@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+# Vendored third-party roles, see the licence section of README.adoc.
+# They are upstream copies and are not ours to reformat.
+roles/bodsch.ansible-snapd/
+roles/gotmax23.epel.crb/
+roles/gotmax23.epel.epel/
+roles/gotmax23.epel.epel_next/
+roles/gotmax23.epel.install/
+roles/greenleader.codium/
+roles/iesplin.vscode/

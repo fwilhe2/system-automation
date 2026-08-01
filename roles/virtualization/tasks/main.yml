@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: MIT
 
 ---
-- import_tasks: common.yml
+- name: Install Lima
+  ansible.builtin.import_tasks: common.yml
   tags: virtualization
 
 - name: Install Virtualization Packages

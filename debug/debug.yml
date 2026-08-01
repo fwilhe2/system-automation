@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: MIT
 
 ---
-- hosts: all
+- name: Print Ansible Facts
+  hosts: all
 
   tasks:
     - name: Print all available facts
