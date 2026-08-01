@@ -30,22 +30,41 @@ This project contains multiple playbooks:
 * `desktop.yml`: Setup for desktop computers
 * `vm-host.yml`: Skips development tools, meant for hosts running https://github.com/fwilhe2/dev[dev]
 * `dev-env.yml`: Skips virtualization tools, meant for guests running https://github.com/fwilhe2/dev[dev]
+* `clone-git-repos.yml`: Clones the author's git repositories into `~/code`
+
+== Configuration
+
+`default.config.yml` holds the `username` and the package lists.
+
+To change settings without editing that file, put the keys you want to override into a
+gitignored `config.yml` and pass it as extra vars, which take precedence over everything else:
+
+----
+ansible-playbook --ask-become-pass --inventory inventory --extra-vars "@config.yml" common.yml
+----
+
+Only the keys present in `config.yml` are overridden; the rest keep their defaults.
+
+CAUTION: The playbooks also declare `vars_files: - [default.config.yml, config.yml]`, which
+reads as an override but is not one. Ansible uses the first file in such a list that exists,
+and `default.config.yml` always exists, so `config.yml` is never picked up that way. Use
+`--extra-vars` as shown above.
 
 == Preparation
 
 .Preparation for Fedora
 ----
-sudo dnf install -y ansible curl bash unzip
+sudo dnf install -y git ansible curl bash unzip
 ----
 
 .Preparation for *EL-like
 ----
-sudo dnf install -y ansible-core curl bash unzip
+sudo dnf install -y git ansible-core curl bash unzip
 ----
 
 .Preparation for Ubuntu/Debian
 ----
-sudo apt -y install ansible curl bash unzip
+sudo apt -y install git ansible curl bash unzip
 ----
 
 .Preparation for opensuse
@@ -74,6 +93,30 @@ This requires `ansible`, `curl`, `bash` and `unzip`.
 
 == Setup (traditional)
 
+.Get the sources
+----
+git clone https://github.com/fwilhe2/system-automation.git
+cd system-automation
+----
+
+.Install the collections the roles depend on
+----
+ansible-galaxy install -r requirements.yml
+----
+
+IMPORTANT: This step is not optional. Several roles use modules from `community.general`,
+and the first one of them runs early in the `common` playbook.
+
+.Enable EPEL (*EL-like only) and remove snap (Debian/Ubuntu only)
+----
+ansible-playbook --ask-become-pass --inventory inventory epel.yml
+ansible-playbook --ask-become-pass --inventory inventory snap.yml
+----
+
+Both playbooks are no-ops on distributions they do not apply to, so running them
+unconditionally is safe. On *EL-like systems `epel.yml` has to run before `common.yml`,
+otherwise packages from EPEL are missing.
+
 .Run `common` playbook
 ----
 ansible-playbook --ask-become-pass --inventory inventory common.yml
@@ -82,6 +125,14 @@ ansible-playbook --ask-become-pass --inventory inventory common.yml
 .Run `desktop` playbook
 ----
 ansible-playbook --ask-become-pass --inventory inventory desktop.yml
+----
+
+`run.sh` wraps the same command, taking the playbook name without the `.yml` suffix
+and defaulting to `common`:
+
+----
+./run.sh
+./run.sh desktop
 ----
 
 == Testing
