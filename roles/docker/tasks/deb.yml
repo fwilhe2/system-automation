@@ -34,7 +34,7 @@
 # out in the description, Debian's is the one that still says 'sid'.
 - name: Get codename for the Docker APT repository
   ansible.builtin.set_fact:
-    deb_release_codename: >-
+    docker_release_codename: >-
       {{ docker_development_branch_codename[ansible_facts['distribution']] | default(ansible_facts['distribution_release'])
       if ansible_facts['lsb'].description is search('development branch|sid', ignorecase=True)
       else ansible_facts['distribution_release'] }}
@@ -43,8 +43,8 @@
   ansible.builtin.deb822_repository:
     name: docker
     types: [deb]
-    uris: "https://download.docker.com/linux/{{ansible_facts['distribution']|lower}}"
-    suites: "{{ deb_release_codename }}"
+    uris: "https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}"
+    suites: "{{ docker_release_codename }}"
     components: [stable]
     signed_by: https://download.docker.com/linux/ubuntu/gpg
     state: present
@@ -58,7 +58,7 @@
       - docker-ce
       - docker-ce-cli
       - containerd.io
-    update_cache: yes
+    update_cache: true
   become: true
 
 - name: Start and enable the docker service

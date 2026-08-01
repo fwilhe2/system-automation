@@ -6,7 +6,8 @@
   become: true
 
   tasks:
-    - when:
+    - name: Enable EPEL repositories on RHEL and derivatives
+      when:
         - "ansible_facts['os_family'] == 'RedHat'"
         - "ansible_facts['distribution'] != 'Fedora'"
       block:

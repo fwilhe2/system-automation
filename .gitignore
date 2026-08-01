@@ -3,4 +3,6 @@
 config.yml
 debug/node_modules
 __pycache__
+# Scratch directory ansible-lint creates for the collections it resolves
+.ansible
 

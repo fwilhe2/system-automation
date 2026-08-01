@@ -11,7 +11,7 @@
   ansible.builtin.git:
     repo: https://github.com/fwilhe2/dotfiles.git
     dest: ~/.dotfiles
-  register: clone_dotfiles
+  register: dotfiles_clone
 
 - name: Make `~/.config/Code/User` if not exists
   ansible.builtin.file:
@@ -19,16 +19,19 @@
     state: directory
     mode: "750"
 
-- name: Symlink Dotfiles
+# The install script is deliberately a task rather than a handler: later tasks
+# in this role write into the tree it lays out.
+- name: Symlink Dotfiles # noqa: no-handler
   ansible.builtin.command: ~/.dotfiles/install
-  when: clone_dotfiles.changed
+  when: dotfiles_clone.changed
+  changed_when: true
 
 - name: Copy Package Manager Aliases File
   ansible.builtin.copy:
-    src: "files/{{ package_manager_aliases_file[ansible_facts['os_family']] }}"
+    src: "files/{{ dotfiles_package_manager_aliases_file[ansible_facts['os_family']] }}"
     dest: ~/.dotfiles/aliases_package_manager
     mode: "640"
-  when: ansible_facts['os_family'] in package_manager_aliases_file
+  when: ansible_facts['os_family'] in dotfiles_package_manager_aliases_file
 
 - name: Make Symlink for Package Manager Aliases File
   ansible.builtin.file:

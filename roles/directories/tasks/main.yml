@@ -2,5 +2,6 @@
 # SPDX-License-Identifier: MIT
 
 ---
-- ansible.builtin.import_tasks: directories.yml
+- name: Create home directories
+  ansible.builtin.import_tasks: directories.yml
   tags: directories

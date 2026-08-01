@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 ---
-package_manager_aliases_file:
+dotfiles_package_manager_aliases_file:
   RedHat: dnf-aliases.txt
   Debian: apt-aliases.txt
   Archlinux: pacman-aliases.txt

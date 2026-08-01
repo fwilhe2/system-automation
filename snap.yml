@@ -7,7 +7,8 @@
   become: true
 
   tasks:
-    - when:
+    - name: Purge Snap on Debian and derivatives
+      when:
         - "ansible_facts['os_family'] | lower == 'debian'"
       block:
         - name: Purge Snap

@@ -2,5 +2,6 @@
 # SPDX-License-Identifier: MIT
 
 ---
-- ansible.builtin.import_tasks: bin.yml
+- name: Install `bin` scripts
+  ansible.builtin.import_tasks: bin.yml
   tags: bin
