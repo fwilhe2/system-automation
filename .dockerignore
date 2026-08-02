@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+# The Containerfiles `COPY . /home/user` as root, so anything the build context
+# carries in ends up root-owned and unwritable for the `user` the tests run as.
+# CI builds from a fresh checkout, but a local build otherwise picks up the
+# scratch directories of previous runs -- a root-owned `.ansible` in particular
+# makes every ansible-playbook call fail before it starts.
+# Keep this in sync with .gitignore.
+.ansible
+.ansible-deps
+__pycache__
+.claude
