@@ -104,11 +104,16 @@ to check idempotence, and then assert properties of the resulting system
 (`test/container/run-test.py`).
 
 The convenient way to run one locally is `local-test-env.sh`, which builds the image and
-drops you into it. It uses `podman` when available and `docker` otherwise:
+drops you into it. It takes `distro[:version]` and translates that into the right
+Containerfile and `VERSION` build argument; the version defaults to the first one the CI
+matrix lists for that distro. It uses `podman` when available and `docker` otherwise:
 
 ----
-./local-test-env.sh fedora            # run the test suite in a fedora:devel container
-./local-test-env.sh fedora bash       # ... with a shell instead of the test runner
+./local-test-env.sh                     # fedora:latest, the full test suite
+./local-test-env.sh debian              # debian:testing
+./local-test-env.sh debian:unstable
+./local-test-env.sh fedora:rawhide bash # ... with a shell instead of the test runner
+./local-test-env.sh --help              # the distros and versions on offer
 ----
 
 Inside an interactive container, `python3 test/container/run-playbook.py <name>` applies a
@@ -130,7 +135,7 @@ To build the images by hand, note that the `VERSION` build argument is not unifo
 
 | `Containerfile.fedora`
 | a bare tag, the image name is fixed
-| `latest`, `devel`
+| `latest`, `rawhide`
 
 | `Containerfile.opensuse`
 | a tag below `registry.opensuse.org/opensuse/`
@@ -141,14 +146,25 @@ To build the images by hand, note that the `VERSION` build argument is not unifo
 | --
 |===
 
-.For example, on Debian
+.Test on Debian
 ----
 docker build --build-arg=VERSION=debian:testing -t system-automation-test-debian --file test/container/Containerfile.dpkg .
 docker run --tty --volume $PWD:/mnt system-automation-test-debian
 ----
 
+.Test on Fedora
+----
+docker build --build-arg=VERSION=latest -t system-automation-test-fedora --file test/container/Containerfile.fedora .
+docker run --tty --volume $PWD:/mnt system-automation-test-fedora
+----
+
 NOTE: `Containerfile.archlinux` applies `common.yml` directly instead of running
 `run-test.py`, so the Arch job checks that the playbook succeeds but not the assertions.
+
+NOTE: When running an image with `podman` by hand, add `--env SYSTEMD_OFFLINE=1`, which is
+what `local-test-env.sh` does. None of the images run systemd, and ansible's systemd module
+only notices that by itself under docker; under podman the docker role fails with "Service
+is in unknown state".
 
 === Lima
 

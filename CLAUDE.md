@@ -35,15 +35,23 @@ npx prettier --check "./**/*.yml"
 then asserts properties of the resulting system. A "single test" is one distro image.
 
 ```bash
-./local-test-env.sh fedora           # interactive fedora:devel container
+# local-test-env.sh takes distro[:version] and maps it onto the Containerfile and the
+# VERSION build argument, which is not uniform: dpkg and el take a full image ref,
+# fedora only the tag, opensuse the openSUSE registry path, archlinux takes none.
+# The version defaults to the first one the CI matrix lists for that distro.
+./local-test-env.sh                  # fedora:latest, full suite
+./local-test-env.sh debian:unstable
 ./local-test-env.sh fedora bash      # ...with a shell instead of the test runner
 
-# Other distros: the VERSION arg is not uniform across Containerfiles.
-# dpkg and el take a full image ref, fedora takes only the tag, opensuse takes the
-# openSUSE registry path, archlinux takes none.
+# By hand, which is what CI does:
 docker build --build-arg=VERSION=debian:testing -t sa-deb --file test/container/Containerfile.dpkg .
 docker run --user user --tty --volume $PWD:/mnt sa-deb
 ```
+
+Two things make a local run differ from CI, both handled by `local-test-env.sh`: podman
+needs `--env SYSTEMD_OFFLINE=1` or the docker role fails on the missing init system, and
+`.dockerignore` keeps local scratch directories (`.ansible` above all) out of the build
+context, where `COPY . /home/user` would land them root-owned and break every playbook run.
 
 Inside an interactive container, `python3 test/container/run-playbook.py <name>` applies one
 playbook without the assertions.
