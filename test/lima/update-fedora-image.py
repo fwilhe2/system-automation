@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import json
+import pathlib
 from urllib.request import urlopen
 
 # Update once a new Fedora release is out
@@ -8,7 +9,8 @@ FEDORA_VERSION = '44'
 
 
 RELEASES_URL = 'https://gitlab.com/fedora/websites-apps/fedora-websites/fedora-websites-3.0/-/raw/develop/public/releases.json'
-OUTPUT_FILE = 'lima_fedora.yaml'
+# Next to this script, so it does not matter where it is run from
+OUTPUT_FILE = pathlib.Path(__file__).resolve().parent / 'fedora.yaml'
 
 TEMPLATE = """# SPDX-FileCopyrightText: Florian Wilhelm
 # SPDX-License-Identifier: Apache-2.0

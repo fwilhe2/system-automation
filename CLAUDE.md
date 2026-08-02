@@ -7,49 +7,53 @@ usage; this file covers working *on* the repo.
 
 ## Commands
 
+`ansible.cfg` carries the inventory, the role paths and the collection path, so every
+command below has to run from the repository root and needs no flags of its own.
+
 ```bash
-# Apply a playbook to this machine
-ansible-playbook --ask-become-pass --inventory inventory common.yml
-./run.sh desktop                     # same thing, playbook name without .yml
+ansible-playbook --ask-become-pass site.yml              # everything
+ansible-playbook --ask-become-pass playbooks/common.yml  # just the headless half
+./scripts/run.sh desktop                                 # same, playbook name without .yml
 
-# Iterate on a single role (see the tagging caveat under Architecture)
-ansible-playbook --ask-become-pass --inventory inventory desktop.yml --tags firefox
+# Iterate on a single role: every role is tagged with its own name in the playbook
+ansible-playbook --ask-become-pass playbooks/desktop.yml --tags firefox
 
-# What CI's syntax-check job runs
-for p in common desktop epel snap; do
-  ansible-playbook --inventory inventory --syntax-check "$p.yml"; done
+ansible-playbook --syntax-check site.yml   # what CI's syntax-check job runs
+./scripts/format-files.sh                  # prettier over **/*.yml, minus .prettierignore
+reuse lint                                 # licence headers, enforced by its own workflow
 
-./format-files.sh                    # prettier over **/*.yml, minus .prettierignore
-reuse lint                           # licence headers, enforced by its own workflow
-
-# What the lint workflow runs. The repo is clean at ansible-lint's default
+# What the lint workflow runs. The repo is clean at ansible-lint's production
 # profile; keep it that way. Configuration (exclusions, skipped rules and why)
 # lives in .ansible-lint.
 uvx --from ansible-lint ansible-lint
 npx prettier --check "./**/*.yml"
+shellcheck scripts/*.sh
 ```
 
 ### Container tests
 
-`test/container/run-test.py` is the whole suite: it applies epel, snap, common and desktop,
-then asserts properties of the resulting system. A "single test" is one distro image.
+`test/container/run-test.py` is the runner: it applies common and desktop, each twice, then
+calls the assertions in `test/container/assertions.py`, which are what checks the resulting
+system. A "single test" is one distro image.
 
 ```bash
-# local-test-env.sh takes distro[:version] and maps it onto the Containerfile and the
-# VERSION build argument, which is not uniform: dpkg and el take a full image ref,
-# fedora only the tag, opensuse the openSUSE registry path, archlinux takes none.
-# The version defaults to the first one the CI matrix lists for that distro.
-./local-test-env.sh                  # fedora:latest, full suite
-./local-test-env.sh debian:unstable
-./local-test-env.sh fedora bash      # ...with a shell instead of the test runner
-
-# By hand, which is what CI does:
-docker build --build-arg=VERSION=debian:testing -t sa-deb --file test/container/Containerfile.dpkg .
-docker run --user user --tty --volume $PWD:/mnt sa-deb
+# container-test.sh takes distro[:version] and maps it onto a Containerfile and the
+# image its VERSION build argument names. The version defaults to the first one its
+# --help lists for that distro. CI calls this same script, so a green run here is the
+# run CI makes.
+./scripts/container-test.sh                  # fedora:latest, full suite
+./scripts/container-test.sh debian:unstable
+./scripts/container-test.sh fedora bash      # ...with a shell instead of the test runner
 ```
 
-Two things make a local run differ from CI, both handled by `local-test-env.sh`: podman
-needs `--env SYSTEMD_OFFLINE=1` or the docker role fails on the missing init system, and
+The containers cannot use the inventory from `ansible.cfg`, which has no way to escalate
+privileges. They pass `--inventory test/container/inventory.yml`, which carries the
+throwaway root password, and each Containerfile sets the `ANSIBLE_BECOME_METHOD` that works
+on that distribution - `su` everywhere except openSUSE and Arch, which get passwordless
+sudo instead.
+
+Under podman the run needs `--env SYSTEMD_OFFLINE=1` or the docker role fails on the
+missing init system; `container-test.sh` always passes it, and it is a no-op under docker.
 `.dockerignore` keeps local scratch directories (`.ansible` above all) out of the build
 context, where `COPY . /home/user` would land them root-owned and break every playbook run.
 
@@ -60,52 +64,68 @@ Lima VMs are the higher-fidelity option; see the Testing section of `README.adoc
 
 ## Architecture
 
-**Playbooks compose roles; roles hold all logic.** `common.yml` (headless) and `desktop.yml`
-are role lists. `epel.yml` and `snap.yml` are prerequisites applied before the others.
-Tagging is inconsistent: most roles repeat `tags: <role>` on every task, while `firefox` is
-tagged where the playbook includes it. Check which of the two a role uses before relying on
-`--tags`.
+**Playbooks compose roles; roles hold all logic.** `site.yml` imports
+`playbooks/common.yml` (headless) and `playbooks/desktop.yml`; both are role lists with no
+tasks of their own. Do not add a `tasks:` section to a playbook - make it a role.
 
-**Configuration is one variable file.** `default.config.yml` holds `username` plus package
-lists, loaded via `vars_files`. Every playbook then has a `Load Configuration Overrides`
-pre-task that `include_vars` a gitignored `config.yml` through
-`query('first_found', ['config.yml'], errors='ignore')`, so the file is optional and only the
-keys it defines are overridden. `include_vars` outranks `vars_files` in precedence, and the
-pre-task is tagged `always` so overrides survive a `--tags` run. Do not fold this back into
-`vars_files: - [default.config.yml, config.yml]`: that form takes the first file that exists,
-which is always the default, so `config.yml` would never be read.
+Every role is tagged with its own name where the playbook lists it, which covers all of its
+tasks. Tags do not belong on individual tasks; `notest` (below) is the exception and it also
+goes on the role.
+
+**Configuration is role defaults plus one shared file.** Each role's inputs, package lists
+above all, live in `roles/<role>/defaults/main.yml`. Variables used by more than one role
+live in `playbooks/group_vars/all/defaults.yml`, which currently means `username` alone.
+
+Overrides go in the gitignored `playbooks/group_vars/all/local.yml`: everything in
+`group_vars/all/` is loaded and merged, and group vars outrank role defaults, so only the
+keys that file names are overridden. This is plain variable precedence - it needs no
+`vars_files`, no `include_vars` pre-task and no `tags: always`, and none of those should be
+reintroduced.
+
+Role variables are prefixed with the role name (`directories_paths`, `vscodium_extensions`),
+which ansible-lint's production profile enforces.
 
 **Everything must work on five package managers and two architectures.** Debian/Ubuntu,
-Fedora, EL, openSUSE and Arch, on amd64 and arm64. The two mechanisms for this:
+Fedora, EL, openSUSE and Arch, on amd64 and arm64. The three mechanisms for this:
 
-- Package lists are dicts keyed by `ansible_os_family`, looped over as
-  `basic_packages[ansible_os_family]`, usually with `ignore_errors: true` because names
-  drift between distros.
+- Package lists are dicts keyed by `ansible_facts['os_family']`, installed as one list in
+  one transaction: `name: "{{ basic_packages[ansible_facts['os_family']] }}"`. Do not loop
+  the package module per item, and do not add `ignore_errors` - a name that does not exist
+  on a distribution is a bug in that distribution's list, and CI covers every one of them.
+  Where the family is not fine-grained enough, key by `ansible_facts['distribution']` with
+  the family as the `default()` (see `roles/virtualization/defaults/main.yml`).
 - Where a whole role cannot work somewhere, the `when:` guard lives on the role in the
-  playbook (see the vscode entry in `desktop.yml`), with a comment saying why.
+  playbook (see the vscode entry in `playbooks/desktop.yml`), with a comment saying why.
+- Distro-specific task files (`roles/docker/tasks/deb.yml`) are imported from the role's
+  `main.yml` when the split is too large for a `when:`.
 
-Distro-specific task files (`roles/docker/tasks/deb.yml`) are included from the role's
-`main.yml` when the split is too large for a `when:`.
+`become: true` goes on the role in the playbook when every task in it needs root. Only roles
+that mix privileged and unprivileged tasks (`firefox`, `virtualization`) set it per task.
 
 **Idempotence is a hard contract.** `run_ansible()` in `run-test.py` applies every playbook
 twice and fails unless the second run reports `changed=0`. A task that always reports changed
 turns every container job red. In practice: `ansible.builtin.command` needs `changed_when`,
-downloads and extractions that run unconditionally are marked `changed_when: false`, and
-anything else should be expressed as state rather than as a command.
+and anything else should be expressed as state rather than as a command - see how the
+virtualization role compares `limactl --version` against the latest release tag and skips
+the download entirely instead of masking it with `changed_when: false`. The firefox role
+does use `changed_when: false` on its download and extraction, because the nightly build
+behind the URL can change between the two runs.
 
-Tag a task `notest` to have CI skip it (`--skip-tags notest`); currently only flatpak uses it.
+Tag a role `notest` to have CI skip it (`--skip-tags notest`); currently only flatpak uses it.
 
-**Vendored roles.** `greenleader.codium`, `iesplin.vscode`, `gotmax23.epel*`,
-`bodsch.ansible-snapd` and `library/codium-extensions` are third-party copies whose licences
-`README.adoc` documents. Prefer working around them over editing them; they are excluded
-from both `.ansible-lint` and `.prettierignore` so the linters do not push edits into them.
+**Vendored roles** live in `vendor/roles/` and are on the role path via `ansible.cfg`.
+`greenleader.codium`, `iesplin.vscode`, `gotmax23.epel*` and `bodsch.ansible-snapd` are
+third-party copies whose licences `README.adoc` documents, as is
+`roles/vscodium/library/codium_extensions.py`. Prefer working around them over editing them;
+`vendor/` is excluded from both `.ansible-lint` and `.prettierignore` so the linters do not
+push edits into them.
 
 ## Conventions
 
 - Every file needs SPDX headers (`# SPDX-FileCopyrightText: Florian Wilhelm` /
   `# SPDX-License-Identifier: MIT`), enforced by the REUSE workflow. For formats without
   comments, put the tags in a Jinja comment in the `.j2` template or add a `.license`
-  sidecar; `.reuse/dep5` covers the exceptions.
+  sidecar next to the file (see `CLAUDE.md.license`).
 - YAML is prettier-formatted. `.j2` templates are not.
 - Facts are referenced as `ansible_facts['os_family']`, never as top-level `ansible_*`
   variables, which ansible-core 2.24 removes. Single quotes inside the brackets: the

@@ -19,32 +19,46 @@ image:https://api.reuse.software/badge/github.com/fwilhe2/system-automation[REUS
 
 A set of Ansible playbooks to setup Linux machines.
 
-Four playbooks, applied in this order:
+`site.yml` is everything, in the order it has to run. It is made of two playbooks that can
+also be applied on their own:
 
-* `epel.yml`: adds the Extra Packages for Enterprise Linux repos (*EL-like only)
-* `snap.yml`: removes/disables snap (Debian/Ubuntu only)
-* `common.yml`: software and setup which does not require a graphical environment
-* `desktop.yml`: setup for desktop computers
+* `playbooks/common.yml`: software and setup which does not require a graphical environment
+* `playbooks/desktop.yml`: setup for desktop computers
 
-`epel.yml` and `snap.yml` are no-ops on distributions they do not apply to, so running them
-unconditionally is safe. On *EL-like systems `epel.yml` has to run before `common.yml`,
-otherwise packages from EPEL are missing.
+`common.yml` starts with the repository set-up the rest depends on - the Extra Packages for
+Enterprise Linux repos on *EL-like systems, and removing snap on Debian and Ubuntu. Both are
+no-ops everywhere else.
+
+== Layout
+
+[cols="1,3"]
+|===
+| `site.yml`, `playbooks/` | the plays, which are lists of roles and nothing else
+| `roles/` | all the logic, one role per thing being set up
+| `vendor/roles/` | third-party roles, see the licence section below
+| `inventories/` | the machines to apply this to: `local` is this machine, `lima` the test VMs
+| `test/` | container and VM test setups
+| `scripts/` | the wrappers documented below
+|===
 
 == Configuration
 
-`default.config.yml` holds the `username` and the package lists.
+Every role carries its own defaults in `roles/<role>/defaults/main.yml`, which is where the
+package lists live. The few variables shared by more than one role, `username` above all,
+are in `playbooks/group_vars/all/defaults.yml`.
 
-To change settings, put the keys you want to override into a file named `config.yml` next to
-it. It is gitignored and picked up automatically by every playbook, so no extra flag is
-needed:
+To change any of them, put the keys into `playbooks/group_vars/all/local.yml`. That file is
+gitignored and picked up automatically, so no extra flag is needed:
 
-.config.yml
+.playbooks/group_vars/all/local.yml
 ----
 username: alice
+directories_paths:
+  - "~/code"
 ----
 
-Only the keys present in `config.yml` are overridden, the rest keep the values from
-`default.config.yml`. Leaving the file out entirely is fine.
+Only the keys present in that file are overridden, the rest keep their defaults. Leaving the
+file out entirely is fine.
 
 == Setup
 
@@ -71,27 +85,34 @@ IMPORTANT: The `ansible-galaxy` step is not optional. Several roles use modules 
 
 .Apply the playbooks
 ----
-ansible-playbook --ask-become-pass --inventory inventory epel.yml
-ansible-playbook --ask-become-pass --inventory inventory snap.yml
-ansible-playbook --ask-become-pass --inventory inventory common.yml
-ansible-playbook --ask-become-pass --inventory inventory desktop.yml
+ansible-playbook --ask-become-pass site.yml
+ansible-playbook --ask-become-pass playbooks/common.yml   # just the headless half
 ----
 
-`run.sh` wraps that command, taking the playbook name without the `.yml` suffix and
-defaulting to `common`:
+`ansible.cfg` names the inventory and the role paths, so both commands need no flags - but
+they have to be run from the root of the checkout, which is where `ansible.cfg` is found.
+
+`scripts/run.sh` wraps that, taking the playbook name without the `.yml` suffix and
+defaulting to everything:
 
 ----
-./run.sh
-./run.sh desktop
+./scripts/run.sh
+./scripts/run.sh desktop
+----
+
+Roles are tagged with their own name, so a single one can be applied on its own:
+
+----
+ansible-playbook --ask-become-pass playbooks/desktop.yml --tags firefox
 ----
 
 === Kickstart (experimental)
 
-If you don't mind the `curl | bash` thing, `bootstrap.sh` does the download, the
-`ansible-galaxy` step and `epel`/`snap`/`common` in one go:
+If you don't mind the `curl | bash` thing, `scripts/bootstrap.sh` does the download, the
+`ansible-galaxy` step and the common playbook in one go:
 
 ----
-curl https://raw.githubusercontent.com/fwilhe2/system-automation/main/bootstrap.sh | bash
+curl https://raw.githubusercontent.com/fwilhe2/system-automation/main/scripts/bootstrap.sh | bash
 ----
 
 == Testing
@@ -99,96 +120,70 @@ curl https://raw.githubusercontent.com/fwilhe2/system-automation/main/bootstrap.
 === Containerfile
 
 A Containerfile exists per package manager, and all of them are built and run by the CI
-workflow. They apply `epel.yml`, `snap.yml`, `common.yml` and `desktop.yml`, each one twice
-to check idempotence, and then assert properties of the resulting system
-(`test/container/run-test.py`).
+workflow. They apply `common.yml` and `desktop.yml`, each one twice to check idempotence
+(`test/container/run-test.py`), and then assert properties of the resulting system
+(`test/container/assertions.py`).
 
-The convenient way to run one locally is `local-test-env.sh`, which builds the image and
-drops you into it. It takes `distro[:version]` and translates that into the right
-Containerfile and `VERSION` build argument; the version defaults to the first one the CI
-matrix lists for that distro. It uses `podman` when available and `docker` otherwise:
+`scripts/container-test.sh` builds and runs one of them. The CI workflow calls the same
+script, so a green run here is the run CI makes. It takes `distro[:version]`, where the
+version defaults to the first one listed in its `--help`, and it uses `podman` when
+available and `docker` otherwise:
 
 ----
-./local-test-env.sh                     # fedora:latest, the full test suite
-./local-test-env.sh debian              # debian:testing
-./local-test-env.sh debian:unstable
-./local-test-env.sh fedora:rawhide bash # ... with a shell instead of the test runner
-./local-test-env.sh --help              # the distros and versions on offer
+./scripts/container-test.sh                     # fedora:latest, the full test suite
+./scripts/container-test.sh debian              # debian:testing
+./scripts/container-test.sh debian:unstable
+./scripts/container-test.sh fedora:rawhide bash # ... with a shell instead of the test runner
+./scripts/container-test.sh --help              # the distros and versions on offer
 ----
 
 Inside an interactive container, `python3 test/container/run-playbook.py <name>` applies a
 single playbook without the assertions.
 
-To build the images by hand, note that the `VERSION` build argument is not uniform:
+Every Containerfile takes the image to build on as its `VERSION` build argument, so building
+one by hand is:
 
-[cols="1,2,3"]
-|===
-| Containerfile | `VERSION` is | Example
-
-| `Containerfile.dpkg`
-| a full image reference
-| `debian:testing`, `ubuntu:rolling`
-
-| `Containerfile.el`
-| a full image reference
-| `almalinux:10`
-
-| `Containerfile.fedora`
-| a bare tag, the image name is fixed
-| `latest`, `rawhide`
-
-| `Containerfile.opensuse`
-| a tag below `registry.opensuse.org/opensuse/`
-| `tumbleweed`, `leap:16.0`
-
-| `Containerfile.archlinux`
-| unused, the image is always `archlinux`
-| --
-|===
-
-.Test on Debian
 ----
-docker build --build-arg=VERSION=debian:testing -t system-automation-test-debian --file test/container/Containerfile.dpkg .
-docker run --tty --volume $PWD:/mnt system-automation-test-debian
+docker build --build-arg=VERSION=debian:testing -t system-automation-test --file test/container/Containerfile.dpkg .
+docker run --tty system-automation-test
 ----
 
-.Test on Fedora
-----
-docker build --build-arg=VERSION=latest -t system-automation-test-fedora --file test/container/Containerfile.fedora .
-docker run --tty --volume $PWD:/mnt system-automation-test-fedora
-----
+The containers escalate privileges against `test/container/inventory.yml`, which carries the
+throwaway root password the images are built with, using the method named in each image's
+`ANSIBLE_BECOME_METHOD`.
 
 NOTE: `Containerfile.archlinux` applies `common.yml` directly instead of running
 `run-test.py`, so the Arch job checks that the playbook succeeds but not the assertions.
 
 NOTE: When running an image with `podman` by hand, add `--env SYSTEMD_OFFLINE=1`, which is
-what `local-test-env.sh` does. None of the images run systemd, and ansible's systemd module
+what `container-test.sh` does. None of the images run systemd, and ansible's systemd module
 only notices that by itself under docker; under podman the docker role fails with "Service
 is in unknown state".
 
 === Lima
 
 https://github.com/lima-vm/lima[Lima] is a tool written in go for running virtual machines.
-The `lima_*.yaml` files in the root of this repo are vm definitions for testing this repo:
+`test/lima/` holds vm definitions for testing this repo:
 
 ----
 # boot both fedora and debian
-limactl start --yes lima_fedora.yaml
-limactl start --yes lima_debian.yaml
+limactl start --yes test/lima/fedora.yaml
+limactl start --yes test/lima/debian.yaml
 
 # run the common playbook on both vms
-ansible-playbook --inventory lima-inventory.yaml common.yml
+ansible-playbook --inventory inventories/lima/hosts.yml playbooks/common.yml
 
 # inspect the vms if needed
-limactl shell lima_fedora
-limactl shell lima_debian
+limactl shell fedora
+limactl shell debian
 
 # remove the vms when you're done
-limactl delete -f lima_fedora lima_debian
+limactl delete -f fedora debian
 ----
 
 The vm definitions pin the image location and its digest, so they go stale when a new
-release is published. `lima_fedora_update.py` refreshes those fields in `lima_fedora.yaml`.
+release is published. `test/lima/update-fedora-image.py` refreshes those fields in
+`test/lima/fedora.yaml`.
 
 The `CI with Lima VM` workflow runs the same thing on GitHub Actions, but only when
 triggered manually via `workflow_dispatch`.
@@ -204,22 +199,22 @@ Free use of this software is granted under the terms of the MIT License.
 This project ships the following 3rd party software.
 The copies below have been modified, so they do not match their upstream projects:
 
-https://github.com/green-leader/ansible-role-codium[ansible-role-codium] (`roles/greenleader.codium`)::
+https://github.com/green-leader/ansible-role-codium[ansible-role-codium] (`vendor/roles/greenleader.codium`)::
   Copyright © Sion Fandrick under the _MIT License_
 
-https://github.com/iesplin/ansible-role-vscode[ansible-role-vscode] (`roles/iesplin.vscode`)::
+https://github.com/iesplin/ansible-role-vscode[ansible-role-vscode] (`vendor/roles/iesplin.vscode`)::
   Copyright © iesplin under the _MIT License_
 
-https://github.com/gantsign/ansible-role-visual-studio-code-extensions[ansible-role-visual-studio-code-extensions] (`library/codium-extensions`)::
+https://github.com/gantsign/ansible-role-visual-studio-code-extensions[ansible-role-visual-studio-code-extensions] (`roles/vscodium/library/codium_extensions.py`)::
   Copyright © John Freeman GantSign Ltd. Company No. 06109112 (registered in England) under the _MIT License_
 
-https://git.sr.ht/~gotmax23/ansible-collection-epel[Ansible collection - gotmax23.epel] (`roles/gotmax23.epel*`)::
+https://git.sr.ht/~gotmax23/ansible-collection-epel[Ansible collection - gotmax23.epel] (`vendor/roles/gotmax23.epel*`, `roles/epel`)::
   Copyright © 2022 Maxwell G (@gotmax23) under the _MIT License_
 
-https://github.com/lima-vm/lima[lima - linux virtual machines] (`lima_*yaml`)::
+https://github.com/lima-vm/lima[lima - linux virtual machines] (`test/lima/*.yaml`)::
   Based on examples by Akihiro Suda and https://github.com/lima-vm/lima/graphs/contributors[the lima contributors] under the _Apache-2.0 license_
 
-https://github.com/bodsch/ansible-snapd[Ansible Role: snapd] (`roles/bodsch.ansible-snapd`)::
+https://github.com/bodsch/ansible-snapd[Ansible Role: snapd] (`vendor/roles/bodsch.ansible-snapd`)::
   Copyright © Bodo Schulz under the _BSD-2-Clause License_
 
 == References

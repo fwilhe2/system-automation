@@ -1,0 +1,34 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# Desktop applications that come from the distribution. Firefox has a role of
+# its own because these builds are not the ones this setup runs, and there is
+# no Archlinux entry because the desktop playbook is not applied there.
+#
+# Looked up by distribution first and os_family second, so Fedora and the EL
+# rebuilds can differ.
+desktop_packages:
+  Debian:
+    - keepassxc
+    - libreoffice
+    - libreoffice-help-de
+    - libreoffice-l10n-de
+    - xclip
+  Fedora:
+    - firefox
+    - keepassxc
+    - libreoffice
+    - libreoffice-langpack-de
+    - xclip
+  # RHEL 10 dropped LibreOffice, and so did the rebuilds
+  RedHat:
+    - firefox
+    - keepassxc
+    - xclip
+  Suse:
+    - firefox
+    - keepassxc
+    - libreoffice
+    - libreoffice-l10n-de
+    - xclip

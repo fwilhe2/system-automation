@@ -8,6 +8,10 @@ FROM $VERSION
 ENV TERM=xterm
 ENV DEBIAN_FRONTEND=noninteractive
 
+# The images carry a root account with a throwaway password and no sudo rules,
+# so the test inventory escalates with su
+ENV ANSIBLE_BECOME_METHOD=su
+
 RUN apt-get update && apt-get install -y \
   systemd \
   ansible \
@@ -21,11 +25,6 @@ RUN apt-get update && apt-get install -y \
   && echo "user:x:1001:1001:user:/home/user:/bin/bash" >> /etc/passwd \
   && echo "user:x:1001:" >> /etc/group \
   && chown -R user /home/user
-
-# Install Ansible inventory file.
-# Taken from https://github.com/geerlingguy/docker-ubuntu1804-ansible/blob/97a8d76f87dc4a15e24c88214806448246fbfb98/Dockerfile#L37
-RUN mkdir -p /etc/ansible
-RUN echo "[local]\nlocalhost ansible_connection=local ansible_become_password=toor123" > /etc/ansible/hosts
 
 RUN echo 'root:toor123' | chpasswd
 

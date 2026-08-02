@@ -2,6 +2,55 @@
 # SPDX-License-Identifier: MIT
 
 ---
-- name: Install dotfiles
-  ansible.builtin.import_tasks: dotfiles.yml
-  tags: dotfiles
+- name: Clone `oh-my-zsh` Repository
+  ansible.builtin.git:
+    repo: https://github.com/robbyrussell/oh-my-zsh.git
+    dest: ~/.oh-my-zsh
+
+- name: Clone `dotfiles` Repository
+  ansible.builtin.git:
+    repo: https://github.com/fwilhe2/dotfiles.git
+    dest: ~/.dotfiles
+  register: dotfiles_clone
+
+- name: Make `~/.config/Code/User` if not exists
+  ansible.builtin.file:
+    path: ~/.config/Code/User
+    state: directory
+    mode: "750"
+
+# The install script is deliberately a task rather than a handler: later tasks
+# in this role write into the tree it lays out.
+- name: Symlink Dotfiles # noqa: no-handler
+  ansible.builtin.command: ~/.dotfiles/install
+  when: dotfiles_clone.changed
+  changed_when: true
+
+- name: Copy Package Manager Aliases File
+  ansible.builtin.copy:
+    src: "files/{{ dotfiles_package_manager_aliases_file[ansible_facts['os_family']] }}"
+    dest: ~/.dotfiles/aliases_package_manager
+    mode: "640"
+  when: ansible_facts['os_family'] in dotfiles_package_manager_aliases_file
+
+- name: Make Symlink for Package Manager Aliases File
+  ansible.builtin.file:
+    state: link
+    src: ~/.dotfiles/aliases_package_manager
+    dest: ~/.aliases_package_manager
+    mode: "640"
+
+- name: Make `~/.gitconfig.d` if not exists
+  ansible.builtin.file:
+    path: ~/.gitconfig.d
+    state: directory
+    mode: "750"
+
+# This file is not in the dotfiles, because it is different on private and work computers.
+# I just copy the one with my private address, because I do not install work computers that often.
+- name: Copy Git Configuration for Email Address if not exists
+  ansible.builtin.copy:
+    src: files/git-user-details.txt
+    dest: ~/.gitconfig.d/userdetails
+    force: false
+    mode: "640"

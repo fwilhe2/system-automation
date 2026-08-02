@@ -6,7 +6,6 @@
 # the browser too. What is private is the profile, not the program.
 - name: Ensure /opt/firefox directory exists
   become: true
-  become_user: root
   ansible.builtin.file:
     path: "/opt/firefox"
     state: directory
@@ -32,7 +31,6 @@
 
 - name: Ensure Firefox directory exists
   become: true
-  become_user: root
   ansible.builtin.file:
     path: "/opt/firefox/firefox-{{ item.id }}/"
     state: directory
@@ -45,7 +43,6 @@
 
 - name: Extract Firefox
   become: true
-  become_user: root
   ansible.builtin.unarchive:
     src: "/tmp/firefox-{{ item.id }}-latest.tar.xz"
     dest: "/opt/firefox/firefox-{{ item.id }}/"
@@ -73,7 +70,6 @@
 # profile. This is what installs add-ons and locks preferences.
 - name: Configure Firefox enterprise policies
   become: true
-  become_user: root
   ansible.builtin.template:
     src: templates/policies.json.j2
     dest: "/opt/firefox/firefox-{{ item.id }}/firefox/distribution/policies.json"

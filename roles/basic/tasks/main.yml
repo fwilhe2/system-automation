@@ -3,25 +3,18 @@
 
 ---
 - name: Install Basic Packages
-  become: true
-  become_user: root
   ansible.builtin.package:
     state: present
-    name: "{{ item }}"
-  loop: "{{ basic_packages[ansible_facts['os_family']] }}"
-  tags: basic
-  ignore_errors: true
+    name: >-
+      {{ basic_packages[ansible_facts['distribution']]
+      | default(basic_packages[ansible_facts['os_family']]) }}
 
 - name: Set vim as default editor
-  become: true
   community.general.alternatives:
     name: editor
     path: /usr/bin/vim
   when: ansible_facts['os_family'] == 'Debian'
-  tags: basic
 
 - name: Configure user
-  become: true
   ansible.builtin.user:
     name: "{{ username }}"
-  tags: basic

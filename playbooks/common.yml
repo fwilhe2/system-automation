@@ -1,0 +1,40 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- name: Common Playbook
+  hosts: all
+
+  roles:
+    # Repository set-up first: EPEL carries packages the roles below install on
+    # EL-like systems, and snap is removed before anything can pull it back in.
+    # Both are no-ops everywhere else.
+    - role: epel
+      tags: [epel]
+
+    - role: snapd_purge
+      tags: [snapd_purge]
+
+    - role: basic
+      become: true
+      tags: [basic]
+
+    - role: dotfiles
+      tags: [dotfiles]
+
+    - role: bin
+      tags: [bin]
+
+    - role: directories
+      tags: [directories]
+
+    - role: docker
+      become: true
+      tags: [docker]
+
+    - role: development
+      become: true
+      tags: [development]
+
+    - role: virtualization
+      tags: [virtualization]

@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# Variables shared by more than one role. Everything else lives in the
+# defaults/ of the role that consumes it.
+#
+# To override anything - these, or any role default - put the keys into
+# `local.yml` next to this file. That file is gitignored, is picked up
+# automatically, and only the keys it names are overridden. Everything in this
+# directory is loaded in alphabetical order and the last file wins, which is
+# why this one is not called something that sorts after `local`.
+
+# The account the playbooks set up. It is created if it does not exist.
+username: florian

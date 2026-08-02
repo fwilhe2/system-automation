@@ -3,28 +3,21 @@
 
 ---
 - name: Install Development Packages
-  become: true
-  become_user: root
   ansible.builtin.package:
     state: present
     name: "{{ development_packages[ansible_facts['os_family']] }}"
-  tags: development
 
 - name: Install System Development Packages
-  become: true
-  become_user: root
   ansible.builtin.package:
     state: present
-    name: "{{ system_development_packages[ansible_facts['distribution']] | default(system_development_packages[ansible_facts['os_family']]) }}"
-  tags: development
-  when: ansible_facts['os_family'] == 'Debian' or ansible_facts['os_family'] == 'RedHat'
+    name: >-
+      {{ development_system_packages[ansible_facts['distribution']]
+      | default(development_system_packages[ansible_facts['os_family']]) }}
+  when: ansible_facts['os_family'] in ['Debian', 'RedHat']
 
 - name: Install System Development Packages (Suse)
-  become: true
-  become_user: root
   community.general.zypper:
     state: present
     name: devel_basis
     type: pattern
-  tags: development
   when: ansible_facts['os_family'] == 'Suse'

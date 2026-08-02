@@ -3,9 +3,13 @@
 
 ARG VERSION
 
-FROM registry.opensuse.org/opensuse/$VERSION
+FROM $VERSION
 
 ENV TERM=xterm
+
+# This image grants the test user passwordless sudo below, which is the
+# escalation that works here
+ENV ANSIBLE_BECOME_METHOD=sudo
 
 # codecs.opensuse.org holds nothing this image needs and is regularly
 # unreachable, and a single skipped repository is enough to make zypper exit
@@ -29,11 +33,6 @@ RUN for attempt in 1 2 3; do \
   && mkdir -p /home/user && echo "user:x:1001:1001:user:/home/user:/bin/bash" >> /etc/passwd \
   && chown -R user /home/user \
   && echo 'user ALL=(ALL:ALL) NOPASSWD:ALL' >> /etc/sudoers
-
-# Install Ansible inventory file.
-# Taken from https://github.com/geerlingguy/docker-fedora33-ansible/blob/bd54ebebc836c10e76938a7d52e2386b7f16960e/Dockerfile#L35
-RUN mkdir -p /etc/ansible
-RUN echo -e '[local]\nlocalhost ansible_connection=local ansible_become_method=sudo ansible_become_password=toor123' > /etc/ansible/hosts
 
 COPY . /home/user
 

@@ -17,8 +17,8 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      # No `args:` on purpose: ansible-lint then discovers the playbooks itself,
-      # which is what we want with nine of them in the repository root.
+      # No `args:` on purpose: ansible-lint then discovers the playbooks and
+      # roles itself.
       # The playbooks use community.general, so the collection has to be present
       # or every task using it is reported as an unresolvable module.
       - uses: ansible/ansible-lint@262624cd0ab22a4221293216856c59671ce7aa5e # v26.6.0
@@ -27,3 +27,6 @@ jobs:
 
       - name: Check formatting
         run: npx --yes prettier --check "./**/*.yml"
+
+      - name: Check shell scripts
+        run: shellcheck scripts/*.sh

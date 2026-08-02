@@ -1,0 +1,8 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+flatpak_packages:
+  - com.google.Chrome
+  - org.mozilla.firefox
+  - org.videolan.VLC

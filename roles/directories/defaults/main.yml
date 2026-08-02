@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+directories_paths:
+  - "~/temp"
+  - "~/code"
+  - "~/code/scratch"
+  - "~/code/fwilhe2"
+  - "~/no_backup"

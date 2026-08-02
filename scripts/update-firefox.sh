@@ -9,4 +9,6 @@
 set -o nounset
 set -o errexit
 
-ansible-playbook --ask-become-pass --inventory inventory desktop.yml --tags firefox
+cd "$(dirname "$0")/.."
+
+ansible-playbook --ask-become-pass playbooks/desktop.yml --tags firefox

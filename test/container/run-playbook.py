@@ -17,13 +17,14 @@ def ansible_playbook_executable():
 
 def playbook_path():
     if len(sys.argv) > 1:
-        return f"/home/user/{sys.argv[1]}.yml"
-    return "/home/user/common.yml"
+        return f"playbooks/{sys.argv[1]}.yml"
+    return "playbooks/common.yml"
 
 
 subprocess.run([
     ansible_playbook_executable(),
-    "--become-method=su",
+    "--inventory",
+    "test/container/inventory.yml",
     # "--skip-tags",
     # "notest",
     "-vv",

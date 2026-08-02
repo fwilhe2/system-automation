@@ -1,9 +1,11 @@
 # SPDX-FileCopyrightText: Florian Wilhelm
 # SPDX-License-Identifier: MIT
-config.yml
+
+# Local variable overrides, loaded automatically next to the committed defaults
+playbooks/group_vars/all/local.yml
 __pycache__
 # Scratch directory ansible-lint creates for the collections it resolves
 .ansible
-# Collections installed locally via `ansible-galaxy install -p .ansible-deps`
+# Collections installed here by `ansible-galaxy install -r requirements.yml`,
+# see collections_path in ansible.cfg
 .ansible-deps
-
