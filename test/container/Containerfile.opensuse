@@ -7,9 +7,25 @@ FROM registry.opensuse.org/opensuse/$VERSION
 
 ENV TERM=xterm
 
+# codecs.opensuse.org holds nothing this image needs and is regularly
+# unreachable, and a single skipped repository is enough to make zypper exit
+# 106 even when every package installed. The alias differs between Tumbleweed
+# and Leap, so name both: zypper warns about the one that is not there and
+# still succeeds.
+RUN zypper --non-interactive removerepo repo-openh264 openSUSE:repo-openh264
+
+# download.opensuse.org hands out mirrors that intermittently 404 or refuse the
+# connection, which failed whole CI runs for no reason of ours, so retry before
+# giving up.
 # gawk is listed explicitly so zypper does not pick busybox-gawk as dependency
 # provider, which conflicts with the devel_basis pattern installed later
-RUN zypper --non-interactive install git ansible curl unzip bash python3-distro shadow sudo gawk \
+RUN for attempt in 1 2 3; do \
+  zypper --non-interactive refresh \
+  && zypper --non-interactive install git ansible curl unzip bash python3-distro shadow sudo gawk \
+  && break; \
+  [ "$attempt" = 3 ] && exit 1; \
+  sleep 20; \
+  done \
   && mkdir -p /home/user && echo "user:x:1001:1001:user:/home/user:/bin/bash" >> /etc/passwd \
   && chown -R user /home/user \
   && echo 'user ALL=(ALL:ALL) NOPASSWD:ALL' >> /etc/sudoers
