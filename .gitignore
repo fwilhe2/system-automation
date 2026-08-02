@@ -1,8 +1,9 @@
 # SPDX-FileCopyrightText: Florian Wilhelm
 # SPDX-License-Identifier: MIT
 config.yml
-debug/node_modules
 __pycache__
 # Scratch directory ansible-lint creates for the collections it resolves
 .ansible
+# Collections installed locally via `ansible-galaxy install -p .ansible-deps`
+.ansible-deps
 
