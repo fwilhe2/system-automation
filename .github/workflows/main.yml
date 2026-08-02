@@ -103,7 +103,7 @@ jobs:
           python-version: "3.x"
       - run: pip3 install ansible
       - run: |
-          for playbook in common.yml desktop.yml minimal.yml dev-env.yml vm-host.yml epel.yml snap.yml clone-git-repos.yml; do
+          for playbook in common.yml desktop.yml epel.yml snap.yml; do
             ansible-playbook --inventory inventory --syntax-check "$playbook"
           done
 

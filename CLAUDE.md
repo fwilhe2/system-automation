@@ -16,7 +16,7 @@ ansible-playbook --ask-become-pass --inventory inventory common.yml
 ansible-playbook --ask-become-pass --inventory inventory desktop.yml --tags firefox
 
 # What CI's syntax-check job runs
-for p in common desktop minimal dev-env vm-host epel snap clone-git-repos; do
+for p in common desktop epel snap; do
   ansible-playbook --inventory inventory --syntax-check "$p.yml"; done
 
 ./format-files.sh                    # prettier over **/*.yml, minus .prettierignore
@@ -52,11 +52,11 @@ Lima VMs are the higher-fidelity option; see the Testing section of `README.adoc
 
 ## Architecture
 
-**Playbooks compose roles; roles hold all logic.** `common.yml` (headless), `desktop.yml`,
-`minimal.yml`, `vm-host.yml` and `dev-env.yml` are role lists. `epel.yml` and `snap.yml` are
-prerequisites applied before the others. Tagging is inconsistent: most roles repeat
-`tags: <role>` on every task, while `firefox` is tagged where the playbook includes it. Check
-which of the two a role uses before relying on `--tags`.
+**Playbooks compose roles; roles hold all logic.** `common.yml` (headless) and `desktop.yml`
+are role lists. `epel.yml` and `snap.yml` are prerequisites applied before the others.
+Tagging is inconsistent: most roles repeat `tags: <role>` on every task, while `firefox` is
+tagged where the playbook includes it. Check which of the two a role uses before relying on
+`--tags`.
 
 **Configuration is one variable file.** `default.config.yml` holds `username` plus package
 lists, loaded via `vars_files`. Every playbook then has a `Load Configuration Overrides`

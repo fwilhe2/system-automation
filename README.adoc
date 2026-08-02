@@ -19,18 +19,16 @@ image:https://api.reuse.software/badge/github.com/fwilhe2/system-automation[REUS
 
 A set of Ansible playbooks to setup Linux machines.
 
-== Project Layout
+Four playbooks, applied in this order:
 
-This project contains multiple playbooks:
+* `epel.yml`: adds the Extra Packages for Enterprise Linux repos (*EL-like only)
+* `snap.yml`: removes/disables snap (Debian/Ubuntu only)
+* `common.yml`: software and setup which does not require a graphical environment
+* `desktop.yml`: setup for desktop computers
 
-* `epel.yml`: Helper to add the Extra Packages for Enterprise Linux repos
-* `snap.yml`: Remove/disable snap
-* `common.yml`: Software and setup which does not require a graphical environment
-* `minimal.yml`: Subset of the common playbook to get a nice cli environment without too many packages
-* `desktop.yml`: Setup for desktop computers
-* `vm-host.yml`: Skips development tools, meant for hosts running https://github.com/fwilhe2/dev[dev]
-* `dev-env.yml`: Skips virtualization tools, meant for guests running https://github.com/fwilhe2/dev[dev]
-* `clone-git-repos.yml`: Clones the author's git repositories into `~/code`
+`epel.yml` and `snap.yml` are no-ops on distributions they do not apply to, so running them
+unconditionally is safe. On *EL-like systems `epel.yml` has to run before `common.yml`,
+otherwise packages from EPEL are missing.
 
 == Configuration
 
@@ -48,89 +46,52 @@ username: alice
 Only the keys present in `config.yml` are overridden, the rest keep the values from
 `default.config.yml`. Leaving the file out entirely is fine.
 
-== Preparation
+== Setup
 
-.Preparation for Fedora
-----
-sudo dnf install -y git ansible curl bash unzip
-----
+Everything below needs `git`, `ansible`, `curl`, `bash` and `unzip` installed:
 
-.Preparation for *EL-like
-----
-sudo dnf install -y git ansible-core curl bash unzip
-----
+[cols="1,3"]
+|===
+| Fedora | `sudo dnf install -y git ansible curl bash unzip`
+| *EL-like | `sudo dnf install -y git ansible-core curl bash unzip`
+| Ubuntu/Debian | `sudo apt -y install git ansible curl bash unzip`
+| openSUSE | `sudo zypper --non-interactive install git ansible curl unzip bash`
+| Arch Linux | `sudo pacman --sync --refresh --noconfirm ansible curl bash unzip git`
+|===
 
-.Preparation for Ubuntu/Debian
-----
-sudo apt -y install git ansible curl bash unzip
-----
-
-.Preparation for opensuse
-----
-sudo zypper --non-interactive install git ansible curl unzip bash
-----
-
-.Preparation for Archlinux
-----
-sudo pacman --sync --refresh --noconfirm ansible curl bash unzip git
-----
-
-== Kickstart (experimental)
-
-If you don't mind the `curl | bash` thing, you might try running the playbook directly via:
-
-----
-# Common playbook
-curl https://raw.githubusercontent.com/fwilhe2/system-automation/main/bootstrap.sh | bash
-
-# Minimal playbook
-curl https://raw.githubusercontent.com/fwilhe2/system-automation/main/bootstrap-minimal.sh | bash
-----
-
-This requires `ansible`, `curl`, `bash` and `unzip`.
-
-== Setup (traditional)
-
-.Get the sources
+.Get the sources and the collections the roles depend on
 ----
 git clone https://github.com/fwilhe2/system-automation.git
 cd system-automation
-----
-
-.Install the collections the roles depend on
-----
 ansible-galaxy install -r requirements.yml
 ----
 
-IMPORTANT: This step is not optional. Several roles use modules from `community.general`,
-and the first one of them runs early in the `common` playbook.
+IMPORTANT: The `ansible-galaxy` step is not optional. Several roles use modules from
+`community.general`, and the first one of them runs early in the `common` playbook.
 
-.Enable EPEL (*EL-like only) and remove snap (Debian/Ubuntu only)
+.Apply the playbooks
 ----
 ansible-playbook --ask-become-pass --inventory inventory epel.yml
 ansible-playbook --ask-become-pass --inventory inventory snap.yml
-----
-
-Both playbooks are no-ops on distributions they do not apply to, so running them
-unconditionally is safe. On *EL-like systems `epel.yml` has to run before `common.yml`,
-otherwise packages from EPEL are missing.
-
-.Run `common` playbook
-----
 ansible-playbook --ask-become-pass --inventory inventory common.yml
-----
-
-.Run `desktop` playbook
-----
 ansible-playbook --ask-become-pass --inventory inventory desktop.yml
 ----
 
-`run.sh` wraps the same command, taking the playbook name without the `.yml` suffix
-and defaulting to `common`:
+`run.sh` wraps that command, taking the playbook name without the `.yml` suffix and
+defaulting to `common`:
 
 ----
 ./run.sh
 ./run.sh desktop
+----
+
+=== Kickstart (experimental)
+
+If you don't mind the `curl | bash` thing, `bootstrap.sh` does the download, the
+`ansible-galaxy` step and `epel`/`snap`/`common` in one go:
+
+----
+curl https://raw.githubusercontent.com/fwilhe2/system-automation/main/bootstrap.sh | bash
 ----
 
 == Testing
@@ -180,16 +141,10 @@ To build the images by hand, note that the `VERSION` build argument is not unifo
 | --
 |===
 
-.Test on Debian
+.For example, on Debian
 ----
 docker build --build-arg=VERSION=debian:testing -t system-automation-test-debian --file test/container/Containerfile.dpkg .
 docker run --tty --volume $PWD:/mnt system-automation-test-debian
-----
-
-.Test on Fedora
-----
-docker build --build-arg=VERSION=latest -t system-automation-test-fedora --file test/container/Containerfile.fedora .
-docker run --tty --volume $PWD:/mnt system-automation-test-fedora
 ----
 
 NOTE: `Containerfile.archlinux` applies `common.yml` directly instead of running
@@ -198,10 +153,8 @@ NOTE: `Containerfile.archlinux` applies `common.yml` directly instead of running
 === Lima
 
 https://github.com/lima-vm/lima[Lima] is a tool written in go for running virtual machines.
+The `lima_*.yaml` files in the root of this repo are vm definitions for testing this repo:
 
-Files in the root of this repo named like `lima_*.yaml` contain vm definitions for testing this repo.
-
-.Running the playbook in vms using lima
 ----
 # boot both fedora and debian
 limactl start --yes lima_fedora.yaml
@@ -223,11 +176,6 @@ release is published. `lima_fedora_update.py` refreshes those fields in `lima_fe
 
 The `CI with Lima VM` workflow runs the same thing on GitHub Actions, but only when
 triggered manually via `workflow_dispatch`.
-
-=== Debugging
-
-`debug/` holds a small node-based setup for reproducing playbook failures locally;
-see `debug/README.md`.
 
 == License
 
