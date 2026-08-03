@@ -7,7 +7,14 @@
 # Recent Firefox versions relocate the shared root to ~/.config/mozilla/firefox
 # on machines without an existing ~/.mozilla, which is another reason to pass an
 # explicit path instead of a profile name.
-firefox_profile_root: "{{ ansible_facts['env'].HOME }}/.local/share/firefox-profiles"
+#
+# The `~` is expanded by the file module, in the account the unprivileged tasks
+# run as, and the role reads the absolute path back off that task. Deriving it
+# from ansible_facts['env'].HOME instead pointed the profiles at /root: the env
+# facts belong to whichever account gathered them last, and a role that
+# escalates and re-gathers facts leaves root's environment behind for every
+# later role.
+firefox_profile_root: "~/.local/share/firefox-profiles"
 
 # The names download.mozilla.org uses for the Linux builds it ships. Mozilla
 # publishes these channels for x86_64 and arm64 only, so an unknown

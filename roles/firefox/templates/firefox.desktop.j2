@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 {% set binary = "/opt/firefox/firefox-" ~ item.id ~ "/firefox/firefox" %}
-{% set profile = firefox_profile_root ~ "/" ~ item.id %}
+{% set profile = firefox_profile_dir.path ~ "/" ~ item.id %}
 {# MOZ_APP_REMOTINGNAME sets both the Wayland app_id and the DBus remote name, #}
 {# so the window matches StartupWMClass and this channel never remote-controls #}
 {# an already running Firefox of a different channel. --name does the same for X11. #}

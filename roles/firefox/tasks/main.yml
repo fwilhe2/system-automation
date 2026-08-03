@@ -52,13 +52,24 @@
     label: "{{ item.display_name }}"
   changed_when: false
 
+# The desktop entry needs the profile path spelled out - Exec is not shell
+# parsed, so neither `~` nor $HOME survives into it. The file module returns the
+# path it acted on with the `~` already expanded, in the account this task runs
+# as, so registering it here is what resolves the home directory.
+- name: Ensure Firefox profile root exists
+  ansible.builtin.file:
+    path: "{{ firefox_profile_root }}"
+    state: directory
+    mode: "0700"
+  register: firefox_profile_dir
+
 # Firefox refuses to start on a --profile path that does not exist yet (it opens
 # the profile manager and waits), but it happily populates an existing empty
 # directory. Creating the directory here is all the "profile creation" that is
 # needed - no -CreateProfile, no profiles.ini entry, no manual step.
 - name: Ensure Firefox profile directory exists
   ansible.builtin.file:
-    path: "{{ firefox_profile_root }}/{{ item.id }}"
+    path: "{{ firefox_profile_dir.path }}/{{ item.id }}"
     state: directory
     mode: "0700"
   loop: "{{ firefox_channels }}"
