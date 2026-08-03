@@ -76,7 +76,16 @@ CLI=${CONTAINER_CLI:-docker}
 # which match there -- so it runs systemctl for real and the docker role fails
 # with "Service is in unknown state". SYSTEMD_OFFLINE puts both runtimes on the
 # path docker takes by itself.
-RUN_ARGS=(--rm --tty --privileged --env SYSTEMD_OFFLINE=1)
+#
+# Do not add --privileged. The fedora and el images build pam and sudo against
+# libaudit, and in a privileged container the audit netlink socket reaches the
+# host kernel, where PAM's account lookup fails: every privileged task dies with
+# "Premature end of stream waiting for become success" and either "su:
+# Authentication failure" or "PAM account management error". The dpkg images are
+# unaffected because Debian does not link pam_unix against libaudit. It only
+# shows on GitHub's runners, never on a local docker or podman host with no
+# audit daemon running, so a green local run does not clear this one.
+RUN_ARGS=(--rm --tty --env SYSTEMD_OFFLINE=1)
 
 # Interactive only when there is a terminal to attach to, so this also works
 # as a CI step

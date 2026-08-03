@@ -52,6 +52,12 @@ throwaway root password, and each Containerfile sets the `ANSIBLE_BECOME_METHOD`
 on that distribution - `su` everywhere except openSUSE and Arch, which get passwordless
 sudo instead.
 
+The run must not be `--privileged`. The fedora and el images build pam and sudo against
+libaudit, and in a privileged container the audit netlink socket reaches the host kernel,
+where PAM's account lookup fails and every privileged task dies at the first `become`. This
+only shows on GitHub's runners, never on a local host with no audit daemon running, so a
+green local run does not clear it.
+
 Under podman the run needs `--env SYSTEMD_OFFLINE=1` or the docker role fails on the
 missing init system; `container-test.sh` always passes it, and it is a no-op under docker.
 `.dockerignore` keeps local scratch directories (`.ansible` above all) out of the build
