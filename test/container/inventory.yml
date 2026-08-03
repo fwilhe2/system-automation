@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# The inventory the container tests run against. It exists because ansible.cfg
+# points at the local one, which has no way to escalate privileges: the images
+# have no sudo rules for the test user, only a root account with a throwaway
+# password. Each Containerfile picks the escalation method that works on that
+# distribution via ANSIBLE_BECOME_METHOD.
+all:
+  hosts:
+    localhost:
+      ansible_connection: local
+      ansible_python_interpreter: /usr/bin/python3
+      ansible_become_password: toor123

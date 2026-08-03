@@ -32,6 +32,6 @@ jobs:
         run: |
           set -eux
 
-          cat lima_${{ matrix.distro }}.yaml | limactl create --name=default -
+          cat test/lima/${{ matrix.distro }}.yaml | limactl create --name=default -
           limactl start
-          lima ansible-playbook --inventory inventory common.yml
+          lima ansible-playbook playbooks/common.yml

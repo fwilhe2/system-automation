@@ -16,7 +16,6 @@
       - docker.io
       - containerd
       - runc
-  become: true
 
 - name: Set up the repository
   ansible.builtin.apt:
@@ -27,7 +26,6 @@
       - gnupg
       # Feeds ansible_facts['lsb'], which the codename below reads
       - lsb-release
-  become: true
 
 # Docker publishes no packages for the development branches, so those fall back
 # to the newest codename it does publish. Ubuntu calls its development branch
@@ -49,7 +47,6 @@
     signed_by: https://download.docker.com/linux/ubuntu/gpg
     state: present
     enabled: true
-  become: true
 
 - name: Install Docker Engine
   ansible.builtin.apt:
@@ -59,33 +56,28 @@
       - docker-ce-cli
       - containerd.io
     update_cache: true
-  become: true
 
 - name: Start and enable the docker service
   ansible.builtin.systemd:
     name: docker
     state: started
     enabled: true
-  become: true
 
 - name: Ensure group "docker" exists with correct gid
   ansible.builtin.group:
     name: docker
     state: present
     gid: 1750
-  become: true
 
 - name: Add user to group
   ansible.builtin.user:
     name: "{{ username }}"
     groups: docker
     append: true
-  become: true
 
 - name: Install podman
   ansible.builtin.apt:
     state: present
     name: podman
-  become: true
   # TODO: Update once focal is not required anymore
   when: ansible_facts['distribution_release'] != "focal"

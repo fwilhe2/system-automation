@@ -3,19 +3,18 @@
 
 ARG VERSION
 
-FROM fedora:$VERSION
+FROM $VERSION
 
 ENV TERM=xterm
 
-# util-linux provides su, which the test runner uses via --become-method=su
+# The images carry a root account with a throwaway password and no sudo rules,
+# so the test inventory escalates with su
+ENV ANSIBLE_BECOME_METHOD=su
+
+# util-linux provides su
 RUN dnf --assumeyes update && dnf --assumeyes install git ansible curl unzip bash python3-distro util-linux \
   && mkdir -p /home/user && echo "user:x:1001:1001:user:/home/user:/bin/bash" >> /etc/passwd \
   && chown -R user /home/user
-
-# Install Ansible inventory file.
-# Taken from https://github.com/geerlingguy/docker-fedora33-ansible/blob/bd54ebebc836c10e76938a7d52e2386b7f16960e/Dockerfile#L35
-RUN mkdir -p /etc/ansible
-RUN echo -e '[local]\nlocalhost ansible_connection=local ansible_become_password=toor123' > /etc/ansible/hosts
 
 COPY . /home/user
 

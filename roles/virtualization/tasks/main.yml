@@ -2,14 +2,55 @@
 # SPDX-License-Identifier: MIT
 
 ---
+# Based on 'Manual installation steps' from https://github.com/lima-vm/lima/blob/master/README.md#installation
+- name: Get the installed Lima version
+  ansible.builtin.command: limactl --version
+  register: virtualization_installed_lima
+  changed_when: false
+  failed_when: false
+
+- name: Get latest Lima release version
+  ansible.builtin.uri:
+    url: "https://api.github.com/repos/lima-vm/lima/releases/latest"
+    return_content: true
+    # Authenticate if a token is available; anonymous requests share a
+    # 60/hour rate limit per IP, which CI runners regularly exhaust
+    headers: "{{ {'Authorization': 'Bearer ' + github_token} if github_token else {} }}"
+  vars:
+    github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"
+  register: virtualization_latest_release
+  changed_when: false
+
+- name: Extract Lima release version
+  ansible.builtin.set_fact:
+    virtualization_lima_version: "{{ virtualization_latest_release.json.tag_name }}"
+
+# limactl prints 'limactl version 1.2.3' where the release is tagged 'v1.2.3'.
+# Comparing the two is what makes this role idempotent: it downloads, and
+# reports a change, only when it really installs a different Lima.
 - name: Install Lima
-  ansible.builtin.import_tasks: common.yml
-  tags: virtualization
+  when: virtualization_lima_version[1:] not in virtualization_installed_lima.stdout | default('')
+  vars:
+    virtualization_lima_archive: >-
+      lima-{{ virtualization_lima_version[1:] }}-{{ ansible_facts['system'] | lower }}-{{ ansible_facts['architecture'] | lower }}.tar.gz
+  block:
+    - name: Download Lima
+      ansible.builtin.get_url:
+        url: "https://github.com/lima-vm/lima/releases/download/{{ virtualization_lima_version }}/{{ virtualization_lima_archive }}"
+        dest: "/tmp/{{ virtualization_lima_archive }}"
+        mode: "600"
+
+    - name: Extract Lima binary
+      become: true
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ virtualization_lima_archive }}"
+        dest: "/usr/local"
+        remote_src: true
 
 - name: Install Virtualization Packages
   become: true
-  become_user: root
   ansible.builtin.package:
     state: present
-    name: "{{ virtualization_packages[ansible_facts['distribution']] | default(virtualization_packages[ansible_facts['os_family']]) }}"
-  tags: virtualization
+    name: >-
+      {{ virtualization_packages[ansible_facts['distribution']]
+      | default(virtualization_packages[ansible_facts['os_family']]) }}

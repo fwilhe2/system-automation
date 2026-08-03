@@ -1,0 +1,113 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# Installed as one transaction per distribution, so every name listed here has
+# to exist on that distribution - a typo fails the run instead of being
+# silently skipped. Names drift between distributions, which is why the lists
+# are not simply the same list five times.
+#
+# Looked up by distribution first and os_family second, so Fedora and the EL
+# rebuilds can differ: EPEL carries neither httpie nor the_silver_searcher.
+basic_packages:
+  Debian:
+    - apg
+    - bridge-utils
+    - curl
+    - git
+    - htop
+    - httpie
+    - jq
+    - make
+    - mc
+    - nala
+    - net-tools
+    - python-is-python3
+    - python3
+    - python3-lxml
+    - rdiff-backup
+    - restic
+    - rsync
+    - silversearcher-ag
+    - tealdeer
+    - unzip
+    - vim
+    - yapf3
+    - zip
+    - zsh
+  Fedora:
+    - apg
+    - bridge-utils
+    - bzip2
+    - curl
+    - git
+    - htop
+    - httpie
+    - jq
+    - make
+    - mc
+    - net-tools
+    - python3-lxml
+    - rdiff-backup
+    - restic
+    - rsync
+    - the_silver_searcher
+    - tldr
+    - unzip
+    - vim
+    - xz
+    - zsh
+  # The EL rebuilds: the Fedora list without the two packages EPEL does not have
+  RedHat:
+    - apg
+    - bridge-utils
+    - bzip2
+    - curl
+    - git
+    - htop
+    - jq
+    - make
+    - mc
+    - net-tools
+    - python3-lxml
+    - rdiff-backup
+    - restic
+    - rsync
+    - tldr
+    - unzip
+    - vim
+    - xz
+    - zsh
+  Suse:
+    - apg
+    - bzip2
+    - curl
+    - git
+    - gzip
+    - htop
+    - httpie
+    - jq
+    - make
+    - mc
+    - rdiff-backup
+    - tar
+    - unzip
+    - vim
+    - xz
+    - zsh
+  Archlinux:
+    - bzip2
+    - curl
+    - git
+    - gzip
+    - htop
+    - httpie
+    - jq
+    - make
+    - mc
+    - tar
+    - the_silver_searcher
+    - unzip
+    - vim
+    - xz
+    - zsh

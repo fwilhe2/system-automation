@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# The module lives in this role's library/ directory, so it is on the module
+# path whenever the role runs and nowhere else.
+- name: Install VS Codium Extensions
+  codium_extensions:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ vscodium_extensions }}"

@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- name: Install Desktop Packages
+  ansible.builtin.package:
+    state: present
+    name: >-
+      {{ desktop_packages[ansible_facts['distribution']]
+      | default(desktop_packages[ansible_facts['os_family']]) }}

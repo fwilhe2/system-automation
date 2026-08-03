@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# Everything, in the order it has to run. Either half can also be applied on
+# its own, `playbooks/common.yml` being the headless one.
+- name: Common
+  ansible.builtin.import_playbook: playbooks/common.yml
+
+- name: Desktop
+  ansible.builtin.import_playbook: playbooks/desktop.yml

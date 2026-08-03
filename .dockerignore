@@ -11,3 +11,5 @@
 .ansible-deps
 __pycache__
 .claude
+# The tests run against the committed defaults, not a personal machine's
+playbooks/group_vars/all/local.yml

@@ -4,22 +4,17 @@
 ---
 - name: Install Docker on Fedora
   ansible.builtin.import_tasks: fedora.yml
-  tags: docker
-  when: ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution'] == 'Fedora'
+  when: ansible_facts['distribution'] == 'Fedora'
 
 - name: Install Docker on Debian and derivatives
   ansible.builtin.import_tasks: deb.yml
-  tags: docker
   when: ansible_facts['os_family'] == 'Debian'
 
 # Where docker itself is not packaged, podman stands in for it
 - name: Install podman
-  become: true
-  become_user: root
   ansible.builtin.package:
     state: present
     name: podman
-  tags: docker
   when: >-
     ansible_facts['os_family'] == 'Suse'
     or (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution'] != 'Fedora')

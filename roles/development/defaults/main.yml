@@ -1,0 +1,51 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+development_packages:
+  Debian:
+    - cargo
+    - default-jdk-headless
+    - golang
+    - maven
+    - nodejs
+    - npm
+    - yarnpkg
+  RedHat:
+    - cargo
+    - golang
+    - java-25-openjdk-devel
+    - maven
+    - nodejs
+    - npm
+    - rust
+  Suse:
+    - cargo
+    - go
+    - java-25-openjdk-devel
+    - maven
+    - nodejs-default
+    - npm-default
+    - rust
+  Archlinux:
+    - go
+    - jdk-openjdk
+    - maven
+    - nodejs
+    - npm
+    - rust
+
+# Compilers and headers, which each distribution groups differently. Keyed by
+# distribution first and os_family second, because the EL distributions do not
+# have the Fedora group names. Suse is missing on purpose: it gets the
+# devel_basis pattern instead, which is a zypper concept.
+development_system_packages:
+  Debian:
+    - build-essential
+    - cmake
+  RedHat:
+    - "@C Development Tools and Libraries"
+    - cmake
+  AlmaLinux:
+    - "@Development Tools"
+    - cmake

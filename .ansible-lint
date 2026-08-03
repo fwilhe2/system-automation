@@ -5,24 +5,13 @@
 exclude_paths:
   # Vendored third-party roles, see the licence section of README.adoc.
   # They are upstream copies and are not ours to reformat.
-  - roles/bodsch.ansible-snapd/
-  - roles/gotmax23.epel.crb/
-  - roles/gotmax23.epel.epel/
-  - roles/gotmax23.epel.epel_next/
-  - roles/gotmax23.epel.install/
-  - roles/greenleader.codium/
-  - roles/iesplin.vscode/
+  - vendor/
   # Not Ansible content: GitHub Actions workflows (whose prettier formatting
   # disagrees with yamllint) and Lima VM definitions.
   - .github/
-  - lima_debian.yaml
-  - lima_fedora.yaml
+  - test/lima/
 
 skip_list:
   # Repositories are deliberately cloned at their default branch instead of a
   # pinned revision; these are the author's own repos and dotfiles.
   - latest[git]
-  # Package lists are keyed by os_family and names drift between distros, so a
-  # missing package must not abort the run. See the package list handling in
-  # CLAUDE.md.
-  - ignore-errors

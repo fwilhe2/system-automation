@@ -9,34 +9,28 @@
   ansible.builtin.dnf:
     state: absent
     name: podman-docker
-  become: true
 
 - name: Install the docker packages
   ansible.builtin.dnf:
     state: present
-    name: "{{ item }}"
-  loop:
-    - moby-engine
-    - docker-compose
-  become: true
+    name:
+      - moby-engine
+      - docker-compose
 
 - name: Start and enable the docker service
   ansible.builtin.systemd:
     name: docker
     state: started
     enabled: true
-  become: true
 
 - name: Ensure group "docker" exists with correct gid
   ansible.builtin.group:
     name: docker
     state: present
     gid: 1750
-  become: true
 
 - name: Add user to group
   ansible.builtin.user:
     name: "{{ username }}"
     groups: docker
     append: true
-  become: true

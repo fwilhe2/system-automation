@@ -1,38 +1,20 @@
 # SPDX-FileCopyrightText: Florian Wilhelm
 # SPDX-License-Identifier: MIT
+"""Applies the playbooks in a test container and checks the result.
 
-import subprocess
-import json
-import os
-import platform
+Every playbook is applied twice: the second run must report no changes, which
+is the idempotence contract. The assertions about the resulting system live in
+assertions.py.
+"""
+
 import re
-import sys
-import pathlib
 import shutil
-import urllib.request
+import subprocess
+
 import distro
-import yaml
 
-
-def assert_equals(first, second, message):
-    if not first == second:
-        sys.exit(
-            f"Assertion failed. '{first}' should equal '{second}', but did not. Message: {message}"
-        )
-
-
-def assert_true(val, message):
-    if not val:
-        sys.exit(
-            f"Assertion failed. '{val}' should equal 'True', but did not. Message: {message}"
-        )
-
-
-def assert_not_none(value, message):
-    if value is None:
-        sys.exit(
-            f"Assertion failed. '{value}' should not be 'None'. Message: {message}"
-        )
+import assertions
+from assertions import assert_equals, assert_not_none
 
 
 def run_group(fn, name, *args):
@@ -40,13 +22,24 @@ def run_group(fn, name, *args):
     fn(*args)
     print("::endgroup::")
 
+
+def executable(name):
+    """Locate a tool, falling back to where pip installs it for the test user."""
+    return shutil.which(name) or f"/home/user/.local/bin/{name}"
+
+
 def install_ansible_galaxy_dependencies():
-    subprocess.run([executable('ansible-galaxy'), 'install', '-r', '/home/user/requirements.yml'])
+    subprocess.run([executable("ansible-galaxy"), "install", "-r", "requirements.yml"])
+
 
 def run_ansible(playbook):
     command = [
         executable("ansible-playbook"),
-        "--become-method=su",
+        # ansible.cfg points at the inventory for a real machine, which has no
+        # credentials to escalate with. The escalation method itself comes from
+        # ANSIBLE_BECOME_METHOD, which each Containerfile sets.
+        "--inventory",
+        "test/container/inventory.yml",
         "--skip-tags",
         "notest",
     ]
@@ -79,298 +72,36 @@ def print_ansible_version():
     subprocess.run([executable("ansible-playbook"), "--version"])
 
 
-def executable(name):
-    """Locate a tool, falling back to where pip installs it for the test user."""
-    return shutil.which(name) or f"/home/user/.local/bin/{name}"
-
-
 def print_os_version():
     print(distro.name(pretty=True))
 
 
 def print_sbom():
-  if distro.id() == 'debian' or distro.id() == 'ubuntu':
-    subprocess.run(['dpkg-query', '--list', '--no-pager'])
+    if distro.id() == 'debian' or distro.id() == 'ubuntu':
+        subprocess.run(['dpkg-query', '--list', '--no-pager'])
 
-  if distro.id() == 'centos' or distro.id() == 'fedora' or distro.id() == 'almalinux' or distro.id() == 'rocky':
-    subprocess.run(['dnf', '--assumeyes', 'list', 'installed'])
+    if distro.id() == 'centos' or distro.id() == 'fedora' or distro.id() == 'almalinux' or distro.id() == 'rocky':
+        subprocess.run(['dnf', '--assumeyes', 'list', 'installed'])
 
-  if 'opensuse' in distro.id():
-    subprocess.run(['zypper', 'search', '--installed-only', '--details'])
-
-print_ansible_version()
-print_os_version()
-run_group(install_ansible_galaxy_dependencies, "Install Dependencies from Ansible Galaxy")
-run_group(run_ansible, "Running Playbook EPEL", "/home/user/epel.yml")
-run_group(run_ansible, "Running Playbook Snap", "/home/user/snap.yml")
-run_group(run_ansible, "Running Playbook common", "/home/user/common.yml")
-run_group(run_ansible, "Running Playbook desktop", "/home/user/desktop.yml")
-run_group(print_sbom, "Print SBOM")
+    if 'opensuse' in distro.id():
+        subprocess.run(['zypper', 'search', '--installed-only', '--details'])
 
 
-# Assertions in set-up system follow here
+def main():
+    print_ansible_version()
+    print_os_version()
+
+    run_group(install_ansible_galaxy_dependencies, "Install Dependencies from Ansible Galaxy")
+    run_group(run_ansible, "Running Playbook common", "playbooks/common.yml")
+    run_group(run_ansible, "Running Playbook desktop", "playbooks/desktop.yml")
+    run_group(print_sbom, "Print SBOM")
+
+    run_group(assertions.assert_system_properties,
+              "Assert Properties of Installed System")
+    run_group(assertions.assert_firefox_setup, "Assert Firefox Setup")
+    run_group(assertions.assert_addon_ids_match_their_xpi,
+              "Assert Firefox Add-on IDs")
 
 
-def assert_system_properties():
-    expected_binaries = {
-        "javac": "-version",
-        "mvn": "-version",
-        "go": "version",
-        "keepassxc-cli": "-version",
-    }
-
-    for binary, version_argument in expected_binaries.items():
-        binary_with_path = shutil.which(binary)
-        if binary_with_path is None:
-            sys.exit(f"Error: Could not find {binary}")
-        print(f"Found binary for {binary} at '{binary_with_path}'")
-        script = f"set -e && {binary_with_path} {version_argument}"
-        assert_equals(
-            subprocess.run(["bash", "-c", f"{script}"]).returncode,
-            0,
-            f"Expected {script} to run with exit code 0.",
-        )
-
-run_group(assert_system_properties, "Assert Properties of Installed System")
-
-firefox_channels = {
-    "devedition": "Firefox Developer",
-    "nightly": "Firefox Nightly",
-}
-
-
-def read_from_archive(archive, path):
-    # unzip exits 2 on the non-standard headers omni.ja uses, but still extracts
-    # the file correctly, so the output is checked instead of the return code.
-    result = subprocess.run(["unzip", "-p", str(archive), path], capture_output=True)
-    assert_true(
-        len(result.stdout) > 0,
-        f"Expected to read '{path}' from '{archive}': {result.stderr.decode('utf-8')}",
-    )
-    return result.stdout.decode("utf-8")
-
-
-def firefox_install(channel):
-    return pathlib.Path(f"/opt/firefox/firefox-{channel}/firefox")
-
-
-def installed_policies(channel):
-    policies = firefox_install(channel) / "distribution/policies.json"
-    return json.loads(policies.read_text())["policies"]
-
-
-def firefox_role_defaults():
-    """The role's own defaults, to check the generated policies against."""
-    repository = pathlib.Path(__file__).resolve().parents[2]
-    return yaml.safe_load(
-        (repository / "roles/firefox/defaults/main.yml").read_text())
-
-
-def javascript_string_list(source, name):
-    """Read a `const name = ["a", "b"];` array out of a Firefox module."""
-    match = re.search(rf"(?:const|let)\s+{name}\s*=\s*\[(.*?)\];", source, re.DOTALL)
-    assert_not_none(
-        match,
-        f"Could not find '{name}' in Policies.sys.mjs. Firefox likely restructured "
-        f"the preference allow list and this test needs to be updated.",
-    )
-    return re.findall(r'"([^"]+)"', match.group(1))
-
-
-def elf_machine(binary):
-    """Read e_machine out of an ELF header, without needing 'file' installed."""
-    with open(binary, "rb") as elf:
-        header = elf.read(20)
-    assert_equals(header[:4], b"\x7fELF", f"Expected '{binary}' to be an ELF binary.")
-    return int.from_bytes(header[18:20], "little")
-
-
-def assert_preferences_are_settable(policies, source, display_name):
-    """Firefox silently drops preferences it does not allow, and only reports
-    them in about:policies, so they have to be checked up front."""
-    allowed_prefixes = javascript_string_list(source, "allowedPrefixes")
-    allowed_security_prefs = javascript_string_list(source, "allowedSecurityPrefs")
-    blocked_prefs = javascript_string_list(source, "blockedPrefs")
-
-    for preference in policies.get("Preferences", {}):
-        if preference.startswith("security."):
-            allowed = preference in allowed_security_prefs
-        else:
-            allowed = any(
-                preference.startswith(prefix) for prefix in allowed_prefixes)
-        assert_true(
-            allowed and preference not in blocked_prefs,
-            f"{display_name} refuses to set '{preference}' via the "
-            f"Preferences policy. Use the dedicated policy for it instead.")
-
-
-def assert_policy_values_are_valid(policies, schema, display_name):
-    """The enums the schema spells out, for the two policies this role fills
-    from configuration. A misspelled status or installation mode is not an
-    error to Firefox, it just drops the entry."""
-    statuses = single_pattern(schema["Preferences"])["properties"]["Status"]["enum"]
-    for preference, setting in policies.get("Preferences", {}).items():
-        assert_true(
-            setting["Status"] in statuses,
-            f"'{setting['Status']}' of '{preference}' is not a preference "
-            f"status {display_name} knows about, it accepts {statuses}.")
-
-    # The catch-all "*" entry is described separately from the per-add-on ones,
-    # and only the latter can install anything.
-    modes = single_pattern(
-        schema["ExtensionSettings"])["properties"]["installation_mode"]["enum"]
-    for addon_id, settings in policies.get("ExtensionSettings", {}).items():
-        assert_true(
-            settings["installation_mode"] in modes,
-            f"'{settings['installation_mode']}' of '{addon_id}' is not an "
-            f"installation mode {display_name} knows about, it accepts {modes}.")
-        assert_true(
-            "install_url" in settings,
-            f"'{addon_id}' has no install_url, so {display_name} has nowhere "
-            f"to install it from.")
-
-
-def single_pattern(policy_schema):
-    """The sub-schema of a policy whose keys are user-chosen names."""
-    patterns = list(policy_schema["patternProperties"].values())
-    assert_equals(
-        len(patterns), 1,
-        f"Expected exactly one pattern in {policy_schema['patternProperties']}. "
-        f"Firefox restructured the schema and this test needs to be updated.")
-    return patterns[0]
-
-
-def assert_policies_match_defaults(policies, defaults, display_name):
-    """The template takes a preference either as a bare value or as a mapping
-    that names a status, and an add-on with or without an installation mode, so
-    both spellings are checked here. A preference that silently ends up locked
-    greys out a working checkbox in the settings UI."""
-    for name, preference in defaults["firefox_preferences"].items():
-        expected = preference if isinstance(preference, dict) else {
-            "value": preference
-        }
-        assert_true(
-            name in policies["Preferences"],
-            f"'{name}' is configured for the role but missing from the "
-            f"policies of {display_name}.")
-        generated = policies["Preferences"][name]
-        assert_equals(generated["Value"], expected["value"],
-                      f"Wrong value generated for preference '{name}'.")
-        assert_equals(generated["Status"], expected.get("status", "locked"),
-                      f"Wrong status generated for preference '{name}'.")
-
-    for addon_id, addon in defaults["firefox_extensions"].items():
-        assert_true(
-            addon_id in policies["ExtensionSettings"],
-            f"'{addon_id}' is configured for the role but missing from the "
-            f"policies of {display_name}.")
-        generated = policies["ExtensionSettings"][addon_id]
-        assert_equals(generated["install_url"], addon["url"],
-                      f"Wrong install_url generated for '{addon_id}'.")
-        assert_equals(generated["installation_mode"],
-                      addon.get("mode", "normal_installed"),
-                      f"Wrong installation mode generated for '{addon_id}'.")
-
-
-def assert_addon_ids_match_their_xpi():
-    """The policy names the add-on it installs by ID, and Firefox rejects the
-    install when the XPI declares a different one. The add-on ID and the AMO
-    slug in the URL are picked independently of each other, so nothing but this
-    check keeps the pair honest - and a mismatch is invisible until a browser
-    starts up without the add-on."""
-    for addon_id, settings in installed_policies("nightly").get(
-            "ExtensionSettings", {}).items():
-        xpi = pathlib.Path(f"/tmp/{addon_id}.xpi")
-        request = urllib.request.Request(
-            settings["install_url"],
-            # addons.mozilla.org answers 403 to the default urllib agent.
-            headers={"User-Agent": "system-automation-test"})
-        with urllib.request.urlopen(request) as response:
-            xpi.write_bytes(response.read())
-
-        manifest = json.loads(read_from_archive(xpi, "manifest.json"))
-        gecko = (manifest.get("browser_specific_settings")
-                 or manifest.get("applications") or {}).get("gecko", {})
-        assert_equals(
-            gecko.get("id"), addon_id,
-            f"The add-on behind '{settings['install_url']}' calls itself "
-            f"'{gecko.get('id')}', so Firefox refuses to install it as "
-            f"'{addon_id}'. Check the slug in the URL against the ID.")
-        xpi.unlink()
-        print(f"{addon_id}: served by {settings['install_url']}")
-
-
-def assert_firefox_setup():
-    home = pathlib.Path.home()
-    defaults = firefox_role_defaults()
-    # https://refspecs.linuxfoundation.org/elf/gabi4+/ch4.eheader.html
-    expected_machine = {"x86_64": 0x3E, "aarch64": 0xB7}[platform.machine()]
-
-    for channel, display_name in firefox_channels.items():
-        install = firefox_install(channel)
-
-        # Mozilla serves x86_64 unless the download URL asks for another
-        # architecture, so a wrong URL yields a browser that cannot run here.
-        assert_equals(
-            elf_machine(install / "firefox"), expected_machine,
-            f"{display_name} was built for a different architecture than "
-            f"{platform.machine()}. Check the os= parameter of the download URL.")
-
-        # Firefox opens the profile manager and waits forever when the --profile
-        # directory does not exist, so its presence is what makes the browser
-        # start unattended.
-        profile = home / ".local/share/firefox-profiles" / channel
-        assert_true(profile.is_dir(),
-                    f"Expected profile directory '{profile}' for {display_name}.")
-        assert_equals(
-            oct(profile.stat().st_mode & 0o777), oct(0o700),
-            f"Expected profile directory '{profile}' to be private.")
-
-        entry = home / ".local/share/applications" / f"firefox-{channel}.desktop"
-        assert_true(entry.is_file(),
-                    f"Expected desktop entry '{entry}' for {display_name}.")
-        exec_lines = [
-            line for line in entry.read_text().splitlines()
-            if line.startswith("Exec=")
-        ]
-        assert_true(len(exec_lines) > 0, f"Expected an Exec line in '{entry}'.")
-        for exec_line in exec_lines:
-            assert_true(
-                f"--profile {profile}" in exec_line,
-                f"Expected '{exec_line}' to start on profile '{profile}'.")
-            # Opening in a private window is intentional for these channels.
-            assert_true(" --private-window " in exec_line,
-                        f"Expected '{exec_line}' to open a private window.")
-            binary = pathlib.Path(exec_line.split(" ")[2])
-            assert_true(os.access(binary, os.X_OK),
-                        f"Expected '{binary}' from '{entry}' to be executable.")
-
-        # Validate the generated policies against the rules of the very Firefox
-        # build that was just installed, so this keeps working as Firefox
-        # changes which policies and preferences it accepts.
-        policies = installed_policies(channel)
-        omni = install / "browser/omni.ja"
-
-        schema = json.loads(
-            read_from_archive(omni, "modules/policies/policies-schema.json"))
-        for policy in policies:
-            assert_true(
-                policy in schema["properties"],
-                f"'{policy}' is not a policy {display_name} knows about.")
-
-        assert_preferences_are_settable(
-            policies,
-            read_from_archive(omni, "modules/policies/Policies.sys.mjs"),
-            display_name)
-        assert_policy_values_are_valid(policies, schema["properties"],
-                                       display_name)
-        assert_policies_match_defaults(policies, defaults, display_name)
-
-        print(f"{display_name}: profile, desktop entry, "
-              f"{len(policies['ExtensionSettings'])} add-ons, "
-              f"{len(policies['Preferences'])} preferences and "
-              f"{len(policies)} policies are valid")
-
-
-run_group(assert_firefox_setup, "Assert Firefox Setup")
-run_group(assert_addon_ids_match_their_xpi, "Assert Firefox Add-on IDs")
+if __name__ == "__main__":
+    main()
