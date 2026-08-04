@@ -7,9 +7,12 @@
 {% endfor %}
     "ExtensionSettings": {
 {% for addon_id, addon in firefox_extensions.items() %}
+{# Add-ons are off in private windows unless this is set, and the desktop #}
+{# entries open every window private, so without it they would never run. #}
       {{ addon_id | to_json }}: {
         "install_url": {{ addon['url'] | to_json }},
-        "installation_mode": {{ addon['mode'] | default("normal_installed") | to_json }}
+        "installation_mode": {{ addon['mode'] | default("normal_installed") | to_json }},
+        "private_browsing": {{ addon['private_browsing'] | default(true) | to_json }}
       }{{ "," if not loop.last else "" }}
 {% endfor %}
     },

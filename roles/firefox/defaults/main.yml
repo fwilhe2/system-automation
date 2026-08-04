@@ -40,6 +40,9 @@ firefox_channels:
 # add-on but still lets it be disabled or removed - the right default in a
 # nightly browser, where an add-on is a suspect whenever a page misbehaves.
 # force_installed is for the ad blocker only, which should never be off by accident.
+# `private_browsing` is the policy's private_browsing and defaults to true, because
+# the desktop entries pass --private-window and an add-on that is not allowed there
+# is an add-on that never runs. Set it to false for one that should stay out.
 firefox_extensions:
   "uBlock0@raymondhill.net":
     url: "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"

@@ -145,8 +145,16 @@ def assert_policy_values_are_valid(policies, schema, display_name):
 
     # The catch-all "*" entry is described separately from the per-add-on ones,
     # and only the latter can install anything.
-    modes = single_pattern(
-        schema["ExtensionSettings"])["properties"]["installation_mode"]["enum"]
+    addon_schema = single_pattern(schema["ExtensionSettings"])["properties"]
+    modes = addon_schema["installation_mode"]["enum"]
+    # Without this key an add-on is disabled in private windows, which is every
+    # window these channels open, so a Firefox that stopped honouring it would
+    # leave the add-ons installed but never running.
+    assert_true(
+        "private_browsing" in addon_schema,
+        f"{display_name} does not know a 'private_browsing' setting for "
+        f"add-ons any more. Check how it now allows them in private windows.")
+
     for addon_id, settings in policies.get("ExtensionSettings", {}).items():
         assert_true(
             settings["installation_mode"] in modes,
@@ -198,6 +206,9 @@ def assert_policies_match_defaults(policies, defaults, display_name):
         assert_equals(generated["installation_mode"],
                       addon.get("mode", "normal_installed"),
                       f"Wrong installation mode generated for '{addon_id}'.")
+        assert_equals(generated["private_browsing"],
+                      addon.get("private_browsing", True),
+                      f"Wrong private browsing setting generated for '{addon_id}'.")
 
 
 def assert_addon_ids_match_their_xpi():
