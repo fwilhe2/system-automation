@@ -4,7 +4,6 @@
 ---
 development_packages:
   Debian:
-    - cargo
     - default-jdk-headless
     - golang
     - maven
@@ -12,28 +11,23 @@ development_packages:
     - npm
     - yarnpkg
   RedHat:
-    - cargo
     - golang
     - java-25-openjdk-devel
     - maven
     - nodejs
     - npm
-    - rust
   Suse:
-    - cargo
     - go
     - java-25-openjdk-devel
     - maven
     - nodejs-default
     - npm-default
-    - rust
   Archlinux:
     - go
     - jdk-openjdk
     - maven
     - nodejs
     - npm
-    - rust
 
 # Compilers and headers, which each distribution groups differently. Keyed by
 # distribution first and os_family second, because the EL distributions do not

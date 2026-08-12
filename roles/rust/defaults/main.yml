@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# The toolchain rustup installs and, on a machine that does not have rustup
+# yet, makes the default. rustup builds the target triple from the host it runs
+# on, so this covers both architectures without naming either.
+rust_toolchain: stable
+
+# `default` is what the plain `curl https://sh.rustup.rs | sh` installs: the
+# compiler plus rustfmt, clippy and the docs. `minimal` drops everything but
+# the compiler, cargo and rust-std.
+rust_profile: default
+
+rust_installer_url: https://sh.rustup.rs
+rust_installer_path: /tmp/rustup-init.sh
+
+# Where rustup puts the toolchains and the `cargo`, `rustc` and `rustup` entry
+# points. `rust_home` is registered by the first task of the role; see the
+# comment there for why the home directory is not taken from the facts.
+rust_cargo_home: "{{ rust_home.stat.path }}/.cargo"
