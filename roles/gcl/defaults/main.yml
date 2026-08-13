@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+gcl_repository: fwilhe2/gcl
+gcl_install_dir: /usr/local/bin
+
+# goreleaser spells the architectures the way go does, which is not the way
+# uname reports them, so the fact has to be mapped onto the asset name.
+gcl_architectures:
+  x86_64: x86_64
+  aarch64: arm64

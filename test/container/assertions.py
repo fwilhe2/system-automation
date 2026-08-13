@@ -46,6 +46,7 @@ def assert_system_properties():
         "mvn": "-version",
         "go": "version",
         "keepassxc-cli": "-version",
+        "gcl": "--version",
     }
 
     for binary, version_argument in expected_binaries.items():

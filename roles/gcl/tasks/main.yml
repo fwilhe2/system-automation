@@ -1,0 +1,58 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# gcl is published to GitHub releases by goreleaser, as a tarball holding the
+# binary plus its README and licence.
+- name: Get the installed gcl version
+  # Asking the binary by its full path rather than by name keeps this
+  # independent of whether gcl_install_dir is on PATH.
+  ansible.builtin.command: "{{ gcl_install_dir }}/gcl --version"
+  register: gcl_installed
+  changed_when: false
+  failed_when: false
+
+- name: Get latest gcl release version
+  ansible.builtin.uri:
+    url: "https://api.github.com/repos/{{ gcl_repository }}/releases/latest"
+    return_content: true
+    # Authenticate if a token is available; anonymous requests share a
+    # 60/hour rate limit per IP, which CI runners regularly exhaust
+    headers: "{{ {'Authorization': 'Bearer ' + github_token} if github_token else {} }}"
+  vars:
+    github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"
+  register: gcl_latest_release
+  changed_when: false
+
+- name: Extract gcl release version
+  ansible.builtin.set_fact:
+    gcl_version: "{{ gcl_latest_release.json.tag_name }}"
+
+# gcl prints 'gcl v1.2.3 (release build)' where the release is tagged 'v1.2.3'.
+# Comparing the two is what makes this role idempotent, and what upgrades an
+# outdated installation: it downloads, and reports a change, only when the
+# installed binary is not the current release.
+- name: Install gcl
+  when: gcl_version not in gcl_installed.stdout | default('')
+  vars:
+    gcl_archive: >-
+      gcl_{{ ansible_facts['system'] }}_{{ gcl_architectures[ansible_facts['architecture']] }}.tar.gz
+  block:
+    - name: Download gcl
+      ansible.builtin.get_url:
+        url: "https://github.com/{{ gcl_repository }}/releases/download/{{ gcl_version }}/{{ gcl_archive }}"
+        dest: "/tmp/{{ gcl_archive }}"
+        mode: "600"
+
+    - name: Extract gcl binary
+      become: true
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ gcl_archive }}"
+        dest: "{{ gcl_install_dir }}"
+        remote_src: true
+        # Only the binary belongs in the install directory, and the archive
+        # carries the uid of the machine that built it.
+        include: [gcl]
+        owner: root
+        group: root
+        mode: "755"
