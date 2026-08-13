@@ -61,6 +61,31 @@ def assert_system_properties():
         )
 
 
+def assert_rust_toolchain():
+    """Rust comes from rustup, installed with --no-modify-path, so nothing puts
+    `~/.cargo/bin` on the PATH of this process and the binaries are called
+    through their full path here."""
+    cargo_bin = pathlib.Path.home() / ".cargo/bin"
+    for binary in ("rustup", "cargo", "rustc"):
+        executable = cargo_bin / binary
+        assert_true(os.access(executable, os.X_OK),
+                    f"Expected '{executable}' to be an executable rustup shim.")
+        assert_equals(
+            subprocess.run([str(executable), "--version"]).returncode, 0,
+            f"Expected '{executable} --version' to run with exit code 0.")
+
+    # rustup builds the toolchain name from the host triple, so a toolchain
+    # installed for the wrong architecture would show up here.
+    expected = f"stable-{platform.machine()}-unknown-linux-gnu"
+    toolchains = subprocess.run([str(cargo_bin / "rustup"), "toolchain", "list"],
+                                capture_output=True)
+    installed = toolchains.stdout.decode("utf-8")
+    assert_true(
+        any(line.startswith(expected) for line in installed.splitlines()),
+        f"Expected the '{expected}' toolchain, rustup has: {installed}")
+    print(f"rustup: {expected} installed in {cargo_bin.parent}")
+
+
 firefox_channels = {
     "devedition": "Firefox Developer",
     "nightly": "Firefox Nightly",

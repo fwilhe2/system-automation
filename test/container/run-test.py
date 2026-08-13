@@ -98,6 +98,7 @@ def main():
 
     run_group(assertions.assert_system_properties,
               "Assert Properties of Installed System")
+    run_group(assertions.assert_rust_toolchain, "Assert Rust Toolchain")
     run_group(assertions.assert_firefox_setup, "Assert Firefox Setup")
     run_group(assertions.assert_addon_ids_match_their_xpi,
               "Assert Firefox Add-on IDs")

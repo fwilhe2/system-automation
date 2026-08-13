@@ -1,0 +1,66 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# Rust comes from rustup rather than from the distribution packages, which are
+# too old on everything but Arch and Fedora. This is the documented
+# `curl https://sh.rustup.rs | sh` install, split into a download and a run so
+# that it happens once instead of on every play.
+# rustup installs into the home directory, and the tasks below need it spelled
+# out because a command is not run through a shell. It cannot come from
+# `ansible_facts['env']`: the vendored snapd role re-gathers facts under
+# `become` on Debian, which leaves the whole play with root's environment.
+# Every module expands `~` in a path itself, in the environment of the user it
+# really runs as, so this is the reliable way to ask.
+# The quotes around the tilde are not optional: bare `~` is null in YAML.
+- name: Get the Home Directory
+  ansible.builtin.stat:
+    path: "~"
+  register: rust_home
+
+- name: Get the Installed Rustup
+  ansible.builtin.stat:
+    path: "{{ rust_cargo_home }}/bin/rustup"
+  register: rust_rustup
+
+- name: Install Rustup
+  when: not rust_rustup.stat.exists
+  block:
+    # Fetched only when it is about to be run: the script behind the URL
+    # changes with every rustup release, which get_url would report as a change
+    # on a machine that has the toolchain already.
+    - name: Download the Rustup Installer
+      ansible.builtin.get_url:
+        url: "{{ rust_installer_url }}"
+        dest: "{{ rust_installer_path }}"
+        mode: "700"
+
+    # --no-modify-path keeps the installer out of the shell startup files. It
+    # appends to `~/.bashrc`, which is a symlink into the dotfiles checkout,
+    # and a dirty checkout is a change the dotfiles role then reports on every
+    # run. The dotfiles put `~/.cargo/bin` on PATH themselves.
+    - name: Run the Rustup Installer
+      ansible.builtin.command:
+        cmd: >-
+          {{ rust_installer_path }} -y --no-modify-path
+          --default-toolchain {{ rust_toolchain }}
+          --profile {{ rust_profile }}
+        creates: "{{ rust_cargo_home }}/bin/rustup"
+
+# The installer only picks a toolchain on a machine that had no rustup, so the
+# two tasks below are what covers one that did - without touching which
+# toolchain is the default there.
+- name: Get the Installed Toolchains
+  ansible.builtin.command: "{{ rust_cargo_home }}/bin/rustup toolchain list"
+  register: rust_toolchains
+  changed_when: false
+
+# rustup names a toolchain after the host triple it is built for, so matching
+# the channel and letting rustup fill in the architecture is what makes this
+# work on both of them.
+- name: Install the Toolchain
+  ansible.builtin.command: >-
+    {{ rust_cargo_home }}/bin/rustup toolchain install {{ rust_toolchain }}
+    --profile {{ rust_profile }}
+  when: rust_toolchains.stdout_lines | select('match', rust_toolchain ~ '-') | list | length == 0
+  changed_when: true

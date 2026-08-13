@@ -36,5 +36,10 @@
       become: true
       tags: [development]
 
+    # Unprivileged on purpose: rustup installs into the user's home, and it
+    # needs the compilers and headers the development role brings in.
+    - role: rust
+      tags: [rust]
+
     - role: virtualization
       tags: [virtualization]
