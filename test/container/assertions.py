@@ -161,7 +161,8 @@ def assert_policy_values_are_valid(policies, schema, display_name):
     """The enums the schema spells out, for the two policies this role fills
     from configuration. A misspelled status or installation mode is not an
     error to Firefox, it just drops the entry."""
-    statuses = single_pattern(schema["Preferences"])["properties"]["Status"]["enum"]
+    statuses = allowed_values(
+        single_pattern(schema["Preferences"])["properties"]["Status"])
     for preference, setting in policies.get("Preferences", {}).items():
         assert_true(
             setting["Status"] in statuses,
@@ -171,7 +172,7 @@ def assert_policy_values_are_valid(policies, schema, display_name):
     # The catch-all "*" entry is described separately from the per-add-on ones,
     # and only the latter can install anything.
     addon_schema = single_pattern(schema["ExtensionSettings"])["properties"]
-    modes = addon_schema["installation_mode"]["enum"]
+    modes = allowed_values(addon_schema["installation_mode"])
     # Without this key an add-on is disabled in private windows, which is every
     # window these channels open, so a Firefox that stopped honouring it would
     # leave the add-ons installed but never running.
@@ -189,6 +190,19 @@ def assert_policy_values_are_valid(policies, schema, display_name):
             "install_url" in settings,
             f"'{addon_id}' has no install_url, so {display_name} has nowhere "
             f"to install it from.")
+
+
+def allowed_values(value_schema):
+    """The values a string-valued policy setting accepts. Firefox is in the
+    middle of respelling these: the older channels list them in an 'enum', the
+    newer ones as a 'oneOf' of documented 'const' entries."""
+    if "enum" in value_schema:
+        return value_schema["enum"]
+    assert_true(
+        "oneOf" in value_schema,
+        f"Expected an 'enum' or a 'oneOf' in {value_schema}. Firefox "
+        f"restructured the schema and this test needs to be updated.")
+    return [alternative["const"] for alternative in value_schema["oneOf"]]
 
 
 def single_pattern(policy_schema):
