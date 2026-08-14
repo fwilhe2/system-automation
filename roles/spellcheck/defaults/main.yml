@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# The only spellcheck locales this setup wants. Firefox and LibreOffice both
+# offer whatever hunspell dictionaries the system carries, so this list is the
+# whole policy: everything else is deleted below.
+spellcheck_locales:
+  - de_DE
+  - en_US
+
+# Only here so the two wanted locales exist at all - package selection cannot
+# express the policy by itself. Fedora's hunspell-en-US requires hunspell-en,
+# which ships every English locale from en_AG to en_ZW, and Debian's
+# hunspell-de-de ships de_BE and de_LU as symlinks to de_DE.
+#
+# There is no Archlinux entry because the desktop playbook is not applied there.
+spellcheck_packages:
+  Debian:
+    - hunspell-de-de
+    - hunspell-en-us
+  RedHat:
+    - hunspell-de
+    - hunspell-en-US
+  Suse:
+    - myspell-de_DE
+    - myspell-en_US
+
+# Where hunspell looks dictionaries up, and with it everything that spellchecks
+# through hunspell. openSUSE puts them straight into /usr/share/myspell, Debian
+# into a dicts/ subdirectory below it.
+spellcheck_dictionary_paths:
+  - /usr/share/hunspell
+  - /usr/share/myspell
+  - /usr/share/myspell/dicts

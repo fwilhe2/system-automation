@@ -100,6 +100,7 @@ def main():
               "Assert Properties of Installed System")
     run_group(assertions.assert_rust_toolchain, "Assert Rust Toolchain")
     run_group(assertions.assert_telemetry_opt_out, "Assert Telemetry Opt-Out")
+    run_group(assertions.assert_spellcheck_locales, "Assert Spellcheck Locales")
     run_group(assertions.assert_firefox_setup, "Assert Firefox Setup")
     run_group(assertions.assert_addon_ids_match_their_xpi,
               "Assert Firefox Add-on IDs")

@@ -291,6 +291,29 @@ def assert_telemetry_opt_out():
     print("Telemetry opt-out is in place")
 
 
+def assert_spellcheck_locales():
+    """Firefox and LibreOffice offer whatever hunspell dictionaries the system
+    carries, so the set of files in these directories is the set of languages
+    the spellchecker can be switched to."""
+    installed = set()
+    for directory in ("/usr/share/hunspell", "/usr/share/myspell",
+                      "/usr/share/myspell/dicts"):
+        path = pathlib.Path(directory)
+        if not path.is_dir():
+            continue
+        # Hyphenation patterns share the directories and are not dictionaries.
+        installed |= {
+            entry.stem
+            for entry in path.iterdir()
+            if entry.suffix in (".aff", ".dic")
+            and not entry.name.startswith("hyph_")
+        }
+
+    assert_equals(sorted(installed), ["de_DE", "en_US"],
+                  "Expected exactly these spellcheck locales to be installed.")
+    print("Spellcheck is limited to de_DE and en_US")
+
+
 def assert_firefox_setup():
     home = pathlib.Path.home()
     defaults = firefox_role_defaults()

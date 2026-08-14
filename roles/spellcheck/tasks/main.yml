@@ -1,0 +1,29 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- name: Install Spellcheck Dictionaries
+  ansible.builtin.package:
+    state: present
+    name: "{{ spellcheck_packages[ansible_facts['os_family']] }}"
+
+# Hyphenation patterns live in the same directories and are matched by the same
+# suffix, but they are not spellcheck dictionaries and are kept whatever their
+# locale is.
+- name: Find Dictionaries For Unwanted Locales
+  ansible.builtin.find:
+    paths: "{{ spellcheck_dictionary_paths }}"
+    patterns: ["*.aff", "*.dic"]
+    excludes: "{{ ['hyph_*'] + (spellcheck_locales | map('regex_replace', '$', '.*') | list) }}"
+    file_type: any
+  register: spellcheck_unwanted
+
+# The packages own some of these files, so an update of one puts its locales
+# back; the next run of this role takes them out again.
+- name: Remove Dictionaries For Unwanted Locales
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ spellcheck_unwanted.files }}"
+  loop_control:
+    label: "{{ item.path }}"
