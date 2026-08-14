@@ -279,6 +279,18 @@ def assert_addon_ids_match_their_xpi():
         print(f"{addon_id}: served by {settings['install_url']}")
 
 
+def assert_telemetry_opt_out():
+    assert_true(
+        "DO_NOT_TRACK=1" in pathlib.Path("/etc/environment").read_text().splitlines(),
+        "Expected DO_NOT_TRACK=1 in '/etc/environment'.")
+
+    mode = pathlib.Path.home() / ".config/go/telemetry/mode"
+    assert_equals(mode.read_text().strip(), "off",
+                  f"Expected Go telemetry to be off in '{mode}'.")
+
+    print("Telemetry opt-out is in place")
+
+
 def assert_firefox_setup():
     home = pathlib.Path.home()
     defaults = firefox_role_defaults()
