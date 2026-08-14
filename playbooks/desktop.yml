@@ -48,3 +48,9 @@
 
     - role: vscodium
       tags: [codium]
+
+    # After the desktop role: installing LibreOffice and its German l10n drags
+    # in dictionaries for locales this prunes away again
+    - role: spellcheck
+      become: true
+      tags: [spellcheck]
