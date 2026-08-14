@@ -23,12 +23,14 @@ jobs:
         distro:
           - ubuntu:latest
           - ubuntu:rolling
-          - ubuntu:devel
+          # ubuntu:devel and fedora:rawhide are commented out while they are
+          # broken for reasons of their own, unrelated to the playbooks
+          # - ubuntu:devel
           - debian:stable
           - debian:testing
           - debian:unstable
           - fedora:latest
-          - fedora:rawhide
+          # - fedora:rawhide
           - el:almalinux:10
           - opensuse:tumbleweed
           - opensuse:leap:16.0

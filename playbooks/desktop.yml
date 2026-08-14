@@ -39,6 +39,13 @@
       become: true
       tags: [desktop]
 
+    # Same distributions as the libreoffice entry in desktop_packages
+    - role: libreoffice
+      tags: [libreoffice]
+      when: >-
+        ansible_facts['distribution'] == 'Fedora'
+        or ansible_facts['os_family'] in ['Debian', 'Suse']
+
     - role: vscodium
       tags: [codium]
 
