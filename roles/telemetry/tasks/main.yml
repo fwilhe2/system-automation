@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# `/etc/environment` is read by pam_env on every login on all five
+# distributions, so this reaches shells and the GNOME session alike. DO_NOT_TRACK
+# is the cross-vendor opt-out (https://consoledonottrack.com/) that a growing
+# number of CLI tools honour; setting it once beats chasing per-tool variables.
+- name: Opt out of telemetry system-wide
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/environment
+    regexp: "^DO_NOT_TRACK="
+    line: DO_NOT_TRACK=1
+    create: true
+    mode: "644"
+
+# Go 1.23 and later collect telemetry counters locally; `off` stops the
+# collection itself rather than only the upload. This is the file `go telemetry
+# off` writes, written directly so the role stays idempotent.
+- name: Ensure the Go telemetry directory exists
+  ansible.builtin.file:
+    path: ~/.config/go/telemetry
+    state: directory
+    mode: "750"
+
+- name: Turn Go telemetry off
+  ansible.builtin.copy:
+    dest: ~/.config/go/telemetry/mode
+    content: "off\n"
+    mode: "640"
