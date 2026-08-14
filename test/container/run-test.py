@@ -101,6 +101,8 @@ def main():
     run_group(assertions.assert_rust_toolchain, "Assert Rust Toolchain")
     run_group(assertions.assert_telemetry_opt_out, "Assert Telemetry Opt-Out")
     run_group(assertions.assert_firefox_setup, "Assert Firefox Setup")
+    run_group(assertions.assert_libreoffice_locale,
+              "Assert LibreOffice Locale")
     run_group(assertions.assert_addon_ids_match_their_xpi,
               "Assert Firefox Add-on IDs")
 

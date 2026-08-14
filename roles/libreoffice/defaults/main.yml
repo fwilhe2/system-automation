@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# Keys are the org.openoffice.Setup/L10N property names LibreOffice stores in
+# registrymodifications.xcu. ooLocale is the UI language, ooSetupSystemLocale
+# is the formatting locale (dates, numbers, currency) - kept apart so the UI
+# stays English regardless of which locale documents are formatted in.
+libreoffice_locale_settings:
+  ooLocale: en-US
+  ooSetupSystemLocale: de-DE

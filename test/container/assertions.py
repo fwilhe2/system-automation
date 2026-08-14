@@ -15,6 +15,7 @@ import shutil
 import subprocess
 import sys
 import urllib.request
+import xml.etree.ElementTree
 
 import yaml
 
@@ -289,6 +290,37 @@ def assert_telemetry_opt_out():
                   f"Expected Go telemetry to be off in '{mode}'.")
 
     print("Telemetry opt-out is in place")
+
+
+def assert_libreoffice_locale():
+    """The locale settings the libreoffice role writes into the user profile.
+
+    Skipped where LibreOffice is not packaged - the EL rebuilds dropped it,
+    which is the same condition the role carries in the desktop playbook.
+    """
+    if shutil.which("soffice") is None:
+        print("LibreOffice is not installed here, skipping")
+        return
+
+    repository = pathlib.Path(__file__).resolve().parents[2]
+    settings = yaml.safe_load(
+        (repository / "roles/libreoffice/defaults/main.yml").read_text()
+    )["libreoffice_locale_settings"]
+
+    registry = pathlib.Path.home() / ".config/libreoffice/4/user/registrymodifications.xcu"
+    items = xml.etree.ElementTree.parse(registry).getroot()
+    oor = "{http://openoffice.org/2001/registry}"
+
+    for name, expected in settings.items():
+        prop = items.find(
+            f"item[@{oor}path='/org.openoffice.Setup/L10N']/prop[@{oor}name='{name}']")
+        assert_not_none(prop, f"Expected a '{name}' property in '{registry}'.")
+        assert_equals(prop.get(f"{oor}op"), "fuse",
+                      f"Expected '{name}' in '{registry}' to be fused.")
+        assert_equals(prop.findtext("value"), expected,
+                      f"Expected '{name}' in '{registry}' to be '{expected}'.")
+
+    print(f"LibreOffice is set up for {settings}")
 
 
 def assert_firefox_setup():

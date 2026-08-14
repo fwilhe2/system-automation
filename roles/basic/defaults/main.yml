@@ -89,6 +89,7 @@ basic_packages:
     - jq
     - make
     - mc
+    - python3-lxml
     - rdiff-backup
     - tar
     - unzip

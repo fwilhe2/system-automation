@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# LibreOffice rewrites registrymodifications.xcu from memory when it exits, so
+# a running instance overwrites whatever this role just wrote. Close it first.
+- name: Make LibreOffice User Config Directory if not exists
+  ansible.builtin.file:
+    path: ~/.config/libreoffice/4/user
+    state: directory
+    # What LibreOffice itself creates the profile with, so an existing one is
+    # not reported changed and does not come out of this more readable than it
+    # went in
+    mode: "700"
+
+# LibreOffice only writes this file itself on first launch. Laying down the
+# empty skeleton up front means the xml tasks below do not depend on that
+# having happened yet, and `force: false` leaves an existing profile's file
+# untouched.
+- name: Create LibreOffice Registry Modifications File if not exists
+  ansible.builtin.copy:
+    dest: ~/.config/libreoffice/4/user/registrymodifications.xcu
+    content: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <oor:items xmlns:oor="http://openoffice.org/2001/registry"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      </oor:items>
+    force: false
+    mode: "600"
+
+- name: Set LibreOffice UI Language and Formatting Locale
+  community.general.xml:
+    path: ~/.config/libreoffice/4/user/registrymodifications.xcu
+    xpath: "/oor:items/item[@oor:path='/org.openoffice.Setup/L10N']/prop[@oor:name='{{ item.key }}']/value"
+    namespaces:
+      oor: http://openoffice.org/2001/registry
+    value: "{{ item.value }}"
+  loop: "{{ libreoffice_locale_settings | dict2items }}"
+
+# Every property LibreOffice itself writes to this file carries oor:op="fuse"
+# (see an existing profile's registrymodifications.xcu); matching that keeps
+# these entries indistinguishable from ones the application wrote itself.
+- name: Mark the Locale Properties as Fused with the Defaults
+  community.general.xml:
+    path: ~/.config/libreoffice/4/user/registrymodifications.xcu
+    xpath: "/oor:items/item[@oor:path='/org.openoffice.Setup/L10N']/prop[@oor:name='{{ item.key }}']"
+    namespaces:
+      oor: http://openoffice.org/2001/registry
+    attribute: oor:op
+    value: fuse
+  loop: "{{ libreoffice_locale_settings | dict2items }}"
