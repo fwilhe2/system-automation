@@ -6,6 +6,12 @@
 # registrymodifications.xcu. ooLocale is the UI language, ooSetupSystemLocale
 # is the formatting locale (dates, numbers, currency) - kept apart so the UI
 # stays English regardless of which locale documents are formatted in.
+#
+# ooSetupCurrency is what the currency button inserts. It defaults to empty,
+# which means "whatever ooSetupSystemLocale implies", and that leaves the
+# currency free to follow a locale change; naming it pins it to the Euro. The
+# format is the ISO code, then the locale whose formatting rules apply.
 libreoffice_locale_settings:
   ooLocale: en-US
+  ooSetupCurrency: EUR-de-DE
   ooSetupSystemLocale: de-DE
