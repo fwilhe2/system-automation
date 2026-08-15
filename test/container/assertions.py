@@ -326,24 +326,39 @@ def assert_libreoffice_locale():
         return
 
     repository = pathlib.Path(__file__).resolve().parents[2]
-    settings = yaml.safe_load(
+    defaults = yaml.safe_load(
         (repository / "roles/libreoffice/defaults/main.yml").read_text()
-    )["libreoffice_locale_settings"]
+    )
+    settings = defaults["libreoffice_locale_settings"]
 
     registry = pathlib.Path.home() / ".config/libreoffice/4/user/registrymodifications.xcu"
     items = xml.etree.ElementTree.parse(registry).getroot()
     oor = "{http://openoffice.org/2001/registry}"
 
-    for name, expected in settings.items():
-        prop = items.find(
-            f"item[@{oor}path='/org.openoffice.Setup/L10N']/prop[@{oor}name='{name}']")
+    # The item path is matched in python rather than in the ElementPath
+    # expression: the factory paths quote the factory itself, and a quote inside
+    # a predicate literal is more than ElementPath's XPath subset can parse.
+    def assert_fused(item_path, name, expected):
+        prop = next(
+            (found
+             for item in items if item.get(f"{oor}path") == item_path
+             for found in item.findall(f"prop[@{oor}name='{name}']")), None)
         assert_not_none(prop, f"Expected a '{name}' property in '{registry}'.")
         assert_equals(prop.get(f"{oor}op"), "fuse",
                       f"Expected '{name}' in '{registry}' to be fused.")
         assert_equals(prop.findtext("value"), expected,
                       f"Expected '{name}' in '{registry}' to be '{expected}'.")
 
-    print(f"LibreOffice is set up for {settings}")
+    for name, expected in settings.items():
+        assert_fused("/org.openoffice.Setup/L10N", name, expected)
+
+    calc_filter = defaults["libreoffice_calc_default_filter"]
+    assert_fused(
+        "/org.openoffice.Setup/Office/Factories/org.openoffice.Setup:Factory"
+        "['com.sun.star.sheet.SpreadsheetDocument']",
+        "ooSetupFactoryDefaultFilter", calc_filter)
+
+    print(f"LibreOffice is set up for {settings}, saving as '{calc_filter}'")
 
 
 def assert_firefox_setup():
