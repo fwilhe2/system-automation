@@ -15,3 +15,8 @@ libreoffice_locale_settings:
   ooLocale: en-US
   ooSetupCurrency: EUR-de-DE
   ooSetupSystemLocale: de-DE
+
+# The filter new spreadsheets are saved with, held on the Calc factory node.
+# LibreOffice ships "calc8", the zipped .ods; this is the flat single-file
+# .fods variant of the same format, which version control can diff.
+libreoffice_calc_default_filter: OpenDocument Spreadsheet Flat XML

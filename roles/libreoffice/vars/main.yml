@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# Not configuration - the address of the Calc factory item in
+# registrymodifications.xcu, which tasks/main.yml needs several times over. The
+# factories are a set node addressed through their template, so the path quotes
+# the factory itself and the xpath literal around it has to be double quoted.
+libreoffice_calc_factory_path: >-
+  /org.openoffice.Setup/Office/Factories/org.openoffice.Setup:Factory['com.sun.star.sheet.SpreadsheetDocument']
+libreoffice_calc_factory_xpath: >-
+  /oor:items/item[@oor:path="{{ libreoffice_calc_factory_path }}"]

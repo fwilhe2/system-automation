@@ -50,3 +50,50 @@
     attribute: oor:op
     value: fuse
   loop: "{{ libreoffice_locale_settings | dict2items }}"
+
+# The save format lives on the Calc factory item, which the tasks below cannot
+# spawn the way the L10N ones spawn theirs: community.general.xml builds a
+# missing node by splitting the xpath on every '/' and quote, and this item's
+# path (see vars/main.yml) carries both inside a string literal, which leaves
+# the module cutting that literal in half. So the item is added whole when it is
+# missing, and only the property below it is left to the module's own creation.
+- name: Look for the LibreOffice Calc Factory Item
+  community.general.xml:
+    path: ~/.config/libreoffice/4/user/registrymodifications.xcu
+    xpath: "{{ libreoffice_calc_factory_xpath }}"
+    namespaces:
+      oor: http://openoffice.org/2001/registry
+    count: true
+  register: libreoffice_calc_factory
+  changed_when: false
+
+- name: Create the LibreOffice Calc Factory Item if not exists
+  community.general.xml:
+    path: ~/.config/libreoffice/4/user/registrymodifications.xcu
+    xpath: /oor:items
+    namespaces:
+      oor: http://openoffice.org/2001/registry
+    input_type: xml
+    add_children:
+      - '<item xmlns:oor="http://openoffice.org/2001/registry" oor:path="{{ libreoffice_calc_factory_path }}"/>'
+  when: libreoffice_calc_factory.count == 0
+
+# LibreOffice writes one item per property, so a profile it has run in holds
+# several with this same path; the [1] keeps the format from being written into
+# every one of them.
+- name: Set the Default Save Format for Spreadsheets
+  community.general.xml:
+    path: ~/.config/libreoffice/4/user/registrymodifications.xcu
+    xpath: "({{ libreoffice_calc_factory_xpath }})[1]/prop[@oor:name='ooSetupFactoryDefaultFilter']/value"
+    namespaces:
+      oor: http://openoffice.org/2001/registry
+    value: "{{ libreoffice_calc_default_filter }}"
+
+- name: Mark the Spreadsheet Save Format as Fused with the Defaults
+  community.general.xml:
+    path: ~/.config/libreoffice/4/user/registrymodifications.xcu
+    xpath: "({{ libreoffice_calc_factory_xpath }})[1]/prop[@oor:name='ooSetupFactoryDefaultFilter']"
+    namespaces:
+      oor: http://openoffice.org/2001/registry
+    attribute: oor:op
+    value: fuse
