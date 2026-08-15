@@ -29,9 +29,14 @@ jobs:
           key: lima-${{ steps.lima-actions-setup.outputs.version }}
 
       - name: "Start an instance of ${{ matrix.distro }}"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -eux
 
           cat test/lima/${{ matrix.distro }}.yaml | limactl create --name=default -
           limactl start
-          lima ansible-playbook playbooks/common.yml
+          # The guest gets no environment from the host, so hand the token over
+          # explicitly - without it the GitHub API calls hit the anonymous rate limit.
+          set +x
+          lima env GITHUB_TOKEN="$GITHUB_TOKEN" ansible-playbook playbooks/common.yml
