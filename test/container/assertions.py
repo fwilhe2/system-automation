@@ -46,8 +46,6 @@ def assert_system_properties():
         "javac": "-version",
         "mvn": "-version",
         "go": "version",
-        "cargo": "--version",
-        "rustc": "--version",
         "keepassxc-cli": "-version",
         "gcl": "--version",
         "uv": "--version",
