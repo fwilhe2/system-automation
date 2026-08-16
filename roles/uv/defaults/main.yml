@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+uv_installer_url: https://astral.sh/uv/install.sh
+uv_installer_path: /tmp/uv-installer.sh
+
+# Where the installer puts `uv` and `uvx`. `uv_home` is registered by the
+# first task of the role; see the equivalent comment in the rust role for why
+# the home directory is not taken from the facts.
+uv_bin_dir: "{{ uv_home.stat.path }}/.local/bin"

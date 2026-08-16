@@ -1,0 +1,40 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# uv comes from its own installer rather than distribution packages, which
+# either lack it or ship a version far behind upstream. This is the documented
+# `curl https://astral.sh/uv/install.sh | sh` install, split into a download
+# and a run so that it happens once instead of on every play.
+- name: Get the Home Directory
+  ansible.builtin.stat:
+    path: "~"
+  register: uv_home
+
+- name: Get the Installed Uv
+  ansible.builtin.stat:
+    path: "{{ uv_bin_dir }}/uv"
+  register: uv_installed
+
+- name: Install Uv
+  when: not uv_installed.stat.exists
+  block:
+    # Fetched only when it is about to be run: the script behind the URL
+    # changes with every uv release, which get_url would report as a change
+    # on a machine that has uv installed already.
+    - name: Download the Uv Installer
+      ansible.builtin.get_url:
+        url: "{{ uv_installer_url }}"
+        dest: "{{ uv_installer_path }}"
+        mode: "700"
+
+    # UV_NO_MODIFY_PATH keeps the installer out of the shell startup files. It
+    # appends to `~/.bashrc`, which is a symlink into the dotfiles checkout,
+    # and a dirty checkout is a change the dotfiles role then reports on every
+    # run. The dotfiles put `~/.local/bin` on PATH themselves.
+    - name: Run the Uv Installer
+      ansible.builtin.command: "{{ uv_installer_path }}"
+      environment:
+        UV_NO_MODIFY_PATH: "1"
+      args:
+        creates: "{{ uv_bin_dir }}/uv"

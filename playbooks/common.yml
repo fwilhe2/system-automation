@@ -41,6 +41,10 @@
     - role: rust
       tags: [rust]
 
+    # Unprivileged for the same reason as rust: it installs into the user's home.
+    - role: uv
+      tags: [uv]
+
     - role: virtualization
       tags: [virtualization]
 
