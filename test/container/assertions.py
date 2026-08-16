@@ -88,6 +88,21 @@ def assert_rust_toolchain():
     print(f"rustup: {expected} installed in {cargo_bin.parent}")
 
 
+def assert_uv_installed():
+    """uv is installed with UV_NO_MODIFY_PATH, so nothing puts `~/.local/bin`
+    on the PATH of this process and the binaries are called through their
+    full path here."""
+    local_bin = pathlib.Path.home() / ".local/bin"
+    for binary in ("uv", "uvx"):
+        executable = local_bin / binary
+        assert_true(os.access(executable, os.X_OK),
+                    f"Expected '{executable}' to be an executable uv shim.")
+        assert_equals(
+            subprocess.run([str(executable), "--version"]).returncode, 0,
+            f"Expected '{executable} --version' to run with exit code 0.")
+    print(f"uv: installed in {local_bin}")
+
+
 firefox_channels = {
     "devedition": "Firefox Developer",
     "nightly": "Firefox Nightly",
