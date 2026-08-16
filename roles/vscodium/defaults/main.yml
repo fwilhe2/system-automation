@@ -3,13 +3,9 @@
 
 ---
 vscodium_extensions:
-  - fwcd.kotlin
   - golang.go
-  - humao.rest-client
-  - mathiasfrohlich.Kotlin
   - ms-azuretools.vscode-docker
   - ms-python.python
-  - redhat.java
   - redhat.vscode-xml
   - redhat.vscode-yaml
   - rust-lang.rust
