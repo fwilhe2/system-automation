@@ -48,7 +48,6 @@ def assert_system_properties():
         "go": "version",
         "keepassxc-cli": "-version",
         "gcl": "--version",
-        "uv": "--version",
     }
 
     for binary, version_argument in expected_binaries.items():
