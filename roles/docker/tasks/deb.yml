@@ -34,14 +34,15 @@
   ansible.builtin.set_fact:
     docker_release_codename: >-
       {{ docker_development_branch_codename[ansible_facts['distribution']] | default(ansible_facts['distribution_release'])
-      if ansible_facts['lsb'].description is search('development branch|sid', ignorecase=True)
+      if ansible_facts['lsb'].description is search('development branch|sid|Debian base', ignorecase=True)
+      or ansible_facts['distribution_release'] in docker_development_branch_releases[ansible_facts['distribution']] | default([])
       else ansible_facts['distribution_release'] }}
 
 - name: Add Docker APT repository
   ansible.builtin.deb822_repository:
     name: docker
     types: [deb]
-    uris: "https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}"
+    uris: "https://download.docker.com/linux/{{ 'ubuntu' if ansible_facts['distribution'] == 'Ubuntu' else 'debian' }}"
     suites: "{{ docker_release_codename }}"
     components: [stable]
     signed_by: https://download.docker.com/linux/ubuntu/gpg

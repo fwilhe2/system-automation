@@ -7,3 +7,8 @@
 docker_development_branch_codename:
   Ubuntu: jammy
   Debian: trixie
+  Tuxedo: trixie
+  Tuxedo OS: trixie
+
+docker_development_branch_releases:
+  Ubuntu: [resolute]
