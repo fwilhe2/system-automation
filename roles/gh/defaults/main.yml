@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+gh_repository: cli/cli
+gh_install_dir: /usr/local/bin
+
+# GitHub CLI publishes release assets using Go's architecture names.
+gh_architectures:
+  x86_64: amd64
+  aarch64: arm64

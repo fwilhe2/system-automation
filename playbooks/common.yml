@@ -51,6 +51,9 @@
     - role: gcl
       tags: [gcl]
 
+    - role: gh
+      tags: [gh]
+
     # After the roles that install the tools it opts out of
     - role: telemetry
       tags: [telemetry]
