@@ -28,23 +28,14 @@
     - basic_arch_locale.changed
   changed_when: true
 
-- name: Configure Debian Locale
+- name: Configure LANG in system locale file
   ansible.builtin.lineinfile:
-    path: /etc/default/locale
+    path: "{{ basic_locale_lang_file[ansible_facts['os_family']] }}"
     regexp: "^LANG="
     line: "LANG={{ basic_locale }}"
     create: true
     mode: "0644"
-  when: ansible_facts['os_family'] == 'Debian'
-
-- name: Configure Red Hat and Arch Locale
-  ansible.builtin.lineinfile:
-    path: /etc/locale.conf
-    regexp: "^LANG="
-    line: "LANG={{ basic_locale }}"
-    create: true
-    mode: "0644"
-  when: ansible_facts['os_family'] in ['RedHat', 'Archlinux']
+  when: ansible_facts['os_family'] in basic_locale_lang_file
 
 - name: Configure openSUSE Locale
   ansible.builtin.lineinfile:

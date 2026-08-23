@@ -21,6 +21,11 @@ basic_locale_packages:
   Suse: glibc-locale
   Archlinux: glibc
 
+basic_locale_lang_file:
+  Debian: /etc/default/locale
+  RedHat: /etc/locale.conf
+  Archlinux: /etc/locale.conf
+
 basic_packages:
   Debian:
     - apg

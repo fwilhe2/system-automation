@@ -72,18 +72,22 @@ def assert_system_locale():
         "/etc/sysconfig/language": f'RC_LANG="{expected}"',
     }
     assert_true(
-        any(pathlib.Path(path).is_file()
+        any(
+            pathlib.Path(path).is_file()
             and line in pathlib.Path(path).read_text().splitlines()
             for path, line in locale_files.items()),
-        f"Expected one system locale file to configure {expected}.")
+        f"Expected one system locale file to configure {expected}.",
+    )
 
-    installed = subprocess.run(["locale", "-a"], capture_output=True,
-                                check=True).stdout.decode("utf-8").lower()
+    installed = subprocess.run(
+        ["locale", "-a"], capture_output=True,
+        check=True).stdout.decode("utf-8").lower()
     normalized_expected = expected.lower().replace("-", "")
     normalized_installed = installed.replace("-", "")
     assert_true(
         normalized_expected in normalized_installed,
-        f"Expected {expected} to be generated, but locale -a returned:\n{installed}")
+        f"Expected {expected} to be generated, but locale -a returned:\n{installed}",
+    )
     print(f"System locale is {expected}")
 
 
