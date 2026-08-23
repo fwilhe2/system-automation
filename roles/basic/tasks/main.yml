@@ -2,6 +2,44 @@
 # SPDX-License-Identifier: MIT
 
 ---
+- name: Install Locale Data
+  ansible.builtin.package:
+    state: present
+    name: "{{ basic_locale_packages[ansible_facts['os_family']] }}"
+
+- name: Generate Debian and Arch Locale
+  community.general.locale_gen:
+    name: "{{ basic_locale }}"
+    state: present
+  when: ansible_facts['os_family'] in ['Debian', 'Archlinux']
+
+- name: Configure Debian Locale
+  ansible.builtin.lineinfile:
+    path: /etc/default/locale
+    regexp: "^LANG="
+    line: "LANG={{ basic_locale }}"
+    create: true
+    mode: "0644"
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Configure Red Hat and Arch Locale
+  ansible.builtin.lineinfile:
+    path: /etc/locale.conf
+    regexp: "^LANG="
+    line: "LANG={{ basic_locale }}"
+    create: true
+    mode: "0644"
+  when: ansible_facts['os_family'] in ['RedHat', 'Archlinux']
+
+- name: Configure openSUSE Locale
+  ansible.builtin.lineinfile:
+    path: /etc/sysconfig/language
+    regexp: "^RC_LANG="
+    line: 'RC_LANG="{{ basic_locale }}"'
+    create: true
+    mode: "0644"
+  when: ansible_facts['os_family'] == 'Suse'
+
 - name: Install Basic Packages
   ansible.builtin.package:
     state: present
