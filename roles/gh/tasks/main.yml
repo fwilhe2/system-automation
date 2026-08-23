@@ -1,0 +1,50 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- name: Get the installed gh version
+  ansible.builtin.command: "{{ gh_install_dir }}/gh --version"
+  register: gh_installed
+  changed_when: false
+  failed_when: false
+
+- name: Get latest gh release version
+  ansible.builtin.uri:
+    url: "https://api.github.com/repos/{{ gh_repository }}/releases/latest"
+    return_content: true
+    headers: "{{ {'Authorization': 'Bearer ' + github_token} if github_token else {} }}"
+  vars:
+    github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"
+  register: gh_latest_release
+  changed_when: false
+
+- name: Extract gh release version
+  ansible.builtin.set_fact:
+    gh_version: "{{ gh_latest_release.json.tag_name }}"
+
+- name: Install gh
+  when: gh_version[1:] not in gh_installed.stdout | default('')
+  vars:
+    gh_archive_dir: "gh_{{ gh_version[1:] }}_linux_{{ gh_architectures[ansible_facts['architecture']] }}"
+    gh_archive: "{{ gh_archive_dir }}.tar.gz"
+  block:
+    - name: Download gh
+      ansible.builtin.get_url:
+        url: "https://github.com/{{ gh_repository }}/releases/download/{{ gh_version }}/{{ gh_archive }}"
+        dest: "/tmp/{{ gh_archive }}"
+        mode: "600"
+
+    - name: Extract gh archive
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ gh_archive }}"
+        dest: /tmp
+        remote_src: true
+
+    - name: Install gh binary
+      become: true
+      ansible.builtin.copy:
+        src: "/tmp/{{ gh_archive_dir }}/bin/gh"
+        dest: "{{ gh_install_dir }}/gh"
+        owner: root
+        group: root
+        mode: "755"
