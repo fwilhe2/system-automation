@@ -170,7 +170,7 @@
 
 - name: Find node tarball filename in index
   ansible.builtin.set_fact:
-    development_node_filename: "{{ (development_node_index.content | regex_findall('node-v[^\"<>\\s]+') | select('search', development_upstream.node_major) | select('search', development_node_arch_suffix) | list | first | default('')) }}"
+    development_node_filename: "{{ (development_node_index.content | regex_findall('node-v[^\"<> ]+') | select('search', development_upstream.node_major) | select('search', development_node_arch_suffix) | list | first | default('')) }}"
   when:
     - development_use_upstream | bool
     - development_node_index is defined
