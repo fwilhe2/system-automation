@@ -122,6 +122,7 @@
           '  export PATH=$JAVA_HOME/bin:$PATH'
         ] | join('\n')
       }}
+  changed_when: false
   when:
     - development_use_upstream | bool
     - temurin_target.stat.exists | default(true)
@@ -286,6 +287,7 @@
           '  export PATH=' ~ development_upstream.install_prefix ~ '/node-' ~ node_version ~ '/bin:$PATH'
         ] | join('\n')
       }}
+  changed_when: false
   when:
     - development_use_upstream | bool
     - node_target.stat.exists | default(true)
@@ -348,6 +350,7 @@
     dest: "/tmp/{{ go_file.filename | replace('.tar.gz', '') | replace('.tgz', '') }}.d"
     remote_src: yes
     extra_opts: [--numeric-owner]
+  changed_when: false
   when:
     - development_use_upstream | bool
     - go_file is defined
