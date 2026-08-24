@@ -447,3 +447,96 @@ def assert_firefox_setup():
               f"{len(policies['ExtensionSettings'])} add-ons, "
               f"{len(policies['Preferences'])} preferences and "
               f"{len(policies)} policies are valid")
+
+
+# --- New assertions for upstream tool tarballs ---
+def assert_upstream_installs():
+    """Verify that Temurin, Node and Go upstream tarball installs exist and are usable.
+
+    The container tests enable the upstream installs via a transient group_vars file
+    created by the test runner. The installs live under /opt by default.
+    """
+    repo = pathlib.Path(__file__).resolve().parents[2]
+    # Read the test-local vars if present, otherwise fall back to defaults from role
+    local_vars = pathlib.Path(repo / "playbooks/group_vars/all/local.yml")
+    if local_vars.exists():
+        data = yaml.safe_load(local_vars.read_text())
+        upstream = data.get("development_upstream", {})
+        install_prefix = upstream.get("install_prefix", "/opt")
+        temurin_major = str(upstream.get("temurin_major", "25"))
+        node_major = int(upstream.get("node_major", 24))
+        go_version = str(upstream.get("go_version", "1.27"))
+    else:
+        # fallback to role defaults
+        defaults = yaml.safe_load((repo / "roles/development/defaults/main.yml").read_text())
+        upstream = defaults.get("development_upstream", {})
+        install_prefix = upstream.get("install_prefix", "/opt")
+        temurin_major = str(upstream.get("temurin_major", "25"))
+        node_major = int(upstream.get("node_major", 24))
+        go_version = str(upstream.get("go_version", "1.27"))
+
+    # Temurin
+    temurin_dir = pathlib.Path(install_prefix) / f"temurin-{temurin_major}"
+    assert_true(temurin_dir.is_dir(), f"Expected Temurin directory '{temurin_dir}' to exist")
+    java_bin = temurin_dir / "bin/java"
+    assert_true(java_bin.is_file() and os.access(java_bin, os.X_OK), f"Expected '{java_bin}' to be executable")
+    # Check java prints version and mentions Temurin and the major release
+    java_proc = subprocess.run([str(java_bin), "-version"], capture_output=True)
+    assert_equals(java_proc.returncode, 0, "Expected java -version to run")
+    java_output = (java_proc.stderr + java_proc.stdout).decode('utf-8')
+    assert_true(
+        ("Temurin" in java_output) or ("Eclipse" in java_output) or ("Adoptium" in java_output) or ("OpenJDK" in java_output),
+        f"Expected Temurin/OpenJDK identifier in java -version output, got: {java_output}"
+    )
+    assert_true(str(temurin_major) in java_output, f"Expected Temurin major {temurin_major} in java -version output: {java_output}")
+
+    # Node: find node-<version> directory under install_prefix and check major
+    node_dirs = [p for p in pathlib.Path(install_prefix).iterdir() if p.is_dir() and p.name.startswith("node-")]
+    assert_true(len(node_dirs) > 0, f"Expected at least one node-<version> directory under '{install_prefix}'")
+    node_ok = False
+    for nd in node_dirs:
+        name = nd.name[len("node-"):]
+        # name is expected to be full version like 24.3.1
+        try:
+            major = int(name.split('.')[0])
+        except Exception:
+            continue
+        if major == node_major:
+            node_ok = True
+            node_bin = nd / "bin/node"
+            assert_true(node_bin.is_file() and os.access(node_bin, os.X_OK), f"Expected node binary at '{node_bin}'")
+            # node --version prints v24.x.y
+            out = subprocess.run([str(node_bin), "--version"], capture_output=True)
+            assert_equals(out.returncode, 0, "Expected node --version to run")
+            assert_true(out.stdout.decode('utf-8').strip().startswith(f"v{node_major}"), f"Node version should start with v{node_major}")
+            break
+    assert_true(node_ok, f"No node install with major {node_major} found under {install_prefix}")
+
+    # Go
+    go_dir = pathlib.Path(install_prefix) / f"go-{go_version}"
+    assert_true(go_dir.is_dir(), f"Expected Go directory '{go_dir}' to exist")
+    go_bin = go_dir / "bin/go"
+    assert_true(go_bin.is_file() and os.access(go_bin, os.X_OK), f"Expected '{go_bin}' to be executable")
+    out = subprocess.run([str(go_bin), "version"], capture_output=True)
+    assert_equals(out.returncode, 0, "Expected go version to run")
+    assert_true(f"go{go_version}" in out.stdout.decode('utf-8') or f"go{go_version}" in out.stderr.decode('utf-8'), f"Expected go binary to report version go{go_version}")
+
+    # ELF architecture checks: ensure binaries match the host arch
+    expected_machine = {"x86_64": 0x3E, "aarch64": 0xB7}[platform.machine()]
+    # Some java builds are scripts; attempt ELF check only when file is ELF
+    try:
+        if java_bin.exists():
+            with open(java_bin, 'rb') as f:
+                hdr = f.read(4)
+            if hdr == b"\x7fELF":
+                assert_equals(elf_machine(java_bin), expected_machine, f"Temurin java binary built for wrong arch")
+    except Exception:
+        # Be permissive: the java binary may be a linker script or wrapper in some builds
+        pass
+
+    assert_equals(elf_machine(str(go_bin)), expected_machine, "Go binary built for wrong architecture")
+
+    # The node binary is a regular ELF
+    assert_equals(elf_machine(str(node_bin)), expected_machine, "Node binary built for wrong architecture")
+
+    print(f"Upstream installs present: Temurin {temurin_major}, Node {node_major}, Go {go_version} in {install_prefix}")

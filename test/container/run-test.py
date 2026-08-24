@@ -12,6 +12,7 @@ import shutil
 import subprocess
 
 import distro
+import pathlib
 
 import assertions
 from assertions import assert_equals, assert_not_none
@@ -43,6 +44,13 @@ def run_ansible(playbook):
         "--skip-tags",
         "notest",
     ]
+
+    # If the test runner created a transient local vars file, pass it as
+    # extra-vars to ansible so the playbooks pick up development_use_upstream.
+    local_override = pathlib.Path("/home/user/.local_test_local.yml")
+    if local_override.exists():
+        command += ["-e", f"@{str(local_override)}"]
+
     assert_equals(
         subprocess.run(command + ["-vv", playbook]).returncode,
         0,
@@ -91,6 +99,25 @@ def main():
     print_ansible_version()
     print_os_version()
 
+    # Create a test-local override to enable upstream installs for the
+    # container tests. The runner cannot reliably write into the checked-out
+    # repository files when the image's filesystem keeps them owned by root, so
+    # write the vars to a local temporary file and pass it to ansible with -e @file.
+    local_vars = '''
+
+development_use_upstream: true
+development_upstream:
+  install_prefix: /opt
+  temurin_major: 25
+  node_major: 24
+  go_version: "1.27"
+'''
+    local_vars_path = pathlib.Path("/home/user/.local_test_local.yml")
+    local_vars_path.write_text(local_vars)
+
+    # Export the path for run_ansible to pick up
+    GLOBAL_LOCAL_VARS = str(local_vars_path)
+
     run_group(install_ansible_galaxy_dependencies, "Install Dependencies from Ansible Galaxy")
     run_group(run_ansible, "Running Playbook common", "playbooks/common.yml")
     run_group(run_ansible, "Running Playbook desktop", "playbooks/desktop.yml")
@@ -107,6 +134,15 @@ def main():
               "Assert LibreOffice Locale")
     run_group(assertions.assert_addon_ids_match_their_xpi,
               "Assert Firefox Add-on IDs")
+
+    # New assertions for upstream tarball installs
+    run_group(assertions.assert_upstream_installs, "Assert Upstream Installations")
+
+    # cleanup the generated local.yml to avoid leaving test artefacts behind
+    try:
+        (pathlib.Path("playbooks/group_vars/all") / "local.yml").unlink()
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

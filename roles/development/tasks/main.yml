@@ -21,3 +21,8 @@
     name: devel_basis
     type: pattern
   when: ansible_facts['os_family'] == 'Suse'
+
+- name: Optionally install upstream tool tarballs (Temurin, Node, Go)
+  ansible.builtin.include_tasks:
+    file: upstream.yml
+  when: development_use_upstream | bool

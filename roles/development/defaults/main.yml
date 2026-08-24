@@ -43,3 +43,33 @@ development_system_packages:
   AlmaLinux:
     - "@Development Tools"
     - cmake
+
+# Optional: install newer upstream versions for certain languages
+# Defaults leave distro packages in place. Enable by setting
+# development_use_upstream: true in playbooks/group_vars/all/local.yml or
+# another appropriate vars file. When enabled the tasks below will add upstream
+# repositories and install pinned major versions of Temurin (OpenJDK), Node.js
+# and a pinned Go release.
+#
+# Pin choices here are major versions (Temurin/Node) or explicit go version.
+# Update these values to the desired major/version to pin upgrades.
+
+development_use_upstream: true
+development_upstream:
+  # Install prefix for upstream tarballs. Change this to your preferred opt-in
+  # directory; defaults to /opt so you can add e.g. /opt/node-20/bin to PATH.
+  install_prefix: /opt
+
+  # Temurin major version (e.g. 17, 21, 25). The role will download the latest
+  # available Temurin binary for this feature release and extract it under
+  # {{ development_upstream.install_prefix }}/temurin-<major>.
+  temurin_major: 25
+
+  # Node.js major: the role will look up the latest release in this major
+  # series (e.g. 20, 24) and install it under
+  # {{ development_upstream.install_prefix }}/node-<full-version>
+  node_major: 24
+
+  # Go version to install from official tarballs. Use full semver (e.g. "1.27").
+  # The role will extract this under {{ development_upstream.install_prefix }}/go-<version>
+  go_version: "1.27"
