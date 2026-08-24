@@ -43,3 +43,36 @@ development_system_packages:
   AlmaLinux:
     - "@Development Tools"
     - cmake
+
+# The upstream tarballs from upstream.yml, which are installed next to the
+# distribution packages above rather than instead of them: nothing here lands on
+# PATH, every install goes into its own directory below the prefix, and each one
+# carries a README saying which lines to add to a shell profile to use it.
+# Set this to false to skip them entirely.
+development_use_upstream: true
+development_upstream_prefix: /opt
+
+# Temurin feature release. Its latest build is what gets installed, into
+# {{ development_upstream_prefix }}/temurin-<major>.
+development_temurin_major: 25
+
+# Node.js major release. Its latest version is what gets installed, into
+# {{ development_upstream_prefix }}/node-<full version>, so a new upstream
+# release is picked up without touching the one already installed.
+development_node_major: 24
+
+# Go release, pinned to a minor version, installed into
+# {{ development_upstream_prefix }}/go-<minor>. go.dev only lists the two
+# current majors, so this cannot lag more than one release behind.
+development_go_version: "1.27"
+
+# The same three architectures under the three names upstream give them.
+development_temurin_architectures:
+  x86_64: x64
+  aarch64: aarch64
+development_node_architectures:
+  x86_64: x64
+  aarch64: arm64
+development_go_architectures:
+  x86_64: amd64
+  aarch64: arm64

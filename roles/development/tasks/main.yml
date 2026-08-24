@@ -21,3 +21,8 @@
     name: devel_basis
     type: pattern
   when: ansible_facts['os_family'] == 'Suse'
+
+- name: Install the JDK, Node.js and Go from upstream
+  ansible.builtin.include_tasks:
+    file: upstream.yml
+  when: development_use_upstream | bool

@@ -1,0 +1,241 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# The distributions ship the JDK, Node.js and Go in whatever vintage their
+# release froze, so these three come from upstream as tarballs instead. Each one
+# is extracted into its own directory below development_upstream_prefix and
+# nothing is put on PATH, which is what keeps them from colliding with the
+# distribution packages the rest of this role installs.
+#
+# Every tool follows the same shape: resolve the download, skip the whole block
+# when the binary it installs is already there, extract, drop the tarball. That
+# guard is what makes the role idempotent, and it is also what stops a second
+# run from downloading a few hundred megabytes just to throw them away again.
+#
+# Before any of the three is fetched, the version resolved above is checked
+# against files/upstream-checksums.yml: if upstream is serving something other
+# than what is pinned there, the play fails instead of trusting a checksum
+# that the same origin as the download also controls. Run
+# scripts/update-upstream-checksums.sh to move the pin forward.
+
+# --- Eclipse Temurin ---
+- name: Check for the Temurin JDK
+  ansible.builtin.stat:
+    path: "{{ development_temurin_home }}/bin/java"
+  register: development_temurin_java
+
+- name: Install Temurin {{ development_temurin_major }}
+  when: not development_temurin_java.stat.exists
+  block:
+    # The assets API rather than the binary/latest redirect used to just
+    # download from, because this is what names the exact release the pinned
+    # checksum below is checked against.
+    - name: Get the latest Temurin release for this architecture
+      ansible.builtin.uri:
+        url: >-
+          https://api.adoptium.net/v3/assets/latest/{{ development_temurin_major }}/hotspot?image_type=jdk&os=linux&architecture={{
+            development_temurin_architecture
+          }}
+        return_content: true
+      register: development_temurin_release
+      changed_when: false
+
+    - name: Select the Temurin build
+      ansible.builtin.set_fact:
+        development_temurin_build: "{{ development_temurin_release.json[0] }}"
+
+    - name: Check the resolved Temurin release against the pinned checksum
+      ansible.builtin.assert:
+        that: development_temurin_build.release_name == development_upstream_checksums.temurin.version
+        fail_msg: >-
+          Adoptium is serving {{ development_temurin_build.release_name }} but
+          files/upstream-checksums.yml only pins
+          {{ development_upstream_checksums.temurin.version }}. Run
+          scripts/update-upstream-checksums.sh to pin the new build before
+          installing it.
+
+    - name: Download Temurin
+      ansible.builtin.get_url:
+        url: "{{ development_temurin_build.binary.package.link }}"
+        dest: "{{ development_temurin_tarball }}"
+        checksum: "sha256:{{ development_upstream_checksums.temurin[development_temurin_architecture] }}"
+        mode: "0600"
+
+    - name: Create the Temurin directory
+      ansible.builtin.file:
+        path: "{{ development_temurin_home }}"
+        state: directory
+        mode: "0755"
+
+    # The tarball unpacks into a jdk-<full version> directory, which is dropped
+    # so that the install path stays the feature release alone.
+    - name: Extract Temurin
+      ansible.builtin.unarchive:
+        src: "{{ development_temurin_tarball }}"
+        dest: "{{ development_temurin_home }}"
+        remote_src: true
+        extra_opts: [--strip-components=1]
+
+    - name: Remove the Temurin tarball
+      ansible.builtin.file:
+        path: "{{ development_temurin_tarball }}"
+        state: absent
+
+- name: Document the Temurin install
+  ansible.builtin.copy:
+    dest: "{{ development_temurin_home }}/README.upstream"
+    mode: "0644"
+    content: |
+      Eclipse Temurin {{ development_temurin_major }}, installed from upstream.
+      To use it, add to your shell profile:
+
+        export JAVA_HOME={{ development_temurin_home }}
+        export PATH="$JAVA_HOME/bin:$PATH"
+
+# --- Node.js ---
+# The release directory is stable but the files in it are not, so the checksum
+# file is what names the current tarball. The download itself is checked
+# against the pinned checksum below rather than this same file, which is only
+# used to name the current version.
+- name: Get the checksums of the current Node.js release
+  ansible.builtin.uri:
+    url: "{{ development_node_release_url }}/SHASUMS256.txt"
+    return_content: true
+  register: development_node_checksums
+  changed_when: false
+
+- name: Extract the Node.js version from the checksums
+  ansible.builtin.set_fact:
+    development_node_version: >-
+      {{ development_node_checksums.content
+      | regex_search('node-v([0-9.]+)-linux-' ~ development_node_architecture ~ '\.tar\.gz', '\1')
+      | first }}
+
+- name: Check for Node.js
+  ansible.builtin.stat:
+    path: "{{ development_node_home }}/bin/node"
+  register: development_node_binary
+
+- name: Install Node.js {{ development_node_version }}
+  when: not development_node_binary.stat.exists
+  block:
+    - name: Check the resolved Node.js release against the pinned checksum
+      ansible.builtin.assert:
+        that: development_node_version == development_upstream_checksums.node.version
+        fail_msg: >-
+          nodejs.org is serving {{ development_node_version }} but
+          files/upstream-checksums.yml only pins
+          {{ development_upstream_checksums.node.version }}. Run
+          scripts/update-upstream-checksums.sh to pin the new release before
+          installing it.
+
+    - name: Download Node.js
+      ansible.builtin.get_url:
+        url: "{{ development_node_release_url }}/{{ development_node_tarball }}"
+        dest: "/tmp/{{ development_node_tarball }}"
+        checksum: "sha256:{{ development_upstream_checksums.node[development_node_architecture] }}"
+        mode: "0600"
+
+    - name: Create the Node.js directory
+      ansible.builtin.file:
+        path: "{{ development_node_home }}"
+        state: directory
+        mode: "0755"
+
+    - name: Extract Node.js
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ development_node_tarball }}"
+        dest: "{{ development_node_home }}"
+        remote_src: true
+        extra_opts: [--strip-components=1]
+
+    - name: Remove the Node.js tarball
+      ansible.builtin.file:
+        path: "/tmp/{{ development_node_tarball }}"
+        state: absent
+
+- name: Document the Node.js install
+  ansible.builtin.copy:
+    dest: "{{ development_node_home }}/README.upstream"
+    mode: "0644"
+    content: |
+      Node.js {{ development_node_version }}, installed from upstream.
+      To use it, add to your shell profile:
+
+        export PATH="{{ development_node_home }}/bin:$PATH"
+
+# --- Go ---
+# The download index carries both the file name of the current release and
+# its checksum, which names the tarball to download; the download itself is
+# checked against the pinned checksum below rather than this same index.
+- name: Get the Go download index
+  ansible.builtin.uri:
+    url: "https://go.dev/dl/?mode=json"
+    return_content: true
+  register: development_go_index
+  changed_when: false
+
+- name: Select the Go tarball for this architecture
+  ansible.builtin.set_fact:
+    development_go_download: >-
+      {{ development_go_index.json
+      | selectattr('version', 'match', '^go' ~ development_go_version ~ '(\.|$)')
+      | map(attribute='files') | flatten
+      | selectattr('os', 'equalto', 'linux')
+      | selectattr('arch', 'equalto', development_go_architecture)
+      | selectattr('kind', 'equalto', 'archive')
+      | first }}
+
+- name: Check for Go
+  ansible.builtin.stat:
+    path: "{{ development_go_home }}/bin/go"
+  register: development_go_binary
+
+- name: Install Go {{ development_go_version }}
+  when: not development_go_binary.stat.exists
+  block:
+    - name: Check the resolved Go release against the pinned checksum
+      ansible.builtin.assert:
+        that: development_go_download.version == development_upstream_checksums.go.version
+        fail_msg: >-
+          go.dev is serving {{ development_go_download.version }} but
+          files/upstream-checksums.yml only pins
+          {{ development_upstream_checksums.go.version }}. Run
+          scripts/update-upstream-checksums.sh to pin the new release before
+          installing it.
+
+    - name: Download Go
+      ansible.builtin.get_url:
+        url: "https://go.dev/dl/{{ development_go_download.filename }}"
+        dest: "/tmp/{{ development_go_download.filename }}"
+        checksum: "sha256:{{ development_upstream_checksums.go[development_go_architecture] }}"
+        mode: "0600"
+
+    - name: Create the Go directory
+      ansible.builtin.file:
+        path: "{{ development_go_home }}"
+        state: directory
+        mode: "0755"
+
+    - name: Extract Go
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ development_go_download.filename }}"
+        dest: "{{ development_go_home }}"
+        remote_src: true
+        extra_opts: [--strip-components=1]
+
+    - name: Remove the Go tarball
+      ansible.builtin.file:
+        path: "/tmp/{{ development_go_download.filename }}"
+        state: absent
+
+- name: Document the Go install
+  ansible.builtin.copy:
+    dest: "{{ development_go_home }}/README.upstream"
+    mode: "0644"
+    content: |
+      Go {{ development_go_version }}, installed from upstream.
+      To use it, add to your shell profile:
+
+        export PATH="{{ development_go_home }}/bin:$PATH"

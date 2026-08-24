@@ -447,3 +447,61 @@ def assert_firefox_setup():
               f"{len(policies['ExtensionSettings'])} add-ons, "
               f"{len(policies['Preferences'])} preferences and "
               f"{len(policies)} policies are valid")
+
+
+
+def assert_upstream_dev_tools():
+    """The JDK, Node.js and Go that the development role installs from upstream.
+    Nothing puts them on the PATH of this process, so the binaries are called
+    through their full path here, and the pinned versions they are checked
+    against are the ones the role defaults ask for."""
+    repository = pathlib.Path(__file__).resolve().parents[2]
+    defaults = yaml.safe_load(
+        (repository / "roles/development/defaults/main.yml").read_text())
+    prefix = pathlib.Path(defaults["development_upstream_prefix"])
+    temurin = defaults["development_temurin_major"]
+    node = defaults["development_node_major"]
+    go = defaults["development_go_version"]
+
+    # Node.js is installed under its full version, which upstream picks, so its
+    # directory is looked up by major instead of being named outright.
+    node_homes = sorted(prefix.glob(f"node-{node}.*"))
+    assert_equals(
+        len(node_homes), 1,
+        f"Expected exactly one Node.js {node} install below '{prefix}', "
+        f"found: {[str(home) for home in node_homes]}")
+
+    expected_machine = {"x86_64": 0x3E, "aarch64": 0xB7}[platform.machine()]
+    checks = (
+        (prefix / f"temurin-{temurin}/bin/java", "-version", f'version "{temurin}.'),
+        (node_homes[0] / "bin/node", "--version", f"v{node}."),
+        (prefix / f"go-{go}/bin/go", "version", f"go{go}"),
+    )
+    for binary, argument, expected in checks:
+        assert_true(os.access(binary, os.X_OK),
+                    f"Expected '{binary}' to be an executable.")
+
+        # Every tarball is downloaded for one architecture, so a wrong URL
+        # yields an install whose binaries cannot run here.
+        assert_equals(
+            elf_machine(binary), expected_machine,
+            f"'{binary}' was built for a different architecture than "
+            f"{platform.machine()}. Check the architecture in its download URL.")
+
+        version = subprocess.run([str(binary), argument], capture_output=True)
+        assert_equals(
+            version.returncode, 0,
+            f"Expected '{binary} {argument}' to run with exit code 0.")
+        # java writes its version banner to stderr, node and go to stdout.
+        reported = (version.stdout + version.stderr).decode("utf-8")
+        assert_true(
+            expected in reported,
+            f"Expected '{binary} {argument}' to report '{expected}', got: {reported}")
+
+        # The installs are of no use without the two lines that put them on a
+        # PATH, which is what the README next to them carries.
+        readme = binary.parents[1] / "README.upstream"
+        assert_true(readme.is_file(), f"Expected a README at '{readme}'.")
+
+    print(f"Upstream tools: Temurin {temurin}, {node_homes[0].name} and Go {go} "
+          f"installed in {prefix}")
