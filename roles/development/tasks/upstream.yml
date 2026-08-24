@@ -65,11 +65,17 @@
   ansible.builtin.set_fact:
     development_temurin_pkg_link: >-
       {{
-        (((development_temurin_assets | default({})).json | default([]) | first | default({})).binaries | default([]) | first | default({})).package.link | default('')
+        (((development_temurin_assets | default({})).json
+          | default([]) | first | default({})).binaries
+          | default([]) | first | default({})).package.link
+          | default('')
       }}
     development_temurin_pkg_checksum: >-
       {{
-        (((development_temurin_assets | default({})).json | default([]) | first | default({})).binaries | default([]) | first | default({})).package.checksum | default('')
+        (((development_temurin_assets | default({})).json
+          | default([]) | first | default({})).binaries
+          | default([]) | first | default({})).package.checksum
+          | default('')
       }}
   when:
     - development_use_upstream | bool
@@ -139,8 +145,7 @@
           'To use it add e.g.:',
           '  export JAVA_HOME=' ~ development_upstream.install_prefix ~ '/temurin-' ~ development_upstream.temurin_major,
           '  export PATH=$JAVA_HOME/bin:$PATH'
-        ] | join('
-')
+        ] | join('\\n')
       }}
     mode: "0644"
   changed_when: false
@@ -161,20 +166,38 @@
   register: development_install_prefix_stat
   when: development_use_upstream | bool
 
-- name: Fetch node latest-v<major> directory listing
-  ansible.builtin.uri:
-    url: "https://nodejs.org/dist/latest-v{{ development_upstream.node_major }}.x/"
-    return_content: true
-  register: development_node_index
+- name: Fetch SHASUMS256 for Node
+  ansible.builtin.command:
+    argv:
+      - curl
+      - -fsSL
+      - "https://nodejs.org/dist/latest-v{{ development_upstream.node_major }}.x/SHASUMS256.txt"
+  register: development_node_shasums
+  changed_when: false
   when: development_use_upstream | bool
 
-- name: Find node tarball filename in index
-  ansible.builtin.set_fact:
-    development_node_filename: "{{ (development_node_index.content | regex_findall('node-v[^\"<> ]+') | select('search', development_upstream.node_major) | select('search', development_node_arch_suffix) | list | first | default('')) }}"
+- name: Find node tarball filename in SHASUMS256
+  ansible.builtin.shell: |
+    set -o pipefail
+    printf '%s\\n' "{{ development_node_shasums.stdout }}" \
+      | grep 'node-v' \
+      | grep '{{ development_upstream.node_major }}' \
+      | grep '{{ development_node_arch_suffix }}' \
+      | awk '{print $2}' \
+      | head -n 1
+  register: development_node_filename_result
+  changed_when: false
   when:
     - development_use_upstream | bool
-    - development_node_index is defined
-    - development_node_index.status == 200
+    - development_node_shasums is defined
+    - development_node_shasums.rc == 0
+
+- name: Set node filename from shell result
+  ansible.builtin.set_fact:
+    development_node_filename: "{{ development_node_filename_result.stdout | trim }}"
+  when:
+    - development_use_upstream | bool
+    - development_node_filename_result is defined
 
 - name: Fail if no Node tarball found for requested major
   ansible.builtin.fail:
@@ -208,21 +231,11 @@
     - development_use_upstream | bool
     - development_node_version is defined
 
-- name: Fetch SHASUMS256 for Node
-  ansible.builtin.uri:
-    url: "https://nodejs.org/dist/latest-v{{ development_upstream.node_major }}.x/SHASUMS256.txt"
-    return_content: true
-  register: development_node_shasums
-  when:
-    - development_use_upstream | bool
-    - development_node_filename is defined
-    - not development_node_target.stat.exists
-
 - name: Set node checksum from SHASUMS256 content
   ansible.builtin.set_fact:
     development_node_checksum: >-
       {{
-        (development_node_shasums.content.splitlines()
+        (development_node_shasums.stdout.splitlines()
           | select('search', development_node_filename)
           | list
           | first
@@ -302,8 +315,7 @@
           'Node.js ' ~ development_node_version ~ ' installed here.',
           'To use it add e.g.:',
           '  export PATH=' ~ development_upstream.install_prefix ~ '/node-' ~ development_node_version ~ '/bin:$PATH'
-        ] | join('
-')
+        ] | join('\\n')
       }}
     mode: "0644"
   changed_when: false
@@ -407,8 +419,7 @@
           'Go ' ~ development_upstream.go_version ~ ' installed here.',
           'To use it add e.g.:',
           '  export PATH=' ~ development_upstream.install_prefix ~ '/go-' ~ development_upstream.go_version ~ '/bin:$PATH'
-        ] | join('
-')
+        ] | join('\\n')
       }}
     mode: "0644"
   changed_when: false
