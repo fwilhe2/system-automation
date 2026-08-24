@@ -44,32 +44,35 @@ development_system_packages:
     - "@Development Tools"
     - cmake
 
-# Optional: install newer upstream versions for certain languages
-# Defaults leave distro packages in place. Enable by setting
-# development_use_upstream: true in playbooks/group_vars/all/local.yml or
-# another appropriate vars file. When enabled the tasks below will add upstream
-# repositories and install pinned major versions of Temurin (OpenJDK), Node.js
-# and a pinned Go release.
-#
-# Pin choices here are major versions (Temurin/Node) or explicit go version.
-# Update these values to the desired major/version to pin upgrades.
-
+# The upstream tarballs from upstream.yml, which are installed next to the
+# distribution packages above rather than instead of them: nothing here lands on
+# PATH, every install goes into its own directory below the prefix, and each one
+# carries a README saying which lines to add to a shell profile to use it.
+# Set this to false to skip them entirely.
 development_use_upstream: true
-development_upstream:
-  # Install prefix for upstream tarballs. Change this to your preferred opt-in
-  # directory; defaults to /opt so you can add e.g. /opt/node-20/bin to PATH.
-  install_prefix: /opt
+development_upstream_prefix: /opt
 
-  # Temurin major version (e.g. 17, 21, 25). The role will download the latest
-  # available Temurin binary for this feature release and extract it under
-  # {{ development_upstream.install_prefix }}/temurin-<major>.
-  temurin_major: 25
+# Temurin feature release. Its latest build is what gets installed, into
+# {{ development_upstream_prefix }}/temurin-<major>.
+development_temurin_major: 25
 
-  # Node.js major: the role will look up the latest release in this major
-  # series (e.g. 20, 24) and install it under
-  # {{ development_upstream.install_prefix }}/node-<full-version>
-  node_major: 24
+# Node.js major release. Its latest version is what gets installed, into
+# {{ development_upstream_prefix }}/node-<full version>, so a new upstream
+# release is picked up without touching the one already installed.
+development_node_major: 24
 
-  # Go version to install from official tarballs. Use full semver (e.g. "1.27").
-  # The role will extract this under {{ development_upstream.install_prefix }}/go-<version>
-  go_version: "1.27"
+# Go release, pinned to a minor version, installed into
+# {{ development_upstream_prefix }}/go-<minor>. go.dev only lists the two
+# current majors, so this cannot lag more than one release behind.
+development_go_version: "1.27"
+
+# The same three architectures under the three names upstream give them.
+development_temurin_architectures:
+  x86_64: x64
+  aarch64: aarch64
+development_node_architectures:
+  x86_64: x64
+  aarch64: arm64
+development_go_architectures:
+  x86_64: amd64
+  aarch64: arm64

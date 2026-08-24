@@ -1,0 +1,29 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# Not configuration - what upstream.yml derives from the pinned versions in
+# defaults/main.yml, and needs several times over each. The Node.js version is
+# only known once upstream.yml has read it off the checksum file, which is fine:
+# these are templated where they are used, not where they are defined.
+development_temurin_architecture: "{{ development_temurin_architectures[ansible_facts['architecture']] }}"
+development_node_architecture: "{{ development_node_architectures[ansible_facts['architecture']] }}"
+development_go_architecture: "{{ development_go_architectures[ansible_facts['architecture']] }}"
+
+development_temurin_home: "{{ development_upstream_prefix }}/temurin-{{ development_temurin_major }}"
+development_node_home: "{{ development_upstream_prefix }}/node-{{ development_node_version }}"
+development_go_home: "{{ development_upstream_prefix }}/go-{{ development_go_version }}"
+
+# This endpoint redirects to the latest build of the feature release, which
+# saves querying the Adoptium assets API for a download link. That link is the
+# only thing the API would add over the redirect, and the checksum next to it
+# would only be as trustworthy as the same TLS connection the tarball arrives
+# over, so this is the whole Temurin download.
+development_temurin_url: >-
+  https://api.adoptium.net/v3/binary/latest/{{ development_temurin_major }}/ga/linux/{{ development_temurin_architecture }}/jdk/hotspot/normal/eclipse
+development_temurin_tarball: "/tmp/temurin-{{ development_temurin_major }}.tar.gz"
+
+development_node_release_url: "https://nodejs.org/dist/latest-v{{ development_node_major }}.x"
+# The gzip tarball rather than the smaller xz one, because gzip is the only
+# compressor every one of the distributions has out of the box.
+development_node_tarball: "node-v{{ development_node_version }}-linux-{{ development_node_architecture }}.tar.gz"
