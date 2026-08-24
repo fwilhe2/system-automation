@@ -10,17 +10,15 @@ development_temurin_architecture: "{{ development_temurin_architectures[ansible_
 development_node_architecture: "{{ development_node_architectures[ansible_facts['architecture']] }}"
 development_go_architecture: "{{ development_go_architectures[ansible_facts['architecture']] }}"
 
+# Pinned by scripts/update-upstream-checksums.sh into files/upstream-checksums.yml,
+# which upstream.yml checks the exact version it resolves against before it
+# trusts that file's checksum for the architecture it is installing.
+development_upstream_checksums: "{{ lookup('ansible.builtin.file', role_path ~ '/files/upstream-checksums.yml') | from_yaml }}"
+
 development_temurin_home: "{{ development_upstream_prefix }}/temurin-{{ development_temurin_major }}"
 development_node_home: "{{ development_upstream_prefix }}/node-{{ development_node_version }}"
 development_go_home: "{{ development_upstream_prefix }}/go-{{ development_go_version }}"
 
-# This endpoint redirects to the latest build of the feature release, which
-# saves querying the Adoptium assets API for a download link. That link is the
-# only thing the API would add over the redirect, and the checksum next to it
-# would only be as trustworthy as the same TLS connection the tarball arrives
-# over, so this is the whole Temurin download.
-development_temurin_url: >-
-  https://api.adoptium.net/v3/binary/latest/{{ development_temurin_major }}/ga/linux/{{ development_temurin_architecture }}/jdk/hotspot/normal/eclipse
 development_temurin_tarball: "/tmp/temurin-{{ development_temurin_major }}.tar.gz"
 
 development_node_release_url: "https://nodejs.org/dist/latest-v{{ development_node_major }}.x"

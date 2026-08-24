@@ -12,6 +12,12 @@
 # when the binary it installs is already there, extract, drop the tarball. That
 # guard is what makes the role idempotent, and it is also what stops a second
 # run from downloading a few hundred megabytes just to throw them away again.
+#
+# Before any of the three is fetched, the version resolved above is checked
+# against files/upstream-checksums.yml: if upstream is serving something other
+# than what is pinned there, the play fails instead of trusting a checksum
+# that the same origin as the download also controls. Run
+# scripts/update-upstream-checksums.sh to move the pin forward.
 
 # --- Eclipse Temurin ---
 - name: Check for the Temurin JDK
@@ -22,10 +28,38 @@
 - name: Install Temurin {{ development_temurin_major }}
   when: not development_temurin_java.stat.exists
   block:
+    # The assets API rather than the binary/latest redirect used to just
+    # download from, because this is what names the exact release the pinned
+    # checksum below is checked against.
+    - name: Get the latest Temurin release for this architecture
+      ansible.builtin.uri:
+        url: >-
+          https://api.adoptium.net/v3/assets/latest/{{ development_temurin_major }}/hotspot?image_type=jdk&os=linux&architecture={{
+            development_temurin_architecture
+          }}
+        return_content: true
+      register: development_temurin_release
+      changed_when: false
+
+    - name: Select the Temurin build
+      ansible.builtin.set_fact:
+        development_temurin_build: "{{ development_temurin_release.json[0] }}"
+
+    - name: Check the resolved Temurin release against the pinned checksum
+      ansible.builtin.assert:
+        that: development_temurin_build.release_name == development_upstream_checksums.temurin.version
+        fail_msg: >-
+          Adoptium is serving {{ development_temurin_build.release_name }} but
+          files/upstream-checksums.yml only pins
+          {{ development_upstream_checksums.temurin.version }}. Run
+          scripts/update-upstream-checksums.sh to pin the new build before
+          installing it.
+
     - name: Download Temurin
       ansible.builtin.get_url:
-        url: "{{ development_temurin_url }}"
+        url: "{{ development_temurin_build.binary.package.link }}"
         dest: "{{ development_temurin_tarball }}"
+        checksum: "sha256:{{ development_upstream_checksums.temurin[development_temurin_architecture] }}"
         mode: "0600"
 
     - name: Create the Temurin directory
@@ -61,8 +95,9 @@
 
 # --- Node.js ---
 # The release directory is stable but the files in it are not, so the checksum
-# file is what names the current tarball. get_url reads the same file again to
-# check the download against it.
+# file is what names the current tarball. The download itself is checked
+# against the pinned checksum below rather than this same file, which is only
+# used to name the current version.
 - name: Get the checksums of the current Node.js release
   ansible.builtin.uri:
     url: "{{ development_node_release_url }}/SHASUMS256.txt"
@@ -85,11 +120,21 @@
 - name: Install Node.js {{ development_node_version }}
   when: not development_node_binary.stat.exists
   block:
+    - name: Check the resolved Node.js release against the pinned checksum
+      ansible.builtin.assert:
+        that: development_node_version == development_upstream_checksums.node.version
+        fail_msg: >-
+          nodejs.org is serving {{ development_node_version }} but
+          files/upstream-checksums.yml only pins
+          {{ development_upstream_checksums.node.version }}. Run
+          scripts/update-upstream-checksums.sh to pin the new release before
+          installing it.
+
     - name: Download Node.js
       ansible.builtin.get_url:
         url: "{{ development_node_release_url }}/{{ development_node_tarball }}"
         dest: "/tmp/{{ development_node_tarball }}"
-        checksum: "sha256:{{ development_node_release_url }}/SHASUMS256.txt"
+        checksum: "sha256:{{ development_upstream_checksums.node[development_node_architecture] }}"
         mode: "0600"
 
     - name: Create the Node.js directory
@@ -121,8 +166,9 @@
         export PATH="{{ development_node_home }}/bin:$PATH"
 
 # --- Go ---
-# The download index carries both the file name of the pinned release and its
-# checksum, so it answers the same question SHASUMS256.txt does for Node.js.
+# The download index carries both the file name of the current release and
+# its checksum, which names the tarball to download; the download itself is
+# checked against the pinned checksum below rather than this same index.
 - name: Get the Go download index
   ansible.builtin.uri:
     url: "https://go.dev/dl/?mode=json"
@@ -149,11 +195,21 @@
 - name: Install Go {{ development_go_version }}
   when: not development_go_binary.stat.exists
   block:
+    - name: Check the resolved Go release against the pinned checksum
+      ansible.builtin.assert:
+        that: development_go_download.version == development_upstream_checksums.go.version
+        fail_msg: >-
+          go.dev is serving {{ development_go_download.version }} but
+          files/upstream-checksums.yml only pins
+          {{ development_upstream_checksums.go.version }}. Run
+          scripts/update-upstream-checksums.sh to pin the new release before
+          installing it.
+
     - name: Download Go
       ansible.builtin.get_url:
         url: "https://go.dev/dl/{{ development_go_download.filename }}"
         dest: "/tmp/{{ development_go_download.filename }}"
-        checksum: "sha256:{{ development_go_download.sha256 }}"
+        checksum: "sha256:{{ development_upstream_checksums.go[development_go_architecture] }}"
         mode: "0600"
 
     - name: Create the Go directory
