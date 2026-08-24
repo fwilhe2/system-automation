@@ -16,97 +16,116 @@
   ansible.builtin.file:
     path: "{{ development_upstream.install_prefix }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
   when: development_use_upstream | bool
 
 - name: Set architecture variables
   ansible.builtin.set_fact:
-    arch: "{{ 'x64' if ansible_facts['architecture'] == 'x86_64' else ('aarch64' if ansible_facts['architecture'] == 'aarch64' else ansible_facts['architecture']) }}"
-    node_arch_suffix: "{{ 'linux-x64' if ansible_facts['architecture'] == 'x86_64' else ('linux-arm64' if ansible_facts['architecture'] == 'aarch64' else 'linux-x64') }}"
-    go_arch: "{{ 'amd64' if ansible_facts['architecture'] == 'x86_64' else ('arm64' if ansible_facts['architecture'] == 'aarch64' else 'amd64') }}"
+    development_arch: >-
+      {{
+        'x64' if ansible_facts['architecture'] == 'x86_64'
+        else ('aarch64' if ansible_facts['architecture'] == 'aarch64'
+          else ansible_facts['architecture'])
+      }}
+    development_node_arch_suffix: >-
+      {{
+        'linux-x64' if ansible_facts['architecture'] == 'x86_64'
+        else ('linux-arm64' if ansible_facts['architecture'] == 'aarch64'
+          else 'linux-x64')
+      }}
+    development_go_arch: >-
+      {{
+        'amd64' if ansible_facts['architecture'] == 'x86_64'
+        else ('arm64' if ansible_facts['architecture'] == 'aarch64'
+          else 'amd64')
+      }}
   when: development_use_upstream | bool
 
 # --- Temurin (Eclipse Temurin, Adoptium API assets) ---
 - name: Stat Temurin target
   ansible.builtin.stat:
     path: "{{ development_upstream.install_prefix }}/temurin-{{ development_upstream.temurin_major }}"
-  register: temurin_target
+  register: development_temurin_target
   when: development_use_upstream | bool
 
 - name: Query Adoptium assets for Temurin
   ansible.builtin.uri:
     url: >-
-      https://api.adoptium.net/v3/assets/feature_releases/{{ development_upstream.temurin_major }}/ga?architecture={{ arch }}&os=linux&image_type=jdk&heap_size=normal&impl=hotspot&vendor=eclipse
-    return_content: yes
-    validate_certs: yes
-  register: temurin_assets
+      https://api.adoptium.net/v3/assets/feature_releases/
+      {{ development_upstream.temurin_major }}/ga?architecture={{ development_arch }}
+      &os=linux&image_type=jdk&heap_size=normal&impl=hotspot&vendor=eclipse
+    return_content: true
+    validate_certs: true
+  register: development_temurin_assets
   when:
     - development_use_upstream | bool
-    - not temurin_target.stat.exists
+    - not development_temurin_target.stat.exists
 
 - name: Set Temurin package link and checksum
   ansible.builtin.set_fact:
-    temurin_pkg_link: >-
+    development_temurin_pkg_link: >-
       {{
-        (((temurin_assets | default({})).json | default([]) | first | default({})).binaries | default([]) | first | default({})).package.link | default('')
+        (((development_temurin_assets | default({})).json | default([]) | first | default({})).binaries | default([]) | first | default({})).package.link | default('')
       }}
-    temurin_pkg_checksum: >-
+    development_temurin_pkg_checksum: >-
       {{
-        (((temurin_assets | default({})).json | default([]) | first | default({})).binaries | default([]) | first | default({})).package.checksum | default('')
+        (((development_temurin_assets | default({})).json | default([]) | first | default({})).binaries | default([]) | first | default({})).package.checksum | default('')
       }}
   when:
     - development_use_upstream | bool
-    - (temurin_assets | default({})).json is defined
-    - ((temurin_assets | default({})).json | default([]) | length) > 0
-    - ((((temurin_assets | default({})).json | default([]) | first | default({})).binaries | default([]) | length) > 0)
+    - (development_temurin_assets | default({})).json is defined
+    - (development_temurin_assets.json | default([]) | length) > 0
+    - ((development_temurin_assets.json | default([]) | first | default({})).binaries | default([]) | length) > 0
 
 - name: Download Temurin package with checksum
   ansible.builtin.get_url:
-    url: "{{ temurin_pkg_link }}"
-    dest: "/tmp/{{ temurin_pkg_link | basename }}"
-    checksum: "sha256:{{ temurin_pkg_checksum }}"
-    mode: '0644'
+    url: "{{ development_temurin_pkg_link }}"
+    dest: "/tmp/{{ development_temurin_pkg_link | basename }}"
+    checksum: "sha256:{{ development_temurin_pkg_checksum }}"
+    mode: "0644"
   when:
     - development_use_upstream | bool
-    - temurin_pkg_link is defined
-    - not temurin_target.stat.exists
+    - development_temurin_pkg_link is defined
+    - not development_temurin_target.stat.exists
 
 - name: Create temporary directory for temurin extraction
   ansible.builtin.file:
     path: "/tmp/temurin-{{ development_upstream.temurin_major }}.d"
     state: directory
-    mode: '0755'
+    mode: "0755"
   when:
     - development_use_upstream | bool
-    - not temurin_target.stat.exists
+    - not development_temurin_target.stat.exists
 
 - name: Extract Temurin archive to temporary dir
   ansible.builtin.unarchive:
-    src: "/tmp/{{ temurin_pkg_link | basename }}"
+    src: "/tmp/{{ development_temurin_pkg_link | basename }}"
     dest: "/tmp/temurin-{{ development_upstream.temurin_major }}.d"
-    remote_src: yes
+    remote_src: true
     extra_opts: [--numeric-owner]
   when:
     - development_use_upstream | bool
-    - not temurin_target.stat.exists
+    - not development_temurin_target.stat.exists
 
 - name: Find extracted Temurin top-level directory
   ansible.builtin.find:
     paths: "/tmp/temurin-{{ development_upstream.temurin_major }}.d"
     file_type: directory
     depth: 1
-  register: temurin_extracted
+  register: development_temurin_extracted
   when:
     - development_use_upstream | bool
-    - not temurin_target.stat.exists
+    - not development_temurin_target.stat.exists
 
 - name: Move Temurin into install prefix
   ansible.builtin.command:
-    cmd: mv {{ temurin_extracted.files[0].path }} {{ development_upstream.install_prefix }}/temurin-{{ development_upstream.temurin_major }}
+    cmd: >-
+      mv {{ development_temurin_extracted.files[0].path }}
+      {{ development_upstream.install_prefix }}/temurin-{{ development_upstream.temurin_major }}
   when:
     - development_use_upstream | bool
-    - not temurin_target.stat.exists
-    - temurin_extracted.files | length > 0
+    - not development_temurin_target.stat.exists
+    - development_temurin_extracted.files | length > 0
   args:
     removes: "/tmp/temurin-{{ development_upstream.temurin_major }}.d"
 
@@ -120,12 +139,14 @@
           'To use it add e.g.:',
           '  export JAVA_HOME=' ~ development_upstream.install_prefix ~ '/temurin-' ~ development_upstream.temurin_major,
           '  export PATH=$JAVA_HOME/bin:$PATH'
-        ] | join('\n')
+        ] | join('
+')
       }}
+    mode: "0644"
   changed_when: false
   when:
     - development_use_upstream | bool
-    - temurin_target.stat.exists | default(true)
+    - development_temurin_target.stat.exists | default(true)
 
 - name: Clean up Temurin temporary files
   ansible.builtin.file:
@@ -137,78 +158,72 @@
 - name: Stat Node target prefix
   ansible.builtin.stat:
     path: "{{ development_upstream.install_prefix }}"
-  register: install_prefix_stat
+  register: development_install_prefix_stat
   when: development_use_upstream | bool
 
 - name: Fetch node latest-v<major> directory listing
   ansible.builtin.uri:
     url: "https://nodejs.org/dist/latest-v{{ development_upstream.node_major }}.x/"
-    return_content: yes
-  register: node_index
+    return_content: true
+  register: development_node_index
   when: development_use_upstream | bool
 
 - name: Find node tarball filename in index
   ansible.builtin.set_fact:
-    node_filename: >-
-      {{
-        (node_index.content
-          | regex_findall('node-v' ~ development_upstream.node_major ~ '[^" ]+')
-          | select('search', node_arch_suffix)
-          | list
-          | first
-          | default(''))
-      }}
+    development_node_filename: "{{ (development_node_index.content | regex_findall('node-v[^\"<>\\s]+') | select('search', development_upstream.node_major) | select('search', development_node_arch_suffix) | list | first | default('')) }}"
   when:
     - development_use_upstream | bool
-    - node_index is defined
-    - node_index.status == 200
+    - development_node_index is defined
+    - development_node_index.status == 200
 
 - name: Fail if no Node tarball found for requested major
   ansible.builtin.fail:
-    msg: "Could not detect a Node.js tarball for major {{ development_upstream.node_major }} and arch {{ node_arch_suffix }}"
+    msg: >-
+      Could not detect a Node.js tarball for major {{ development_upstream.node_major }}
+      and arch {{ development_node_arch_suffix }}
   when:
     - development_use_upstream | bool
-    - node_filename == ''
+    - development_node_filename == ''
 
 - name: Set node_version from filename
   ansible.builtin.set_fact:
-    node_version: >-
+    development_node_version: >-
       {{
-        node_filename
+        development_node_filename
         | replace('node-v', '')
-        | replace('-' ~ node_arch_suffix, '')
+        | replace('-' ~ development_node_arch_suffix, '')
         | replace('.tar.xz', '')
         | replace('.tar.gz', '')
       }}
   when:
     - development_use_upstream | bool
-    - node_filename is defined
-    - node_filename != ''
+    - development_node_filename is defined
+    - development_node_filename != ''
 
 - name: Stat Node install dir
   ansible.builtin.stat:
-    path: "{{ development_upstream.install_prefix }}/node-{{ node_version }}"
-  register: node_target
+    path: "{{ development_upstream.install_prefix }}/node-{{ development_node_version }}"
+  register: development_node_target
   when:
     - development_use_upstream | bool
-    - node_version is defined
+    - development_node_version is defined
 
 - name: Fetch SHASUMS256 for Node
   ansible.builtin.uri:
     url: "https://nodejs.org/dist/latest-v{{ development_upstream.node_major }}.x/SHASUMS256.txt"
-    return_content: yes
-  register: node_shasums
+    return_content: true
+  register: development_node_shasums
   when:
     - development_use_upstream | bool
-    - node_filename is defined
-    - not node_target.stat.exists
+    - development_node_filename is defined
+    - not development_node_target.stat.exists
 
 - name: Set node checksum from SHASUMS256 content
   ansible.builtin.set_fact:
-    node_checksum: >-
+    development_node_checksum: >-
       {{
-        (node_shasums.content.splitlines()
-          | select('search', node_filename)
+        (development_node_shasums.content.splitlines()
+          | select('search', development_node_filename)
           | list
           | first
           | default('')
@@ -218,156 +233,169 @@
       }}
   when:
     - development_use_upstream | bool
-    - node_filename is defined
-    - node_shasums is defined
+    - development_node_filename is defined
+    - development_node_shasums is defined
 
 - name: Download Node.js tarball with checksum
   ansible.builtin.get_url:
-    url: "https://nodejs.org/dist/latest-v{{ development_upstream.node_major }}.x/{{ node_filename }}"
-    dest: "/tmp/{{ node_filename }}"
-    checksum: "sha256:{{ node_checksum }}"
-    mode: '0644'
+    url: "https://nodejs.org/dist/latest-v{{ development_upstream.node_major }}.x/{{ development_node_filename }}"
+    dest: "/tmp/{{ development_node_filename }}"
+    checksum: "sha256:{{ development_node_checksum }}"
+    mode: "0644"
   when:
     - development_use_upstream | bool
-    - node_filename is defined
-    - not node_target.stat.exists
-    - node_checksum is defined
+    - development_node_filename is defined
+    - not development_node_target.stat.exists
+    - development_node_checksum is defined
 
 - name: Create temporary directory for node extraction
   ansible.builtin.file:
-    path: "/tmp/node-{{ node_version }}.d"
+    path: "/tmp/node-{{ development_node_version }}.d"
     state: directory
-    mode: '0755'
+    mode: "0755"
   when:
     - development_use_upstream | bool
-    - node_filename is defined
-    - not node_target.stat.exists
+    - development_node_filename is defined
+    - not development_node_target.stat.exists
 
 - name: Extract Node tarball to temporary dir
   ansible.builtin.unarchive:
-    src: "/tmp/{{ node_filename }}"
-    dest: "/tmp/node-{{ node_version }}.d"
-    remote_src: yes
+    src: "/tmp/{{ development_node_filename }}"
+    dest: "/tmp/node-{{ development_node_version }}.d"
+    remote_src: true
     extra_opts: [--numeric-owner]
   when:
     - development_use_upstream | bool
-    - node_filename is defined
-    - not node_target.stat.exists
+    - development_node_filename is defined
+    - not development_node_target.stat.exists
 
 - name: Find extracted Node top-level directory
   ansible.builtin.find:
-    paths: "/tmp/node-{{ node_version }}.d"
+    paths: "/tmp/node-{{ development_node_version }}.d"
     file_type: directory
     depth: 1
-  register: node_extracted
+  register: development_node_extracted
   when:
     - development_use_upstream | bool
-    - node_version is defined
-    - not node_target.stat.exists
+    - development_node_version is defined
+    - not development_node_target.stat.exists
 
 - name: Move Node into install prefix
   ansible.builtin.command:
-    cmd: mv {{ node_extracted.files[0].path }} {{ development_upstream.install_prefix }}/node-{{ node_version }}
+    cmd: >-
+      mv {{ development_node_extracted.files[0].path }}
+      {{ development_upstream.install_prefix }}/node-{{ development_node_version }}
   args:
-    creates: "{{ development_upstream.install_prefix }}/node-{{ node_version }}"
+    creates: "{{ development_upstream.install_prefix }}/node-{{ development_node_version }}"
   when:
     - development_use_upstream | bool
-    - node_version is defined
-    - not node_target.stat.exists
-    - node_extracted.files | length > 0
+    - development_node_version is defined
+    - not development_node_target.stat.exists
+    - development_node_extracted.files | length > 0
 
 - name: Create README for Node install
   ansible.builtin.copy:
-    dest: "{{ development_upstream.install_prefix }}/node-{{ node_version }}/README"
+    dest: "{{ development_upstream.install_prefix }}/node-{{ development_node_version }}/README"
     content: >-
       {{
         [
-          'Node.js ' ~ node_version ~ ' installed here.',
+          'Node.js ' ~ development_node_version ~ ' installed here.',
           'To use it add e.g.:',
-          '  export PATH=' ~ development_upstream.install_prefix ~ '/node-' ~ node_version ~ '/bin:$PATH'
-        ] | join('\n')
+          '  export PATH=' ~ development_upstream.install_prefix ~ '/node-' ~ development_node_version ~ '/bin:$PATH'
+        ] | join('
+')
       }}
+    mode: "0644"
   changed_when: false
   when:
     - development_use_upstream | bool
-    - node_target.stat.exists | default(true)
+    - development_node_target.stat.exists | default(true)
 
 - name: Clean up Node temporary files
   ansible.builtin.file:
-    path: "/tmp/{{ node_filename }}"
+    path: "/tmp/{{ development_node_filename }}"
     state: absent
   when:
     - development_use_upstream | bool
-    - node_filename is defined
+    - development_node_filename is defined
 
 # --- Go ---
 - name: Query Go download index (JSON)
   ansible.builtin.uri:
     url: "https://go.dev/dl/?mode=json"
-    return_content: yes
-  register: go_index
+    return_content: true
+  register: development_go_index
   when: development_use_upstream | bool
 
 - name: Select Go release entry
   ansible.builtin.set_fact:
-    go_entry: >-
+    development_go_entry: >-
       {{
-        ((go_index | default({})).json | default([]) | selectattr('version', 'match', '^go' + development_upstream.go_version) | list | first | default({}))
+        ((development_go_index | default({})).json | default([])
+          | selectattr('version', 'match', '^go' + development_upstream.go_version)
+          | list | first | default({}))
       }}
   when:
     - development_use_upstream | bool
-    - go_index is defined
+    - development_go_index is defined
 
-- name: Select Go file for linux/{{ go_arch }}
+- name: Select Go file for linux/{{ development_go_arch }}
   ansible.builtin.set_fact:
-    go_file: "{{ (go_entry.files | selectattr('os', 'equalto', 'linux') | selectattr('arch', 'equalto', go_arch) | selectattr('kind', 'equalto', 'archive') | list)[0] }}"
+    development_go_file: >-
+      {{
+        (development_go_entry.files | selectattr('os', 'equalto', 'linux')
+          | selectattr('arch', 'equalto', development_go_arch)
+          | selectattr('kind', 'equalto', 'archive') | list)[0]
+      }}
   when:
     - development_use_upstream | bool
-    - go_entry is defined
+    - development_go_entry is defined
 
 - name: Download Go tarball with checksum
   ansible.builtin.get_url:
-    url: "https://go.dev/dl/{{ go_file.filename }}"
-    dest: "/tmp/{{ go_file.filename }}"
-    checksum: "sha256:{{ go_file.sha256 }}"
-    mode: '0644'
+    url: "https://go.dev/dl/{{ development_go_file.filename }}"
+    dest: "/tmp/{{ development_go_file.filename }}"
+    checksum: "sha256:{{ development_go_file.sha256 }}"
+    mode: "0644"
   when:
     - development_use_upstream | bool
-    - go_file is defined
+    - development_go_file is defined
 
 - name: Create temporary directory for go extraction
   ansible.builtin.file:
-    path: "/tmp/{{ go_file.filename | replace('.tar.gz', '') | replace('.tgz', '') }}.d"
+    path: "/tmp/{{ development_go_file.filename | replace('.tar.gz', '') | replace('.tgz', '') }}.d"
     state: directory
-    mode: '0755'
+    mode: "0755"
   when:
     - development_use_upstream | bool
-    - go_file is defined
+    - development_go_file is defined
 
 - name: Extract Go to temporary dir
   ansible.builtin.unarchive:
-    src: "/tmp/{{ go_file.filename }}"
-    dest: "/tmp/{{ go_file.filename | replace('.tar.gz', '') | replace('.tgz', '') }}.d"
-    remote_src: yes
+    src: "/tmp/{{ development_go_file.filename }}"
+    dest: "/tmp/{{ development_go_file.filename | replace('.tar.gz', '') | replace('.tgz', '') }}.d"
+    remote_src: true
     extra_opts: [--numeric-owner]
   changed_when: false
   when:
     - development_use_upstream | bool
-    - go_file is defined
+    - development_go_file is defined
 
 - name: Move Go into install prefix
   ansible.builtin.command:
-    cmd: mv /tmp/{{ go_file.filename | replace('.tar.gz', '') | replace('.tgz', '') }}.d/go {{ development_upstream.install_prefix }}/go-{{ development_upstream.go_version }}
+    cmd: >-
+      mv /tmp/{{ development_go_file.filename | replace('.tar.gz', '') | replace('.tgz', '') }}.d/go
+      {{ development_upstream.install_prefix }}/go-{{ development_upstream.go_version }}
   args:
     creates: "{{ development_upstream.install_prefix }}/go-{{ development_upstream.go_version }}"
   when:
     - development_use_upstream | bool
-    - go_file is defined
+    - development_go_file is defined
 
 - name: Stat Go install dir
   ansible.builtin.stat:
     path: "{{ development_upstream.install_prefix }}/go-{{ development_upstream.go_version }}"
-  register: go_target
+  register: development_go_target
   when: development_use_upstream | bool
 
 - name: Create README for Go install
@@ -379,15 +407,20 @@
           'Go ' ~ development_upstream.go_version ~ ' installed here.',
           'To use it add e.g.:',
           '  export PATH=' ~ development_upstream.install_prefix ~ '/go-' ~ development_upstream.go_version ~ '/bin:$PATH'
-        ] | join('\n')
+        ] | join('
+')
       }}
+    mode: "0644"
+  changed_when: false
   when:
     - development_use_upstream | bool
-    - go_target.stat.exists | default(true)
+    - development_go_target.stat.exists | default(true)
 
 - name: Clean up Go temporary files
   ansible.builtin.file:
-    path: "/tmp/{{ go_file.filename | default('go' ~ development_upstream.go_version ~ '.linux-' ~ go_arch ~ '.tar.gz') | replace('.tar.gz', '') | replace('.tgz', '') }}*.d"
+    path: >-
+      /tmp/{{ development_go_file.filename | default('go' ~ development_upstream.go_version ~ '.linux-' ~ development_go_arch ~ '.tar.gz')
+      | replace('.tar.gz', '') | replace('.tgz', '') }}*.d
     state: absent
   when: development_use_upstream | bool
 
