@@ -92,6 +92,14 @@ ansible-playbook --ask-become-pass playbooks/common.yml   # just the headless ha
 `ansible.cfg` names the inventory and the role paths, so both commands need no flags - but
 they have to be run from the root of the checkout, which is where `ansible.cfg` is found.
 
+WARNING: Ubuntu 25.10 and later, including 26.04, default to `sudo-rs` instead of `sudo`.
+Older `ansible-core` releases don't recognize the password prompt `sudo-rs` prints, so
+`--ask-become-pass` hangs or fails with a privilege escalation error even with the right
+password. This is https://github.com/ansible/ansible/issues/85837[fixed upstream], but the
+`ansible-core` version `apt install ansible` pulls on Ubuntu 26.04 may predate the fix.
+Install a current `ansible-core` with `pipx install ansible-core` (or `pip install --user
+ansible-core`) and use that instead of the distro package if you hit this.
+
 `scripts/run.sh` wraps that, taking the playbook name without the `.yml` suffix and
 defaulting to everything:
 
