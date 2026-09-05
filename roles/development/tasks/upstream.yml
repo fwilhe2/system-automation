@@ -9,9 +9,10 @@
 # distribution packages the rest of this role installs.
 #
 # Every tool follows the same shape: resolve the download, skip the whole block
-# when the binary it installs is already there, extract, drop the tarball. That
-# guard is what makes the role idempotent, and it is also what stops a second
-# run from downloading a few hundred megabytes just to throw them away again.
+# when the requested version is already installed, extract, drop the tarball.
+# That guard is what makes the role idempotent, and it is also what stops a
+# second run from downloading a few hundred megabytes just to throw them away
+# again.
 #
 # Before any of the three is fetched, the version resolved above is checked
 # against files/upstream-checksums.yml: if upstream is serving something other
@@ -192,8 +193,18 @@
     path: "{{ development_go_home }}/bin/go"
   register: development_go_binary
 
+- name: Check the installed Go version
+  ansible.builtin.command:
+    cmd: "{{ development_go_home }}/bin/go version"
+  register: development_go_installed_version
+  changed_when: false
+  when: development_go_binary.stat.exists
+
 - name: Install Go {{ development_go_version }}
-  when: not development_go_binary.stat.exists
+  when:
+    - >-
+      not development_go_binary.stat.exists or
+      development_go_download.version not in development_go_installed_version.stdout
   block:
     - name: Check the resolved Go release against the pinned checksum
       ansible.builtin.assert:
@@ -211,6 +222,11 @@
         dest: "/tmp/{{ development_go_download.filename }}"
         checksum: "sha256:{{ development_upstream_checksums.go[development_go_architecture] }}"
         mode: "0600"
+
+    - name: Remove the previous Go installation
+      ansible.builtin.file:
+        path: "{{ development_go_home }}"
+        state: absent
 
     - name: Create the Go directory
       ansible.builtin.file:
