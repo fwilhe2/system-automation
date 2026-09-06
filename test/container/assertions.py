@@ -14,7 +14,6 @@ import re
 import shutil
 import subprocess
 import sys
-import urllib.request
 import xml.etree.ElementTree
 
 import yaml
@@ -277,12 +276,11 @@ def assert_addon_ids_match_their_xpi():
     for addon_id, settings in installed_policies("nightly").get(
             "ExtensionSettings", {}).items():
         xpi = pathlib.Path(f"/tmp/{addon_id}.xpi")
-        request = urllib.request.Request(
-            settings["install_url"],
-            # addons.mozilla.org answers 403 to the default urllib agent.
-            headers={"User-Agent": "system-automation-test"})
-        with urllib.request.urlopen(request) as response:
-            xpi.write_bytes(response.read())
+        subprocess.run([
+            "curl", "--fail", "--location", "--silent", "--show-error",
+            "--ipv4", "--user-agent", "system-automation-test", "--output",
+            str(xpi), settings["install_url"]
+        ], check=True)
 
         manifest = json.loads(read_from_archive(xpi, "manifest.json"))
         gecko = (manifest.get("browser_specific_settings")
