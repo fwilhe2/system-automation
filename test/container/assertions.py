@@ -48,6 +48,7 @@ def assert_system_properties():
         "keepassxc-cli": "-version",
         "gcl": "--version",
         "gh": "--version",
+        "dive": "--version",
     }
 
     for binary, version_argument in expected_binaries.items():

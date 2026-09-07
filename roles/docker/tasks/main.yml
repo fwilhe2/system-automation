@@ -18,3 +18,45 @@
   when: >-
     ansible_facts['os_family'] == 'Suse'
     or (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution'] != 'Fedora')
+
+- name: Get the installed Dive version
+  ansible.builtin.command: "{{ docker_dive_install_dir }}/dive --version"
+  register: docker_dive_installed
+  changed_when: false
+  failed_when: false
+
+- name: Get latest Dive release version
+  ansible.builtin.uri:
+    url: "https://api.github.com/repos/{{ docker_dive_repository }}/releases/latest"
+    return_content: true
+    headers: "{{ {'Authorization': 'Bearer ' + github_token} if github_token else {} }}"
+  vars:
+    github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"
+  register: docker_dive_latest_release
+  changed_when: false
+
+- name: Extract Dive release version
+  ansible.builtin.set_fact:
+    docker_dive_version: "{{ docker_dive_latest_release.json.tag_name }}"
+
+- name: Install Dive
+  when: docker_dive_version[1:] not in docker_dive_installed.stdout | default('')
+  vars:
+    docker_dive_archive: >-
+      dive_{{ docker_dive_version[1:] }}_linux_{{ docker_dive_architectures[ansible_facts['architecture']] }}.tar.gz
+  block:
+    - name: Download Dive
+      ansible.builtin.get_url:
+        url: "https://github.com/{{ docker_dive_repository }}/releases/download/{{ docker_dive_version }}/{{ docker_dive_archive }}"
+        dest: "/tmp/{{ docker_dive_archive }}"
+        mode: "0600"
+
+    - name: Extract Dive binary
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ docker_dive_archive }}"
+        dest: "{{ docker_dive_install_dir }}"
+        remote_src: true
+        include: [dive]
+        owner: root
+        group: root
+        mode: "0755"
