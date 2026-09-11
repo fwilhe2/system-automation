@@ -4,9 +4,7 @@
 name: Update upstream checksums
 
 on:
-  workflow_run:
-    workflows: [CI]
-    types: [completed]
+  workflow_dispatch: 
 
 permissions:
   contents: write
@@ -14,12 +12,6 @@ permissions:
 
 jobs:
   update:
-    # Only react to the scheduled CI run on the default branch. A failure in a
-    # pull request or a manual run must not create an unrelated update PR.
-    if: >-
-      github.event.workflow_run.conclusion == 'failure' &&
-      github.event.workflow_run.event == 'schedule' &&
-      github.event.workflow_run.head_branch == github.event.repository.default_branch
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
