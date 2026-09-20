@@ -109,19 +109,22 @@ def assert_smolvm_installed():
     local_bin = pathlib.Path.home() / ".local/bin"
     install_dir = pathlib.Path.home() / ".local/share/smolvm"
     executable = install_dir / "smolvm"
+    binary = install_dir / "smolvm-bin"
 
     assert_true(os.access(executable, os.X_OK),
                 f"Expected '{executable}' to be an executable.")
     assert_true((install_dir / "agent-rootfs").is_dir(),
                 f"Expected the smolvm runtime files below '{install_dir}'.")
+    assert_true(os.access(binary, os.X_OK),
+                f"Expected '{binary}' to be an executable.")
     assert_true((local_bin / "smolvm").is_symlink(),
                 f"Expected '{local_bin / 'smolvm'}' to be a symlink.")
     assert_equals(
         (local_bin / "smolvm").resolve(), executable,
         f"Expected '{local_bin / 'smolvm'}' to link to '{executable}'.")
     assert_equals(
-        elf_machine(executable), {"x86_64": 0x3E, "aarch64": 0xB7}[platform.machine()],
-        f"'{executable}' was built for a different architecture than {platform.machine()}.")
+        elf_machine(binary), {"x86_64": 0x3E, "aarch64": 0xB7}[platform.machine()],
+        f"'{binary}' was built for a different architecture than {platform.machine()}.")
     assert_equals(
         subprocess.run([str(executable), "--version"]).returncode, 0,
         f"Expected '{executable} --version' to run with exit code 0.")
