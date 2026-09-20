@@ -3,7 +3,7 @@
 
 ---
 # The distributions ship the JDK, Node.js and Go in whatever vintage their
-# release froze, so these three come from upstream as tarballs instead. Each one
+# release froze, so these tools come from upstream as tarballs instead. Each one
 # is extracted into its own directory below development_upstream_prefix and
 # nothing is put on PATH, which is what keeps them from colliding with the
 # distribution packages the rest of this role installs.
@@ -14,7 +14,7 @@
 # second run from downloading a few hundred megabytes just to throw them away
 # again.
 #
-# Before any of the three is fetched, the version resolved above is checked
+# Before any upstream tool is fetched, the version resolved above is checked
 # against files/upstream-checksums.yml: if upstream is serving something other
 # than what is pinned there, the play fails instead of trusting a checksum
 # that the same origin as the download also controls. Run
@@ -255,3 +255,83 @@
       To use it, add to your shell profile:
 
         export PATH="{{ development_go_home }}/bin:$PATH"
+
+# --- smolvm ---
+- name: Get the Home Directory
+  ansible.builtin.stat:
+    path: "~"
+  become: false
+  register: development_home
+
+- name: Get the installed smolvm version
+  ansible.builtin.command: "{{ development_smolvm_home }}/smolvm --version"
+  become: false
+  register: development_smolvm_installed_version
+  changed_when: false
+  failed_when: false
+
+- name: Get the latest smolvm release
+  ansible.builtin.uri:
+    url: "https://api.github.com/repos/smol-machines/smolvm/releases/latest"
+    return_content: true
+    headers: "{{ {'Authorization': 'Bearer ' + github_token} if github_token else {} }}"
+  become: false
+  vars:
+    github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"
+  register: development_smolvm_release
+  changed_when: false
+
+- name: Extract the smolvm release version
+  ansible.builtin.set_fact:
+    development_smolvm_version: "{{ development_smolvm_release.json.tag_name }}"
+    development_smolvm_architecture: "{{ development_smolvm_architectures[ansible_facts['architecture']] }}"
+  become: false
+
+- name: Install smolvm
+  become: false
+  when: development_smolvm_version[1:] not in development_smolvm_installed_version.stdout | default('')
+  block:
+    - name: Check the resolved smolvm release against the pinned checksum
+      ansible.builtin.assert:
+        that: development_smolvm_version[1:] == development_upstream_checksums.smolvm.version
+        fail_msg: >-
+          smol-machines/smolvm is serving {{ development_smolvm_version[1:] }} but
+          files/upstream-checksums.yml only pins
+          {{ development_upstream_checksums.smolvm.version }}. Run
+          scripts/update-upstream-checksums.sh to pin the new release before
+          installing it.
+
+    - name: Download smolvm
+      ansible.builtin.get_url:
+        url: >-
+          https://github.com/smol-machines/smolvm/releases/download/{{ development_smolvm_version }}/{{ development_smolvm_archive }}
+        dest: "/tmp/{{ development_smolvm_archive }}"
+        checksum: "sha256:{{ development_upstream_checksums.smolvm[development_smolvm_architecture] }}"
+        mode: "0600"
+
+    - name: Create the smolvm installation directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - "{{ development_home.stat.path }}/.local/bin"
+        - "{{ development_smolvm_home }}"
+
+    - name: Extract smolvm archive
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ development_smolvm_archive }}"
+        dest: "{{ development_smolvm_home }}"
+        remote_src: true
+        extra_opts: [--strip-components=1]
+
+    - name: Link smolvm into PATH
+      ansible.builtin.file:
+        src: "{{ development_smolvm_home }}/smolvm"
+        dest: "{{ development_home.stat.path }}/.local/bin/smolvm"
+        state: link
+
+    - name: Remove the smolvm tarball
+      ansible.builtin.file:
+        path: "/tmp/{{ development_smolvm_archive }}"
+        state: absent
