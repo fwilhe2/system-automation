@@ -3,7 +3,7 @@
 # SPDX-FileCopyrightText: Florian Wilhelm
 # SPDX-License-Identifier: MIT
 
-# Resolves the current upstream release of Temurin, Node.js and Go that
+# Resolves the current upstream release of Temurin, Node.js, Go and smolvm that
 # roles/development/tasks/upstream.yml would install, for both amd64 and
 # arm64, and pins their checksums into
 # roles/development/files/upstream-checksums.yml. upstream.yml refuses to
@@ -32,7 +32,7 @@ TEMURIN_MAJOR=$(default_value development_temurin_major)
 NODE_MAJOR=$(default_value development_node_major)
 GO_VERSION=$(default_value development_go_version)
 
-echo "Pinning Temurin ${TEMURIN_MAJOR}, Node.js ${NODE_MAJOR}.x and Go ${GO_VERSION}" >&2
+echo "Pinning Temurin ${TEMURIN_MAJOR}, Node.js ${NODE_MAJOR}.x, Go ${GO_VERSION} and smolvm" >&2
 
 # --- Temurin ---
 # The assets API (rather than the redirect upstream.yml downloads from) is
@@ -71,9 +71,22 @@ GO_VERSION_FULL=$(jq -r '.version' <<<"$GO_RELEASE")
 GO_SHA_AMD64=$(jq -r '.files[] | select(.os == "linux" and .arch == "amd64" and .kind == "archive") | .sha256' <<<"$GO_RELEASE")
 GO_SHA_ARM64=$(jq -r '.files[] | select(.os == "linux" and .arch == "arm64" and .kind == "archive") | .sha256' <<<"$GO_RELEASE")
 
+# --- smolvm ---
+SMOLVM_RELEASE=$(curl --silent --show-error --location \
+  "https://api.github.com/repos/smol-machines/smolvm/releases/latest")
+SMOLVM_VERSION=$(jq -r '.tag_name | ltrimstr("v")' <<<"$SMOLVM_RELEASE")
+smolvm_sha() {
+  jq -r --arg asset "smolvm-${SMOLVM_VERSION}-linux-$1.tar.gz" \
+    '.assets[] | select(.name == $asset) | .digest | ltrimstr("sha256:")' \
+    <<<"$SMOLVM_RELEASE"
+}
+SMOLVM_SHA_X86_64=$(smolvm_sha x86_64)
+SMOLVM_SHA_ARM64=$(smolvm_sha arm64)
+
 for value in "$TEMURIN_VERSION" "$TEMURIN_SHA_X64" "$TEMURIN_SHA_AARCH64" \
     "$NODE_VERSION" "$NODE_SHA_X64" "$NODE_SHA_ARM64" \
-    "$GO_VERSION_FULL" "$GO_SHA_AMD64" "$GO_SHA_ARM64"; do
+  "$GO_VERSION_FULL" "$GO_SHA_AMD64" "$GO_SHA_ARM64" \
+  "$SMOLVM_VERSION" "$SMOLVM_SHA_X86_64" "$SMOLVM_SHA_ARM64"; do
     if [[ -z "$value" || "$value" == "null" ]]; then
         echo "Could not resolve one of the upstream releases, aborting without touching $CHECKSUMS" >&2
         exit 1
@@ -100,9 +113,14 @@ go:
   version: $GO_VERSION_FULL
   amd64: $GO_SHA_AMD64
   arm64: $GO_SHA_ARM64
+smolvm:
+  version: $SMOLVM_VERSION
+  x86_64: $SMOLVM_SHA_X86_64
+  arm64: $SMOLVM_SHA_ARM64
 EOF
 
 echo "Wrote $CHECKSUMS" >&2
 echo "  Temurin ${TEMURIN_VERSION}" >&2
 echo "  Node.js ${NODE_VERSION}" >&2
 echo "  Go ${GO_VERSION_FULL}" >&2
+echo "  smolvm ${SMOLVM_VERSION}" >&2

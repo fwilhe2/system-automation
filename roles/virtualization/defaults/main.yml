@@ -10,8 +10,3 @@ virtualization_packages:
   Debian: qemu-system
   Suse: qemu
   Archlinux: qemu-base
-
-virtualization_smolvm_repository: smol-machines/smolvm
-virtualization_smolvm_architectures:
-  x86_64: x86_64
-  aarch64: arm64

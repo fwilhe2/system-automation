@@ -66,7 +66,7 @@ development_node_major: 24
 # current majors, so this cannot lag more than one release behind.
 development_go_version: "1.27"
 
-# The same three architectures under the three names upstream give them.
+# The architecture names used by each upstream release.
 development_temurin_architectures:
   x86_64: x64
   aarch64: aarch64
@@ -75,4 +75,7 @@ development_node_architectures:
   aarch64: arm64
 development_go_architectures:
   x86_64: amd64
+  aarch64: arm64
+development_smolvm_architectures:
+  x86_64: x86_64
   aarch64: arm64
