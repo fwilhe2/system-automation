@@ -260,10 +260,12 @@
 - name: Get the Home Directory
   ansible.builtin.stat:
     path: "~"
+  become: false
   register: development_home
 
 - name: Get the installed smolvm version
   ansible.builtin.command: "{{ development_smolvm_home }}/smolvm --version"
+  become: false
   register: development_smolvm_installed_version
   changed_when: false
   failed_when: false
@@ -273,6 +275,7 @@
     url: "https://api.github.com/repos/smol-machines/smolvm/releases/latest"
     return_content: true
     headers: "{{ {'Authorization': 'Bearer ' + github_token} if github_token else {} }}"
+  become: false
   vars:
     github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"
   register: development_smolvm_release
@@ -282,8 +285,10 @@
   ansible.builtin.set_fact:
     development_smolvm_version: "{{ development_smolvm_release.json.tag_name }}"
     development_smolvm_architecture: "{{ development_smolvm_architectures[ansible_facts['architecture']] }}"
+  become: false
 
 - name: Install smolvm
+  become: false
   when: development_smolvm_version[1:] not in development_smolvm_installed_version.stdout | default('')
   block:
     - name: Check the resolved smolvm release against the pinned checksum
