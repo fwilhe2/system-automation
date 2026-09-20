@@ -102,6 +102,7 @@ def main():
     run_group(assertions.assert_upstream_dev_tools,
               "Assert Upstream Development Tools")
     run_group(assertions.assert_uv_installed, "Assert Uv Installed")
+    run_group(assertions.assert_smolvm_installed, "Assert Smolvm Installed")
     run_group(assertions.assert_telemetry_opt_out, "Assert Telemetry Opt-Out")
     run_group(assertions.assert_spellcheck_locales, "Assert Spellcheck Locales")
     run_group(assertions.assert_firefox_setup, "Assert Firefox Setup")

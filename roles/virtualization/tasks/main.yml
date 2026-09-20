@@ -47,6 +47,72 @@
         dest: "/usr/local"
         remote_src: true
 
+# smolvm is installed from its release archive because the archive includes
+# the guest runtime files it needs alongside the executable.
+- name: Get the Home Directory
+  ansible.builtin.stat:
+    path: "~"
+  register: virtualization_home
+
+- name: Get the installed smolvm version
+  ansible.builtin.command: "{{ virtualization_home.stat.path }}/.local/share/smolvm/smolvm --version"
+  register: virtualization_installed_smolvm
+  changed_when: false
+  failed_when: false
+
+- name: Get latest smolvm release version
+  ansible.builtin.uri:
+    url: "https://api.github.com/repos/{{ virtualization_smolvm_repository }}/releases/latest"
+    return_content: true
+    headers: "{{ {'Authorization': 'Bearer ' + github_token} if github_token else {} }}"
+  vars:
+    github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"
+  register: virtualization_smolvm_latest_release
+  changed_when: false
+
+- name: Extract smolvm release version
+  ansible.builtin.set_fact:
+    virtualization_smolvm_version: "{{ virtualization_smolvm_latest_release.json.tag_name }}"
+
+- name: Install smolvm
+  when: virtualization_smolvm_version[1:] not in virtualization_installed_smolvm.stdout | default('')
+  vars:
+    virtualization_smolvm_archive: >-
+      smolvm-{{ virtualization_smolvm_version[1:] }}-linux-{{ virtualization_smolvm_architectures[ansible_facts['architecture']] }}.tar.gz
+    virtualization_smolvm_asset: >-
+      {{ virtualization_smolvm_latest_release.json.assets
+      | selectattr('name', 'equalto', virtualization_smolvm_archive) | first }}
+  block:
+    - name: Download smolvm
+      ansible.builtin.get_url:
+        url: >-
+          https://github.com/{{ virtualization_smolvm_repository }}/releases/download/{{ virtualization_smolvm_version }}/{{ virtualization_smolvm_archive }}
+        dest: "/tmp/{{ virtualization_smolvm_archive }}"
+        checksum: "{{ virtualization_smolvm_asset.digest }}"
+        mode: "600"
+
+    - name: Create the smolvm installation directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "755"
+      loop:
+        - "{{ virtualization_home.stat.path }}/.local/bin"
+        - "{{ virtualization_home.stat.path }}/.local/share/smolvm"
+
+    - name: Extract smolvm archive
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ virtualization_smolvm_archive }}"
+        dest: "{{ virtualization_home.stat.path }}/.local/share/smolvm"
+        remote_src: true
+        extra_opts: [--strip-components=1]
+
+    - name: Link smolvm into PATH
+      ansible.builtin.file:
+        src: "{{ virtualization_home.stat.path }}/.local/share/smolvm/smolvm"
+        dest: "{{ virtualization_home.stat.path }}/.local/bin/smolvm"
+        state: link
+
 - name: Install Virtualization Packages
   become: true
   ansible.builtin.package:
