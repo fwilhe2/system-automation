@@ -98,6 +98,7 @@ def main():
 
     run_group(assertions.assert_system_properties,
               "Assert Properties of Installed System")
+    run_group(assertions.assert_system_locale, "Assert System Locale")
     run_group(assertions.assert_rust_toolchain, "Assert Rust Toolchain")
     run_group(assertions.assert_upstream_dev_tools,
               "Assert Upstream Development Tools")
