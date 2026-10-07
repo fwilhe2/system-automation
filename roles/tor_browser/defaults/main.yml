@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# Tor Browser is a portable install with its profile (and torrc, where bridges
+# end up) inside the install directory, and it updates itself in place. Both
+# need the directory to be owned by the user, so unlike /opt/firefox it lives in
+# the home directory. The `~` is expanded by the file module; see the comment on
+# firefox_profile_root for why the home directory is not taken from the facts.
+tor_browser_home: "~/.local/share/tor-browser"
+
+# The release channel's metadata, which names the current version and its
+# tarball. Tor Project only publishes it for linux-x86_64 - there is no Linux
+# arm64 build, which is why the role is guarded by architecture in the playbook.
+tor_browser_download_metadata: "https://aus1.torproject.org/torbrowser/update_3/release/download-linux-x86_64.json"

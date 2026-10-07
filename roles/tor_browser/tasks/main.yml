@@ -1,0 +1,62 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# The file module returns the path with the `~` expanded, which the desktop
+# entry needs: Exec is not shell parsed, so neither `~` nor $HOME survives into it.
+- name: Ensure Tor Browser directory exists
+  ansible.builtin.file:
+    path: "{{ tor_browser_home }}"
+    state: directory
+    mode: "0700"
+  register: tor_browser_dir
+
+- name: Ensure Application Desktop files directory exists
+  ansible.builtin.file:
+    path: "~/.local/share/applications/"
+    state: directory
+    mode: "750"
+
+# Installed once, then left to Tor Browser's own updater. The tarball carries
+# the profile and torrc, so extracting a newer release over an existing install
+# would reset whatever was configured there, bridges included.
+- name: Check for an existing Tor Browser install
+  ansible.builtin.stat:
+    path: "{{ tor_browser_dir.path }}/Browser/start-tor-browser"
+  register: tor_browser_launcher
+
+- name: Install Tor Browser
+  when: not tor_browser_launcher.stat.exists
+  block:
+    - name: Get the latest Tor Browser release
+      ansible.builtin.uri:
+        url: "{{ tor_browser_download_metadata }}"
+        return_content: true
+      register: tor_browser_release
+
+    # The checksum file sits next to the tarball, so this guards against a
+    # corrupted download rather than a compromised mirror.
+    - name: Download Tor Browser
+      ansible.builtin.get_url:
+        url: "{{ tor_browser_release.json.binary }}"
+        dest: "/tmp/{{ tor_browser_release.json.binary | basename }}"
+        checksum: "sha256:{{ tor_browser_release.json.binary | dirname }}/sha256sums-signed-build.txt"
+        mode: "0600"
+
+    - name: Extract Tor Browser
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ tor_browser_release.json.binary | basename }}"
+        dest: "{{ tor_browser_dir.path }}"
+        remote_src: true
+        extra_opts: [--strip-components=1]
+
+    - name: Remove the Tor Browser tarball
+      ansible.builtin.file:
+        path: "/tmp/{{ tor_browser_release.json.binary | basename }}"
+        state: absent
+
+- name: Create Tor Browser Desktop Entry
+  ansible.builtin.template:
+    src: templates/tor-browser.desktop.j2
+    dest: "~/.local/share/applications/tor-browser.desktop"
+    mode: "0644"

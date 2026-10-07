@@ -23,6 +23,11 @@
     - role: firefox
       tags: [firefox]
 
+    # Tor Project publishes no Linux arm64 build
+    - role: tor_browser
+      tags: [tor_browser]
+      when: ansible_facts['architecture'] == 'x86_64'
+
     # Flatpak talks to a session bus, which the test containers do not have
     - role: flatpak
       tags: [flatpak, notest]

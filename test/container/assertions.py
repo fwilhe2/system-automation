@@ -531,3 +531,39 @@ def assert_upstream_dev_tools():
 
     print(f"Upstream tools: Temurin {temurin}, {node_homes[0].name} and Go {go} "
           f"installed in {prefix}")
+
+
+def assert_tor_browser_setup():
+    """Tor Browser is only installed on x86_64, the one Linux architecture
+    Tor Project builds it for."""
+    if platform.machine() != "x86_64":
+        print(f"Tor Browser: not available for {platform.machine()}, skipped")
+        return
+
+    home = pathlib.Path.home()
+    install = home / ".local/share/tor-browser"
+    launcher = install / "Browser/start-tor-browser"
+    assert_true(os.access(launcher, os.X_OK),
+                f"Expected '{launcher}' to be executable.")
+    assert_equals(
+        elf_machine(install / "Browser/firefox.real"), 0x3E,
+        "Expected Tor Browser to be built for x86_64.")
+
+    # The profile and torrc live inside the install, and the updater writes
+    # there, so it has to belong to the user and to no one else.
+    assert_equals(install.stat().st_uid, os.getuid(),
+                  f"Expected '{install}' to be owned by the user.")
+    assert_equals(oct(install.stat().st_mode & 0o777), oct(0o700),
+                  f"Expected '{install}' to be private.")
+
+    entry = home / ".local/share/applications/tor-browser.desktop"
+    assert_true(entry.is_file(), f"Expected desktop entry '{entry}'.")
+    lines = entry.read_text().splitlines()
+    assert_true(f"Exec={launcher} --detach %u" in lines,
+                f"Expected '{entry}' to start '{launcher}'.")
+    icon = pathlib.Path(next(line for line in lines
+                             if line.startswith("Icon=")).removeprefix("Icon="))
+    assert_true(icon.is_file(), f"Expected icon '{icon}' from '{entry}' to exist.")
+
+    version = json.loads((install / "Browser/tbb_version.json").read_text())
+    print(f"Tor Browser {version['version']} installed in {install}")
