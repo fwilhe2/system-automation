@@ -9,6 +9,23 @@
 #
 # Looked up by distribution first and os_family second, so Fedora and the EL
 # rebuilds can differ: EPEL carries neither httpie nor the_silver_searcher.
+# en_DK keeps the language English while providing continental-European formats
+# for numbers, dates, and units. This motivation is also documented by grml:
+# https://github.com/grml/grml-live/pull/482
+basic_locale: en_DK.UTF-8
+
+basic_locale_packages:
+  Debian: locales
+  Fedora: glibc-langpack-en
+  RedHat: glibc-langpack-en
+  Suse: glibc-locale
+  Archlinux: glibc
+
+basic_locale_lang_file:
+  Debian: /etc/default/locale
+  RedHat: /etc/locale.conf
+  Archlinux: /etc/locale.conf
+
 basic_packages:
   Debian:
     - apg
