@@ -48,7 +48,6 @@
     signed_by: https://download.docker.com/linux/ubuntu/gpg
     state: present
     enabled: true
-    install_python_debian: true
 
 - name: Install Docker Engine
   ansible.builtin.apt:
