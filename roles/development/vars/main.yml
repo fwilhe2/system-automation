@@ -2,18 +2,21 @@
 # SPDX-License-Identifier: MIT
 
 ---
-# Not configuration - what upstream.yml derives from the pinned versions in
-# defaults/main.yml, and needs several times over each. The Node.js version is
-# only known once upstream.yml has read it off the checksum file, which is fine:
-# these are templated where they are used, not where they are defined.
+# Not configuration - what upstream.yml derives from the pinned versions, and
+# needs several times over each.
 development_temurin_architecture: "{{ development_temurin_architectures[ansible_facts['architecture']] }}"
 development_node_architecture: "{{ development_node_architectures[ansible_facts['architecture']] }}"
 development_go_architecture: "{{ development_go_architectures[ansible_facts['architecture']] }}"
+development_smolvm_architecture: "{{ development_smolvm_architectures[ansible_facts['architecture']] }}"
 
 # Pinned by scripts/update-upstream-checksums.sh into files/upstream-checksums.yml,
-# which upstream.yml checks the exact version it resolves against before it
-# trusts that file's checksum for the architecture it is installing.
+# which is the only place the exact version of each tool comes from.
 development_upstream_checksums: "{{ lookup('ansible.builtin.file', role_path ~ '/files/upstream-checksums.yml') | from_yaml }}"
+
+development_temurin_release: "{{ development_upstream_checksums.temurin.version }}"
+development_node_version: "{{ development_upstream_checksums.node.version }}"
+development_go_release: "{{ development_upstream_checksums.go.version }}"
+development_smolvm_version: "{{ development_upstream_checksums.smolvm.version }}"
 
 development_temurin_home: "{{ development_upstream_prefix }}/temurin-{{ development_temurin_major }}"
 development_node_home: "{{ development_upstream_prefix }}/node-{{ development_node_version }}"
@@ -23,10 +26,10 @@ development_smolvm_home: "{{ development_home.stat.path }}/.local/share/smolvm"
 
 development_temurin_tarball: "/tmp/temurin-{{ development_temurin_major }}.tar.gz"
 
-development_node_release_url: "https://nodejs.org/dist/latest-v{{ development_node_major }}.x"
 # The gzip tarball rather than the smaller xz one, because gzip is the only
 # compressor every one of the distributions has out of the box.
 development_node_tarball: "node-v{{ development_node_version }}-linux-{{ development_node_architecture }}.tar.gz"
 
-development_smolvm_archive: >-
-  smolvm-{{ development_smolvm_version[1:] }}-linux-{{ development_smolvm_architecture }}.tar.gz
+development_go_tarball: "{{ development_go_release }}.linux-{{ development_go_architecture }}.tar.gz"
+
+development_smolvm_archive: "smolvm-{{ development_smolvm_version }}-linux-{{ development_smolvm_architecture }}.tar.gz"
