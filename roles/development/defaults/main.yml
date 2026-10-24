@@ -52,13 +52,17 @@ development_system_packages:
 development_use_upstream: true
 development_upstream_prefix: /opt
 
-# Temurin feature release. Its latest build is what gets installed, into
+# The exact build of each upstream tool comes from files/upstream-checksums.yml;
+# these name the release line it has to belong to. Changing one means running
+# scripts/update-upstream-checksums.sh to pin a build from the new line.
+
+# Temurin feature release, installed into
 # {{ development_upstream_prefix }}/temurin-<major>.
 development_temurin_major: 25
 
-# Node.js major release. Its latest version is what gets installed, into
-# {{ development_upstream_prefix }}/node-<full version>, so a new upstream
-# release is picked up without touching the one already installed.
+# Node.js major release, installed into
+# {{ development_upstream_prefix }}/node-<full version>, so a newly pinned
+# release is installed without touching the one already there.
 development_node_major: 24
 
 # Go release, pinned to a minor version, installed into
