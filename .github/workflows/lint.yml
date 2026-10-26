@@ -21,7 +21,7 @@ jobs:
       # roles itself.
       # The playbooks use community.general, so the collection has to be present
       # or every task using it is reported as an unresolvable module.
-      - uses: ansible/ansible-lint@e7f397ad6dfa20d274afa17cd7bbedd84ed136f5 # v26.9.0
+      - uses: ansible/ansible-lint@9bce2bfb8f4a984e6b13767bc0d6bf0a49492164 # v26.10.1
         with:
           requirements_file: requirements.yml
 
