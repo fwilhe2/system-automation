@@ -13,14 +13,14 @@ temurin:
     x64: https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5%2B8/OpenJDK25U-jdk_x64_linux_hotspot_25.0.5_8.tar.gz
     aarch64: https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5%2B8/OpenJDK25U-jdk_aarch64_linux_hotspot_25.0.5_8.tar.gz
 node:
-  version: 24.22.1
-  x64: eb6728e77c576a35162c122c45ccadf224d89ff00abc8dae46cc2897c6002d7c
-  arm64: 33c37be234ba8bee041961047b19160f4d7d0f164e8e246f78bdd10feff148b3
+  version: 24.22.2
+  x64: 361718c444e49af2ca5a110c83ba6a8901143f23ab285ebbef0341f391f482a9
+  arm64: 95c264150aceb7f3437a29fd6984924f5f8d1511ea3cbd6c508b83f6c555dae2
 go:
   version: go1.27.3
   amd64: 65efbc80fdc1fa2cd2631cad5b481777a68e8725f34e89f50fc6ac714e379b40
   arm64: a06e99309dbcbdca1a8ccd2282c3ee146e55930886e26b4f1193269587165f49
 smolvm:
-  version: 1.32.1
-  x86_64: 6d6ddac20e11c1a09409df99232b9a559866a554b413d8d0fd82976d7669108b
-  arm64: 2c7147cc8e13ffe9446c915517ccdc7a812d9421e4f6133fdebadc6bd2214800
+  version: 1.32.4
+  x86_64: 7b0580c2ef98e183ac5c3a1567eca3a336d58aa0e2ca5904350f7d3a851205e8
+  arm64: 693b34530d9eac9d6d1b61e22b33bb34c87c511b1a8c9098fe35d9c4a77e07ce
