@@ -91,7 +91,7 @@ RUN_ARGS=(--rm --tty --env SYSTEMD_OFFLINE=1)
 # as a CI step
 [[ -t 0 ]] && RUN_ARGS+=(--interactive)
 
-# The virtualization and gcl roles read it to lift the anonymous GitHub API rate limit
+# The virtualization, gcl and grind roles read it to lift the anonymous GitHub API rate limit
 [[ -n "${GITHUB_TOKEN:-}" ]] && RUN_ARGS+=(--env GITHUB_TOKEN)
 
 if [[ "$#" -ge 2 ]]; then

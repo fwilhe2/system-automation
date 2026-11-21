@@ -54,6 +54,14 @@
     - role: vscodium
       tags: [codium]
 
+    # grind publishes .deb and .rpm packages for amd64 only, and none for Arch
+    - role: grind
+      become: true
+      tags: [grind]
+      when: >-
+        ansible_facts['architecture'] == 'x86_64'
+        and ansible_facts['os_family'] != 'Archlinux'
+
     # After the desktop role: installing LibreOffice and its German l10n drags
     # in dictionaries for locales this prunes away again
     - role: spellcheck

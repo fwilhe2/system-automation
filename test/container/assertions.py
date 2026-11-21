@@ -533,6 +533,25 @@ def assert_upstream_dev_tools():
           f"installed in {prefix}")
 
 
+def assert_grind_installed():
+    """grind publishes .deb and .rpm packages for amd64 only, which is the
+    condition on the grind entry in playbooks/desktop.yml."""
+    if platform.machine() != "x86_64" or shutil.which("pacman"):
+        print(f"grind: no package for {platform.machine()} or pacman, skipped")
+        return
+
+    for binary in ("grind", "grind-tui", "grind-sheet-gtk", "grind-text-gtk"):
+        path = pathlib.Path("/usr/bin") / binary
+        assert_true(os.access(path, os.X_OK), f"Expected '{path}' to be an executable.")
+    for app in ("Sheet", "Text"):
+        entry = pathlib.Path(f"/usr/share/applications/io.github.fwilhe2.{app}.desktop")
+        assert_true(entry.is_file(), f"Expected desktop entry '{entry}'.")
+    for binary in ("grind", "grind-tui"):
+        assert_equals(
+            subprocess.run([f"/usr/bin/{binary}", "--version"]).returncode, 0,
+            f"Expected '/usr/bin/{binary} --version' to run with exit code 0.")
+
+
 def assert_tor_browser_setup():
     """Tor Browser is only installed on x86_64, the one Linux architecture
     Tor Project builds it for."""
