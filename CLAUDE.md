@@ -28,6 +28,7 @@ reuse lint                                 # licence headers, enforced by its ow
 uvx --from ansible-lint ansible-lint
 npx prettier --check "./**/*.yml"
 shellcheck scripts/*.sh
+python3 scripts/tags.py check   # tags follow the convention below, README table in sync
 ```
 
 ### Container tests
@@ -75,8 +76,14 @@ Lima VMs are the higher-fidelity option; see the Testing section of `README.adoc
 tasks of their own. Do not add a `tasks:` section to a playbook - make it a role.
 
 Every role is tagged with its own name where the playbook lists it, which covers all of its
-tasks. Tags do not belong on individual tasks; `notest` (below) is the exception and it also
-goes on the role.
+tasks, and that name comes first: `scripts/run.sh --keep-going` applies the roles one at a
+time by their first tag. Roles that download from outside the distribution's repositories
+also carry `upstream`. Tags do not belong on individual tasks or on the plays - a play tag
+also lands on the implicit fact gathering, which then does not run under `--tags <role>`;
+`notest` (below) is the exception to the task rule and it also goes on the role.
+
+The tag table in `README.adoc` lists every tag in use. Adding a role or a tag means adding
+its row there; `scripts/tags.py check` fails the lint workflow otherwise.
 
 **Configuration is role defaults plus one shared file.** Each role's inputs, package lists
 above all, live in `roles/<role>/defaults/main.yml`. Variables used by more than one role

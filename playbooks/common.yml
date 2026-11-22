@@ -5,6 +5,12 @@
 - name: Common Playbook
   hosts: all
 
+  # Every role's first tag is its own name; `scripts/run.sh --keep-going`
+  # applies the roles one by one by that tag. `upstream` marks the roles that
+  # download from outside the distribution's repositories, which are the ones
+  # an outage elsewhere can break. scripts/tags.py checks all of this, and the
+  # tag table in README.adoc, in CI.
+
   roles:
     # Repository set-up first: EPEL carries packages the roles below install on
     # EL-like systems, and snap is removed before anything can pull it back in.
@@ -20,17 +26,17 @@
       tags: [basic]
 
     - role: dotfiles
-      tags: [dotfiles]
+      tags: [dotfiles, upstream]
 
     - role: bin
-      tags: [bin]
+      tags: [bin, upstream]
 
     - role: directories
       tags: [directories]
 
     - role: docker
       become: true
-      tags: [docker]
+      tags: [docker, upstream]
 
     - role: development
       become: true
@@ -39,20 +45,20 @@
     # Unprivileged on purpose: rustup installs into the user's home, and it
     # needs the compilers and headers the development role brings in.
     - role: rust
-      tags: [rust]
+      tags: [rust, upstream]
 
     # Unprivileged for the same reason as rust: it installs into the user's home.
     - role: uv
-      tags: [uv]
+      tags: [uv, upstream]
 
     - role: virtualization
-      tags: [virtualization]
+      tags: [virtualization, upstream]
 
     - role: gcl
-      tags: [gcl]
+      tags: [gcl, upstream]
 
     - role: gh
-      tags: [gh]
+      tags: [gh, upstream]
 
     # After the roles that install the tools it opts out of
     - role: telemetry
