@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+grind_repository: fwilhe2/grind
+
+# Which release assets make up the suite, by package format. The 'grind'
+# metapackage depends on the exact version of each application package, so
+# every one of them has to go into the same transaction.
+grind_assets:
+  Debian: '_amd64\.deb$'
+  RedHat: '\.(x86_64|noarch)\.rpm$'
+  Suse: '\.(x86_64|noarch)\.rpm$'

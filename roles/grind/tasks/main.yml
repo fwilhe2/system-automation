@@ -1,0 +1,91 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# grind is not in any distribution's repositories. Its GitHub releases carry
+# .deb and .rpm packages for the four applications - Sheet, Text, the TUI and
+# the CLI - plus a 'grind' metapackage that pulls in all of them.
+- name: Get the installed grind version
+  # The CLI is part of the suite, so its version is the suite's
+  ansible.builtin.command: /usr/bin/grind --version
+  register: grind_installed
+  changed_when: false
+  failed_when: false
+
+- name: Get latest grind release
+  ansible.builtin.uri:
+    url: "https://api.github.com/repos/{{ grind_repository }}/releases/latest"
+    return_content: true
+    # Authenticate if a token is available; anonymous requests share a
+    # 60/hour rate limit per IP, which CI runners regularly exhaust
+    headers: "{{ {'Authorization': 'Bearer ' + github_token} if github_token else {} }}"
+  vars:
+    github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"
+  register: grind_latest_release
+  changed_when: false
+
+- name: Extract grind release
+  ansible.builtin.set_fact:
+    grind_version: "{{ grind_latest_release.json.tag_name }}"
+    grind_release_assets: >-
+      {{ grind_latest_release.json.assets
+      | selectattr('name', 'search', grind_assets[ansible_facts['os_family']])
+      | list }}
+
+# grind prints 'grind 1.2.3 (release build)' where the release is tagged
+# 'v1.2.3'. Comparing the two is what makes this role idempotent, and what
+# upgrades an outdated installation: it downloads, and reports a change, only
+# when the installed suite is not the current release.
+- name: Install grind
+  when: ("grind " ~ grind_version[1:] ~ " ") not in grind_installed.stdout | default('')
+  vars:
+    grind_download_dir: "/tmp/grind-{{ grind_version }}"
+    grind_packages: >-
+      {{ grind_release_assets
+      | map(attribute='name')
+      | map('regex_replace', '^', grind_download_dir ~ '/')
+      | list }}
+  block:
+    - name: Create the grind download directory
+      ansible.builtin.file:
+        path: "{{ grind_download_dir }}"
+        state: directory
+        mode: "700"
+
+    - name: Download grind packages
+      ansible.builtin.get_url:
+        url: "{{ item.browser_download_url }}"
+        dest: "{{ grind_download_dir }}/{{ item.name }}"
+        mode: "600"
+      loop: "{{ grind_release_assets }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    # The apt module takes a single .deb at a time, but the metapackage can
+    # only be installed together with the packages it depends on. apt-get
+    # installs local files in one transaction and resolves their dependencies
+    # from the repositories. This only runs when the version check above
+    # found something to install, so it is a change every time it runs.
+    - name: Install grind packages (deb)
+      when: ansible_facts['os_family'] == 'Debian'
+      ansible.builtin.command:
+        argv: "{{ ['apt-get', 'install', '--yes'] + grind_packages }}"
+      environment:
+        DEBIAN_FRONTEND: noninteractive
+      changed_when: true
+
+    # The release packages are not signed. 'latest' so that an older
+    # installed grind is upgraded to the files just downloaded.
+    - name: Install grind packages (dnf)
+      when: ansible_facts['os_family'] == 'RedHat'
+      ansible.builtin.dnf:
+        name: "{{ grind_packages }}"
+        state: latest # noqa package-latest
+        disable_gpg_check: true
+
+    - name: Install grind packages (zypper)
+      when: ansible_facts['os_family'] == 'Suse'
+      community.general.zypper:
+        name: "{{ grind_packages }}"
+        state: latest # noqa package-latest
+        disable_gpg_check: true
