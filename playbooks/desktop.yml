@@ -5,39 +5,41 @@
 - name: Desktop (GNOME) Playbook
   hosts: all
 
+  # Tag conventions: see the comment in common.yml
+
   roles:
     # Skipped where Microsoft's repo signing fails modern OpenPGP verifiers:
     # Tumbleweed's rpm rejects the key armor, and the stale arm64 'code'
     # package ships a SHA-1-signed keyring that Debian's sqv rejects
     - role: iesplin.vscode
       become: true
-      tags: [vscode]
+      tags: [vscode, upstream]
       when: >-
         ansible_facts['distribution'] != 'openSUSE Tumbleweed'
         and not (ansible_facts['os_family'] == 'Debian' and ansible_facts['architecture'] == 'aarch64')
 
     - role: greenleader.codium
       become: true
-      tags: [codium]
+      tags: [codium, upstream]
 
     - role: firefox
-      tags: [firefox]
+      tags: [firefox, upstream]
 
     # Tor Project publishes no Linux arm64 build
     - role: tor_browser
-      tags: [tor_browser]
+      tags: [tor_browser, upstream]
       when: ansible_facts['architecture'] == 'x86_64'
 
     # Flatpak talks to a session bus, which the test containers do not have
     - role: flatpak
-      tags: [flatpak, notest]
+      tags: [flatpak, upstream, notest]
       when: ansible_facts['os_family'] == 'RedHat'
 
     # Before the desktop packages, because enabling RPM Fusion can replace
     # packages that the ones below pull in
     - role: rpm_fusion
       become: true
-      tags: [rpm_fusion]
+      tags: [rpm_fusion, upstream]
       when: ansible_facts['distribution'] == 'Fedora'
 
     - role: desktop
@@ -52,12 +54,12 @@
         or ansible_facts['os_family'] in ['Debian', 'Suse']
 
     - role: vscodium
-      tags: [codium]
+      tags: [vscodium, codium, upstream]
 
     # grind publishes .deb and .rpm packages for amd64 only, and none for Arch
     - role: grind
       become: true
-      tags: [grind]
+      tags: [grind, upstream]
       when: >-
         ansible_facts['architecture'] == 'x86_64'
         and ansible_facts['os_family'] != 'Archlinux'

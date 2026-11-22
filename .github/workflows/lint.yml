@@ -30,3 +30,7 @@ jobs:
 
       - name: Check shell scripts
         run: shellcheck scripts/*.sh
+
+      # Every role tagged, and README.adoc's tag table matching the playbooks
+      - name: Check tags
+        run: python3 scripts/tags.py check

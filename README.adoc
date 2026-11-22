@@ -114,6 +114,65 @@ Roles are tagged with their own name, so a single one can be applied on its own:
 ansible-playbook --ask-become-pass playbooks/desktop.yml --tags firefox
 ----
 
+==== Opting out, and carrying on past a failure
+
+Anything after the playbook name goes to `ansible-playbook`, so any tag below can be
+skipped (several at once, comma-separated):
+
+----
+./scripts/run.sh --skip-tags docker,flatpak       # opt out of single roles
+./scripts/run.sh --skip-tags upstream             # only what the distro repositories carry
+----
+
+Ansible stops at the first failing task. If a single role is broken - typically an
+`upstream` one whose download site is down - `--keep-going` applies the roles one at a time
+instead, asks for the password once, and lists the failed ones at the end together with
+the `--skip-tags` that leaves them out next time:
+
+----
+./scripts/run.sh --keep-going
+./scripts/run.sh --keep-going desktop --skip-tags upstream
+----
+
+That is slower, as every role gathers facts again, so it is meant for the run after a
+failure rather than as the default.
+
+// tags-table-start
+// Kept in sync with the playbooks by `scripts/tags.py check`, which CI runs.
+[cols="1,3"]
+|===
+| Tag | Selects
+
+| `upstream` | roles that download from outside the distribution's repositories (GitHub, vendor repositories, Flathub, ...)
+| `notest` | roles the container tests skip
+| `epel` | EPEL repository on EL
+| `snapd_purge` | removal of snap
+| `basic` | basic packages
+| `dotfiles` | oh-my-zsh and the dotfiles repository
+| `bin` | the `fwilhe2/bin` repository
+| `directories` | directories in the home directory
+| `docker` | Docker
+| `development` | compilers, toolchains, development packages
+| `rust` | rustup
+| `uv` | uv
+| `virtualization` | virtualization tools and lima
+| `gcl` | gcl
+| `gh` | GitHub CLI
+| `telemetry` | telemetry opt-outs
+| `vscode` | VS Code
+| `codium` | VSCodium and its extensions
+| `vscodium` | VSCodium extensions only
+| `firefox` | Firefox Nightly
+| `tor_browser` | Tor Browser
+| `flatpak` | Flatpak and its apps
+| `rpm_fusion` | RPM Fusion on Fedora
+| `desktop` | desktop packages
+| `libreoffice` | LibreOffice settings
+| `grind` | grind
+| `spellcheck` | spellchecking dictionaries
+|===
+// tags-table-end
+
 === Kickstart (experimental)
 
 If you don't mind the `curl | bash` thing, `scripts/bootstrap.sh` does the download, the
