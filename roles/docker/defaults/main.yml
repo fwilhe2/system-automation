@@ -5,7 +5,7 @@
 # Codename to use for the Docker APT repository on the distributions'
 # development branches, which Docker itself does not publish packages for.
 docker_development_branch_codename:
-  Ubuntu: jammy
+  Ubuntu: noble
   Debian: trixie
   Tuxedo: trixie
   Tuxedo OS: trixie

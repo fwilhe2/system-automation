@@ -13,12 +13,6 @@
     dest: ~/.dotfiles
   register: dotfiles_clone
 
-- name: Make `~/.config/Code/User` if not exists
-  ansible.builtin.file:
-    path: ~/.config/Code/User
-    state: directory
-    mode: "750"
-
 # The install script is deliberately a task rather than a handler: later tasks
 # in this role write into the tree it lays out.
 - name: Symlink Dotfiles # noqa: no-handler

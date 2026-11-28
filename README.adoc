@@ -120,7 +120,7 @@ Anything after the playbook name goes to `ansible-playbook`, so any tag below ca
 skipped (several at once, comma-separated):
 
 ----
-./scripts/run.sh --skip-tags docker,flatpak       # opt out of single roles
+./scripts/run.sh --skip-tags docker,firefox       # opt out of single roles
 ./scripts/run.sh --skip-tags upstream             # only what the distro repositories carry
 ----
 
@@ -143,8 +143,7 @@ failure rather than as the default.
 |===
 | Tag | Selects
 
-| `upstream` | roles that download from outside the distribution's repositories (GitHub, vendor repositories, Flathub, ...)
-| `notest` | roles the container tests skip
+| `upstream` | roles that download from outside the distribution's repositories (GitHub, vendor repositories, ...)
 | `epel` | EPEL repository on EL
 | `snapd_purge` | removal of snap
 | `basic` | basic packages
@@ -159,12 +158,10 @@ failure rather than as the default.
 | `gcl` | gcl
 | `gh` | GitHub CLI
 | `telemetry` | telemetry opt-outs
-| `vscode` | VS Code
 | `codium` | VSCodium and its extensions
 | `vscodium` | VSCodium extensions only
 | `firefox` | Firefox Nightly
 | `tor_browser` | Tor Browser
-| `flatpak` | Flatpak and its apps
 | `rpm_fusion` | RPM Fusion on Fedora
 | `desktop` | desktop packages
 | `libreoffice` | LibreOffice settings

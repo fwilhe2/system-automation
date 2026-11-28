@@ -98,10 +98,3 @@
   loop: "{{ firefox_channels }}"
   loop_control:
     label: "{{ item.display_name }}"
-
-# The Developer Edition entry used to be named after the channel's marketing
-# name rather than its product id.
-- name: Remove superseded Firefox Desktop Entry
-  ansible.builtin.file:
-    path: "~/.local/share/applications/firefox-developer.desktop"
-    state: absent
