@@ -18,5 +18,4 @@
   ansible.builtin.dnf:
     state: present
     name: ffmpeg
-    disable_gpg_check: true
     allowerasing: true

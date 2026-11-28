@@ -42,9 +42,7 @@ def assert_not_none(value, message):
 
 def assert_system_properties():
     expected_binaries = {
-        "javac": "-version",
         "mvn": "-version",
-        "go": "version",
         "keepassxc-cli": "-version",
         "gcl": "--version",
         "gh": "--version",

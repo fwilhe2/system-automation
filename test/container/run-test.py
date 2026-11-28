@@ -14,7 +14,7 @@ import subprocess
 import distro
 
 import assertions
-from assertions import assert_equals, assert_not_none
+from assertions import assert_equals, assert_true
 
 
 def run_group(fn, name, *args):
@@ -29,7 +29,8 @@ def executable(name):
 
 
 def install_ansible_galaxy_dependencies():
-    subprocess.run([executable("ansible-galaxy"), "install", "-r", "requirements.yml"])
+    subprocess.run([executable("ansible-galaxy"), "install", "-r", "requirements.yml"],
+                   check=True)
 
 
 def run_ansible(playbook):
@@ -59,12 +60,11 @@ def run_ansible(playbook):
         0,
         f"Expected running playbook '{playbook}' (second run) to return exit code 0.\n{rerun_stdout}\n{rerun_stderr}",
     )
-    changed_match = re.fullmatch(".*changed=0.*failed=0.*", rerun_stdout,
-                                 re.DOTALL)
-    print(changed_match)
-    assert_not_none(
-        changed_match,
-        f"Idempotence check failed: Could not find 'changed=0' and 'failed=0' in output:\n{rerun_stdout}",
+    # The recap has one line per host; every counter on every line has to be 0
+    recap = re.findall(r"\b(changed|failed|unreachable)=(\d+)", rerun_stdout)
+    assert_true(
+        recap and all(count == "0" for _, count in recap),
+        f"Idempotence check failed: expected changed=0, failed=0 and unreachable=0 in the recap:\n{rerun_stdout}",
     )
 
 

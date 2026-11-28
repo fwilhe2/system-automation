@@ -26,6 +26,7 @@ README = ROOT / "README.adoc"
 ROLE = re.compile(r"^\s+- role: (\S+)\s*$")
 TAGS = re.compile(r"^(\s+)tags: \[([^\]]*)\]\s*$")
 TABLE_ROW = re.compile(r"^\| `([^`]+)`")
+IMPORTED_ROLE = re.compile(r"ansible\.builtin\.import_role:\n\s+name: (\S+)")
 
 
 def parse(playbook):
@@ -70,9 +71,14 @@ def check():
             if not tags:
                 errors.append(f"{playbook}: role {role} has no tags")
             # Our own roles must lead with their own name; the vendored ones
-            # are named by their tag (iesplin.vscode -> vscode)
+            # are named by their tag (greenleader.codium -> codium)
             elif (ROOT / "roles" / role).is_dir() and tags[0] != role:
                 errors.append(f"{playbook}: role {role}: first tag must be {role!r}, is {tags[0]!r}")
+
+    # A role that other roles import (github_release) gets its tags from them
+    # and is not listed in a playbook itself
+    for tasks in (ROOT / "roles").glob("*/tasks/*.yml"):
+        referenced.update(IMPORTED_ROLE.findall(tasks.read_text()))
 
     for role_dir in sorted((ROOT / "roles").iterdir()):
         if role_dir.is_dir() and role_dir.name not in referenced:

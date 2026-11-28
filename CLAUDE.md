@@ -108,7 +108,7 @@ Fedora, EL, openSUSE and Arch, on amd64 and arm64. The three mechanisms for this
   Where the family is not fine-grained enough, key by `ansible_facts['distribution']` with
   the family as the `default()` (see `roles/virtualization/defaults/main.yml`).
 - Where a whole role cannot work somewhere, the `when:` guard lives on the role in the
-  playbook (see the vscode entry in `playbooks/desktop.yml`), with a comment saying why.
+  playbook (see the tor_browser entry in `playbooks/desktop.yml`), with a comment saying why.
 - Distro-specific task files (`roles/docker/tasks/deb.yml`) are imported from the role's
   `main.yml` when the split is too large for a `when:`.
 
@@ -119,17 +119,26 @@ that mix privileged and unprivileged tasks (`firefox`, `virtualization`) set it 
 twice and fails unless the second run reports `changed=0`. A task that always reports changed
 turns every container job red. In practice: `ansible.builtin.command` needs `changed_when`,
 and anything else should be expressed as state rather than as a command - see how the
-virtualization role compares `limactl --version` against the latest release tag and skips
-the download entirely instead of masking it with `changed_when: false`. The firefox role
+github_release role compares the installed `--version` against the latest release tag and
+skips the download entirely instead of masking it with `changed_when: false`. The firefox role
 does use `changed_when: false` on its download and extraction, because the nightly build
 behind the URL can change between the two runs.
 
-Tag a role `notest` to have CI skip it (`--skip-tags notest`); currently only flatpak uses it.
+Tag a role `notest` to have CI skip it (`--skip-tags notest`); no role uses it at the moment,
+so it has no row in the README's tag table until one does.
+
+**Shared roles.** Binaries installed from GitHub releases (gh, gcl, dive, lima) go through
+`roles/github_release`, which each role pulls in with `ansible.builtin.import_role` and its
+`github_release_*` variables. It has to be `import_role`, not `include_role`: only a static
+import inherits the calling role's tags, so `--tags gh` would otherwise skip its tasks.
+Such a role is not listed in a playbook; `scripts/tags.py` accepts it because another role
+imports it. It verifies every download against the checksum file in the same release.
 
 **Vendored roles** live in `vendor/roles/` and are on the role path via `ansible.cfg`.
 `greenleader.codium`, `iesplin.vscode`, `gotmax23.epel*` and `bodsch.ansible-snapd` are
 third-party copies whose licences `README.adoc` documents, as is
-`roles/vscodium/library/codium_extensions.py`. Prefer working around them over editing them;
+`roles/vscodium/library/codium_extensions.py`; `iesplin.vscode` is kept although no playbook
+applies it. Prefer working around them over editing them;
 `vendor/` is excluded from both `.ansible-lint` and `.prettierignore` so the linters do not
 push edits into them.
 

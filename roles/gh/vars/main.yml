@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# Not configuration - the directory the release tarball unpacks into, which
+# tasks/main.yml needs twice. github_release_number is set by github_release.
+gh_archive_dir: "gh_{{ github_release_number }}_linux_{{ gh_architectures[ansible_facts['architecture']] }}"

@@ -2,32 +2,17 @@
 # SPDX-License-Identifier: MIT
 
 ---
+# Java, Node.js and Go come from upstream (tasks/upstream.yml), not from here.
+# Maven pulls in a distribution JRE of its own to run on.
 development_packages:
   Debian:
-    - default-jdk-headless
-    - golang
     - maven
-    - nodejs
-    - npm
-    - yarnpkg
   RedHat:
-    - golang
-    - java-25-openjdk-devel
     - maven
-    - nodejs
-    - npm
   Suse:
-    - go
-    - java-25-openjdk-devel
     - maven
-    - nodejs-default
-    - npm-default
   Archlinux:
-    - go
-    - jdk-openjdk
     - maven
-    - nodejs
-    - npm
 
 # Compilers and headers, which each distribution groups differently. Keyed by
 # distribution first and os_family second, because the EL distributions do not
@@ -44,11 +29,10 @@ development_system_packages:
     - "@Development Tools"
     - cmake
 
-# The upstream tarballs from upstream.yml, which are installed next to the
-# distribution packages above rather than instead of them: nothing here lands on
-# PATH, every install goes into its own directory below the prefix, and each one
-# carries a README saying which lines to add to a shell profile to use it.
-# Set this to false to skip them entirely.
+# The upstream tarballs from upstream.yml, the only source of the JDK, Node.js
+# and Go here: nothing lands on PATH, every install goes into its own directory
+# below the prefix, and each one carries a README saying which lines to add to a
+# shell profile to use it. Setting this to false leaves all three uninstalled.
 development_use_upstream: true
 development_upstream_prefix: /opt
 

@@ -1,0 +1,34 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+# Installs one binary from the latest GitHub release of a project. Not listed in
+# a playbook: the roles that need it import it with the variables below set,
+# which is what gives its tasks their tags.
+#
+# Required:
+#   github_release_repository  owner/name on GitHub
+#   github_release_binary      the executable's name, for the version check
+#   github_release_asset       the release asset to download
+#   github_release_checksums   the release asset holding its sha256 sum
+#
+# The asset names carry the version, so they are templated lazily against the
+# two facts this role sets before it downloads anything:
+#   github_release_tag         the release tag, e.g. v1.2.3
+#   github_release_number      the tag without its leading v, e.g. 1.2.3
+
+# Where the binary ends up, which is also where the version check looks for it.
+github_release_install_dir: /usr/local/bin
+
+# Where the archive is extracted. Lima ships a bin/ and share/ tree, so it
+# unpacks into /usr/local and installs into /usr/local/bin.
+github_release_extract_dir: "{{ github_release_install_dir }}"
+
+# Archive members to extract, and how many leading path components to drop from
+# them. Empty extracts everything.
+github_release_include: []
+github_release_strip_components: 0
+
+# Applied to the extracted files only when set; leaving it unset keeps the
+# modes in the archive, which is what a whole tree like Lima's needs.
+github_release_mode: ""

@@ -11,8 +11,6 @@
 # rebuilds can differ: EPEL carries neither httpie nor the_silver_searcher.
 basic_packages:
   Debian:
-    - apg
-    - bridge-utils
     - curl
     - git
     - htop
@@ -21,7 +19,6 @@ basic_packages:
     - make
     - mc
     - nala
-    - net-tools
     - python-is-python3
     - python3
     - python3-debian
@@ -33,12 +30,9 @@ basic_packages:
     - tealdeer
     - unzip
     - vim
-    - yapf3
     - zip
     - zsh
   Fedora:
-    - apg
-    - bridge-utils
     - bzip2
     - curl
     - git
@@ -47,7 +41,6 @@ basic_packages:
     - jq
     - make
     - mc
-    - net-tools
     - python3-lxml
     - rdiff-backup
     - restic
@@ -60,8 +53,6 @@ basic_packages:
     - zsh
   # The EL rebuilds: the Fedora list without the two packages EPEL does not have
   RedHat:
-    - apg
-    - bridge-utils
     - bzip2
     - curl
     - git
@@ -69,7 +60,6 @@ basic_packages:
     - jq
     - make
     - mc
-    - net-tools
     - python3-lxml
     - rdiff-backup
     - restic
@@ -80,7 +70,6 @@ basic_packages:
     - xz
     - zsh
   Suse:
-    - apg
     - bzip2
     - curl
     - git

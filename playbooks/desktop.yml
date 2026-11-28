@@ -8,16 +8,6 @@
   # Tag conventions: see the comment in common.yml
 
   roles:
-    # Skipped where Microsoft's repo signing fails modern OpenPGP verifiers:
-    # Tumbleweed's rpm rejects the key armor, and the stale arm64 'code'
-    # package ships a SHA-1-signed keyring that Debian's sqv rejects
-    - role: iesplin.vscode
-      become: true
-      tags: [vscode, upstream]
-      when: >-
-        ansible_facts['distribution'] != 'openSUSE Tumbleweed'
-        and not (ansible_facts['os_family'] == 'Debian' and ansible_facts['architecture'] == 'aarch64')
-
     - role: greenleader.codium
       become: true
       tags: [codium, upstream]
@@ -29,11 +19,6 @@
     - role: tor_browser
       tags: [tor_browser, upstream]
       when: ansible_facts['architecture'] == 'x86_64'
-
-    # Flatpak talks to a session bus, which the test containers do not have
-    - role: flatpak
-      tags: [flatpak, upstream, notest]
-      when: ansible_facts['os_family'] == 'RedHat'
 
     # Before the desktop packages, because enabling RPM Fusion can replace
     # packages that the ones below pull in

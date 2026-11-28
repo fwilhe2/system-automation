@@ -2,49 +2,17 @@
 # SPDX-License-Identifier: MIT
 
 ---
-- name: Get the installed gh version
-  ansible.builtin.command: "{{ gh_install_dir }}/gh --version"
-  register: gh_installed
-  changed_when: false
-  failed_when: false
-
-- name: Get latest gh release version
-  ansible.builtin.uri:
-    url: "https://api.github.com/repos/{{ gh_repository }}/releases/latest"
-    return_content: true
-    headers: "{{ {'Authorization': 'Bearer ' + github_token} if github_token else {} }}"
-  vars:
-    github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"
-  register: gh_latest_release
-  changed_when: false
-
-- name: Extract gh release version
-  ansible.builtin.set_fact:
-    gh_version: "{{ gh_latest_release.json.tag_name }}"
-
+# The tarball holds gh_<version>_linux_<arch>/bin/gh next to the man pages;
+# only the binary is installed.
 - name: Install gh
-  when: gh_version[1:] not in gh_installed.stdout | default('')
+  ansible.builtin.import_role:
+    name: github_release
   vars:
-    gh_archive_dir: "gh_{{ gh_version[1:] }}_linux_{{ gh_architectures[ansible_facts['architecture']] }}"
-    gh_archive: "{{ gh_archive_dir }}.tar.gz"
-  block:
-    - name: Download gh
-      ansible.builtin.get_url:
-        url: "https://github.com/{{ gh_repository }}/releases/download/{{ gh_version }}/{{ gh_archive }}"
-        dest: "/tmp/{{ gh_archive }}"
-        mode: "600"
-
-    - name: Extract gh archive
-      ansible.builtin.unarchive:
-        src: "/tmp/{{ gh_archive }}"
-        dest: /tmp
-        remote_src: true
-
-    - name: Install gh binary
-      become: true
-      ansible.builtin.copy:
-        src: "/tmp/{{ gh_archive_dir }}/bin/gh"
-        dest: "{{ gh_install_dir }}/gh"
-        owner: root
-        group: root
-        mode: "755"
+    github_release_repository: "{{ gh_repository }}"
+    github_release_binary: gh
+    github_release_install_dir: "{{ gh_install_dir }}"
+    github_release_asset: "{{ gh_archive_dir }}.tar.gz"
+    github_release_checksums: "gh_{{ github_release_number }}_checksums.txt"
+    github_release_include: ["{{ gh_archive_dir }}/bin/gh"]
+    github_release_strip_components: 2
+    github_release_mode: "0755"

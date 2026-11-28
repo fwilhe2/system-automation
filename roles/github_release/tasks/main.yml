@@ -1,0 +1,65 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: MIT
+
+---
+- name: Get the installed version of {{ github_release_binary }}
+  # Asking the binary by its full path keeps this independent of PATH.
+  ansible.builtin.command: "{{ github_release_install_dir }}/{{ github_release_binary }} --version"
+  register: github_release_installed
+  changed_when: false
+  failed_when: false
+
+- name: Get the latest release of {{ github_release_binary }}
+  ansible.builtin.uri:
+    url: "https://api.github.com/repos/{{ github_release_repository }}/releases/latest"
+    return_content: true
+    # Authenticate if a token is available; anonymous requests share a
+    # 60/hour rate limit per IP, which CI runners regularly exhaust
+    headers: "{{ {'Authorization': 'Bearer ' + github_token} if github_token else {} }}"
+  vars:
+    github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"
+  register: github_release_latest
+  changed_when: false
+
+- name: Extract the release version of {{ github_release_binary }}
+  ansible.builtin.set_fact:
+    github_release_tag: "{{ github_release_latest.json.tag_name }}"
+    github_release_number: "{{ github_release_latest.json.tag_name | regex_replace('^v', '') }}"
+
+# The tools print their version in different shapes ('gh version 1.2.3',
+# 'gcl v1.2.3 (release build)'), so this looks for the bare number with no
+# digit or dot on either side, which keeps 1.2.3 from matching 1.2.30. Comparing
+# it is what makes the role idempotent and what upgrades an outdated install.
+- name: Install the latest release of {{ github_release_binary }}
+  when: >-
+    github_release_installed.stdout | default('') is not
+    search('(^|[^0-9.])' ~ (github_release_number | regex_escape) ~ '([^0-9.]|$)')
+  vars:
+    github_release_download_url: "https://github.com/{{ github_release_repository }}/releases/download/{{ github_release_tag }}"
+  block:
+    # get_url fetches the checksum file and picks the line naming the asset
+    - name: Download {{ github_release_binary }}
+      ansible.builtin.get_url:
+        url: "{{ github_release_download_url }}/{{ github_release_asset }}"
+        dest: "/tmp/{{ github_release_asset }}"
+        checksum: "sha256:{{ github_release_download_url }}/{{ github_release_checksums }}"
+        mode: "0600"
+
+    # The archives carry the uid of the machine that built them.
+    - name: Extract {{ github_release_binary }}
+      become: true
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ github_release_asset }}"
+        dest: "{{ github_release_extract_dir }}"
+        remote_src: true
+        include: "{{ github_release_include }}"
+        extra_opts: "{{ ['--strip-components=' ~ github_release_strip_components] if github_release_strip_components | int > 0 else [] }}"
+        owner: root
+        group: root
+        mode: "{{ github_release_mode or omit }}"
+
+    - name: Remove the archive of {{ github_release_binary }}
+      become: true
+      ansible.builtin.file:
+        path: "/tmp/{{ github_release_asset }}"
+        state: absent

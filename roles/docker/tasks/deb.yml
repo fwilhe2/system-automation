@@ -7,16 +7,6 @@
 # https://docs.docker.com/engine/install/ubuntu/
 # https://github.com/geerlingguy/ansible-role-docker/blob/master/tasks/setup-Debian.yml
 
-- name: Uninstall old versions
-  ansible.builtin.apt:
-    state: absent
-    name:
-      - docker
-      - docker-engine
-      - docker.io
-      - containerd
-      - runc
-
 - name: Set up the repository
   ansible.builtin.apt:
     state: present
@@ -80,5 +70,3 @@
   ansible.builtin.apt:
     state: present
     name: podman
-  # TODO: Update once focal is not required anymore
-  when: ansible_facts['distribution_release'] != "focal"
